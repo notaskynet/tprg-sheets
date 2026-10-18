@@ -15,6 +15,7 @@ export interface StepStatus {
   /** priority: per-rank breakdown, sorted high → low */
   ranks?: { cat: string | null; spent: number; budget: number }[];
   capViolations?: string[]; // item ids above maxPerItem
+  missing?: string[]; // fields/pick: required paths still empty
 }
 
 export interface CheckItem {
@@ -83,13 +84,13 @@ export function evaluateCreation(pkg: SystemPackage, ch: Character, scope: Scope
       case 'fields': {
         const req = step.required ?? step.fields;
         const missing = req.filter((f) => !nonEmpty(get(f)));
-        steps.push({ id: step.id, kind: step.kind, ok: missing.length === 0 });
+        steps.push({ id: step.id, kind: step.kind, ok: missing.length === 0, missing });
         for (const f of req) checklist.push({ id: f, ok: nonEmpty(get(f)), labelKey: `fields.${f}` });
         break;
       }
       case 'pick': {
         const ok = nonEmpty(get(step.field));
-        steps.push({ id: step.id, kind: step.kind, ok });
+        steps.push({ id: step.id, kind: step.kind, ok, missing: ok ? [] : [step.field] });
         checklist.push({ id: step.field, ok, labelKey: `fields.${step.field}` });
         break;
       }

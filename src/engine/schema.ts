@@ -112,7 +112,8 @@ export type Sheet = z.infer<typeof Sheet>;
 
 // ---------- creation ----------
 
-const stepBase = { id, title: z.string().optional() }; // title = label key, default `steps.<id>`
+// title = label key (default `steps.<id>`); show = derived names displayed as live stat boxes on the step
+const stepBase = { id, title: z.string().optional(), show: z.array(id).default([]) };
 
 export const CreationStep = z.discriminatedUnion('kind', [
   z.object({

@@ -12,6 +12,7 @@ id = "clan"
 kind = "pick"
 field = "profile.clan"
 from = "clans"
+show = ["bloodMax"]
 fields = ["profile.generation", "profile.sire", "weakness"]
 
 [[steps]]
@@ -48,6 +49,7 @@ kind = "priority"
 group = "virtues"
 budgets = [7]
 base = 1
+show = ["humanity", "willpower"]
 
 [[steps]]
 id = "freebies"
@@ -66,3 +68,4 @@ costs = [
 [[steps]]
 id = "recap"
 kind = "recap"
+show = ["humanity", "willpower", "bloodMax"]

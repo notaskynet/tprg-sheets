@@ -6,6 +6,7 @@ import { AVAILABLE_LANGS } from '@/i18n/lang';
 import { getPackage } from '@/systems/registry';
 import { SystemProvider, useScope, useSystem } from '@/ui/context';
 import { useCharacterEditor } from '@/ui/useEditor';
+import { Wizard } from '@/ui/wizard/Wizard';
 import { SheetRenderer } from '@/ui/sheet/SheetRenderer';
 import { DiceProvider } from '@/ui/dice/DiceProvider';
 import { SavePill } from '@/ui/primitives';
@@ -36,14 +37,26 @@ export function SheetScreen({ charId }: { charId: string }) {
   }
   return (
     <SystemProvider pkg={pkg}>
-      <DiceProvider values={editor.ch.values}>
-        <SheetBody ch={editor.ch} set={editor.set} saveState={editor.saveState} />
-      </DiceProvider>
+      {/* The wizard replaces the sheet instead of overlaying it: on iOS Safari
+          `position: fixed` degrades when the keyboard opens and would reveal the sheet. */}
+      {editor.ch.creation && !editor.ch.creation.done ? (
+        <Wizard
+          ch={editor.ch}
+          set={editor.set}
+          onStep={(step) => editor.replace({ ...editor.ch!, creation: { step, done: false } })}
+          onFinish={() => editor.replace({ ...editor.ch!, creation: { step: 0, done: true } })}
+          onExit={goLibrary}
+        />
+      ) : (
+        <DiceProvider values={editor.ch.values}>
+          <SheetBody ch={editor.ch} set={editor.set} saveState={editor.saveState} onWizard={() => editor.replace({ ...editor.ch!, creation: { step: 0, done: false } })} />
+        </DiceProvider>
+      )}
     </SystemProvider>
   );
 }
 
-function SheetBody({ ch, set, saveState }: { ch: Character; set: (p: string, v: unknown) => void; saveState: 'saving' | 'saved' | 'offline' }) {
+function SheetBody({ ch, set, saveState, onWizard }: { ch: Character; set: (p: string, v: unknown) => void; saveState: 'saving' | 'saved' | 'offline'; onWizard: () => void }) {
   const { pkg } = useSystem();
   const { t, lang, setLang } = useI18n();
   const scope = useScope(ch.values);
@@ -79,7 +92,7 @@ function SheetBody({ ch, set, saveState }: { ch: Character; set: (p: string, v: 
               </div>
               <AccentPicker systemAccent={pkg.manifest.accent} />
               <Checklist report={report} okCount={okCount} allOk={allOk} />
-              <Actions ch={ch} title={title} />
+              <Actions ch={ch} title={title} onWizard={pkg.creation.steps.length ? onWizard : undefined} />
             </div>
           </div>
           {titlePath && (
@@ -123,12 +136,13 @@ function Checklist({ report, okCount, allOk }: { report: ReturnType<typeof evalu
   );
 }
 
-function Actions({ ch, title }: { ch: Character; title: string }) {
+function Actions({ ch, title, onWizard }: { ch: Character; title: string; onWizard?: () => void }) {
   const { t } = useI18n();
   return (
     <DropdownMenu>
       <DropdownMenuTrigger className="border border-line2 text-text-mute rounded p-1.5 hover:text-text hover:border-text-mute transition-colors" aria-label="menu"><MoreVertical className="size-4" /></DropdownMenuTrigger>
       <DropdownMenuContent align="end">
+        {onWizard && <DropdownMenuItem onSelect={onWizard}>{t('openWizard')}</DropdownMenuItem>}
         <DropdownMenuItem onSelect={() => downloadCharacter(ch, title)}>{t('exportFile')}</DropdownMenuItem>
         <DropdownMenuItem onSelect={() => window.print()}>{t('print')}</DropdownMenuItem>
         <DropdownMenuItem variant="destructive" onSelect={() => { if (confirm(`${t('delete')}: ${title || t('unnamed')}?`)) { deleteCharacter(ch.id); goLibrary(); } }}>{t('delete')}</DropdownMenuItem>
