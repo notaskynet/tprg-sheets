@@ -27,7 +27,7 @@ export function SessionDialog({ open, onOpenChange, initialJoin }: { open: boole
   const code = codeFromInput(codeInput);
 
   // Nothing is shared unless the player chooses it; the last choice is remembered.
-  useEffect(() => { const ids = new Set(chars.map((c) => c.id)); setPicked(new Set(loadShared().filter((id) => ids.has(id)))); }, [chars.length]); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => { const ids = new Set(chars.map((c) => c.id)); setPicked(new Set(loadShared().filter((id) => ids.has(id)))); }, [chars.length]);
 
   async function host() {
     onOpenChange(false);

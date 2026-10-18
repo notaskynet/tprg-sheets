@@ -1,11 +1,11 @@
 // Character <-> .trpg.json file.
 import { CHARACTER_SCHEMA, type Character } from '@/engine/character';
 
-export function characterToJson(ch: Character): string {
+function characterToJson(ch: Character): string {
   return JSON.stringify(ch, null, 2);
 }
 
-export function parseCharacter(text: string): Character {
+function parseCharacter(text: string): Character {
   const raw = JSON.parse(text);
   if (!raw || typeof raw !== 'object' || !raw.system?.id || typeof raw.values !== 'object' || raw.schema > CHARACTER_SCHEMA)
     throw new Error('Not a trpg-sheets character file');

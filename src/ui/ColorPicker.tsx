@@ -1,6 +1,6 @@
 // Small themed HSV picker (saturation/value square + hue slider); no native <input type=color>.
 import { useRef, type PointerEvent } from 'react';
-import { hexToHsv, hsvToHex, type Hsv } from '@/ui/theme';
+import { hsvToHex, type Hsv } from '@/ui/theme';
 
 function useDrag(onMove: (x: number, y: number) => void) {
   const ref = useRef<HTMLDivElement>(null);
@@ -39,5 +39,3 @@ export function ColorPicker({ hsv, onChange }: { hsv: Hsv; onChange: (hsv: Hsv, 
     </div>
   );
 }
-
-export { hexToHsv };

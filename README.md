@@ -40,7 +40,7 @@ schema/             generated JSON Schemas for those files
 docs/               package-format.md — the format reference
 src/
   engine/           pure TypeScript: schema, loader, expressions, dice, creation rules
-  storage/          IndexedDB + import of old v20.* localStorage characters
+  storage/          IndexedDB (characters, imported systems)
   share/            snapshot links, transports (Trystero / in-memory), transfer, sessions
   systems/          registry of bundled + imported packages
   ui/               sheet renderer, wizard, dice dialog, screens, shadcn components

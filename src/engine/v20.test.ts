@@ -1,4 +1,4 @@
-// Parity with the pre-rework TypeScript V20 plugin (legacy/src_old/systems/v20/v20.test.ts):
+// Parity with the original TypeScript V20 plugin:
 // same characters, same expectations, now driven by systems/vtm-v20/*.toml.
 import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';

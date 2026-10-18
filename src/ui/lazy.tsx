@@ -2,7 +2,6 @@
 import { lazy, Suspense, type ComponentType, type LazyExoticComponent, type ReactNode } from 'react';
 
 /** React.lazy for a named export. */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function lazyNamed<M extends Record<string, ComponentType<any>>, K extends keyof M>(load: () => Promise<M>, name: K): LazyExoticComponent<M[K]> {
   return lazy(() => load().then((m) => ({ default: m[name] })));
 }

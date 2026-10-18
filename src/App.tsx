@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { toast } from 'sonner';
 import { I18nProvider, useI18n } from '@/i18n/I18nContext';
 import { Toaster } from '@/ui/components/sonner';
 import { Library } from '@/ui/screens/Library';
@@ -9,26 +8,13 @@ import { Lazy, lazyNamed } from '@/ui/lazy';
 const SessionScreen = lazyNamed(() => import('@/ui/screens/SessionScreen'), 'SessionScreen');
 const SharedView = lazyNamed(() => import('@/ui/screens/SharedView'), 'SharedView');
 import { SheetScreen } from '@/ui/screens/SheetScreen';
-import { initStorage, putCharacter } from '@/storage/db';
-import { initPackages, getPackage } from '@/systems/registry';
-import { readLegacyCharacters } from '@/storage/legacy';
+import { initStorage } from '@/storage/db';
+import { initPackages } from '@/systems/registry';
 import { useRoute } from '@/routing';
 import { resumeSession } from '@/share/active';
 
-const LEGACY_FLAG = 'trpg.legacyImported';
-
-async function boot(): Promise<number> {
+async function boot(): Promise<void> {
   await Promise.all([initStorage(), initPackages()]);
-  try {
-    if (localStorage.getItem(LEGACY_FLAG)) return 0;
-    const pkg = getPackage('vtm-v20');
-    const old = pkg ? readLegacyCharacters(pkg) : [];
-    old.forEach(putCharacter);
-    localStorage.setItem(LEGACY_FLAG, '1');
-    return old.length;
-  } catch {
-    return 0;
-  }
 }
 
 function Router() {
@@ -43,12 +29,10 @@ function Shell() {
   const { t } = useI18n();
   const [ready, setReady] = useState(false);
   useEffect(() => {
-    boot().then((n) => {
+    boot().then(() => {
       setReady(true);
       resumeSession();
-      if (n > 0) toast.success(t('legacyImported') + n);
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   return (
     <>

@@ -29,6 +29,7 @@ function subscribe(cb: () => void): () => void {
   window.addEventListener('trpg:navigate', cb);
   return () => {
     window.removeEventListener('popstate', cb);
+    window.removeEventListener('hashchange', cb);
     window.removeEventListener('trpg:navigate', cb);
   };
 }
@@ -45,7 +46,7 @@ function getSnapshot(): Route {
 
 export const useRoute = (): Route => useSyncExternalStore(subscribe, getSnapshot);
 
-export function navigate(to: Route): void {
+function navigate(to: Route): void {
   const url = new URL(window.location.href);
   url.search = '';
   url.hash = '';

@@ -172,15 +172,15 @@ recap = "Check the summary."
 
 [guide]
 abilities = """
-**Три способа задать значения.**
+**Three ways to set your scores.**
 
-- **Покупка очков:** 27 очков, каждое значение 8–15. Предсказуемо и сбалансировано.
-- **Стандартный набор:** распределите 15, 14, 13, 12, 10, 8 по одному разу.
-- **Броски:** 4d6, отбросить меньший, шесть раз. Рискованно, спросите мастера.
+- **Point buy:** 27 points, each score 8–15. Predictable and balanced.
+- **Standard array:** assign 15, 14, 13, 12, 10, 8 once each.
+- **Roll:** 4d6 drop the lowest, six times. Swingy, ask your DM first.
 
-Расовые бонусы прибавляются автоматически на листе."""
+Racial bonuses are added automatically on the sheet."""
 skills = """
-Выберите столько навыков, сколько разрешает класс (это бюджет). **Бонус мастерства** прибавляется ко всем отмеченным навыкам."""
+Pick as many skills as your class allows (shown as the budget). Your **proficiency bonus** is added to every skill you tick."""
 
 concept = """
 **Start with who they are.** A name, a background (what they did before adventuring) and an alignment (how they see right and wrong).
