@@ -1,3 +1,4 @@
+#:schema ../../schema/system.schema.json
 id = "vtm-v20"
 version = "1.0.0"
 languages = ["ru", "en"]

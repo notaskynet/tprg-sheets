@@ -1,3 +1,4 @@
+#:schema ../../schema/model.schema.json
 # Call of Cthulhu 7e — percentile skills. A skill's stored value is the points you added;
 # the total is base + added (see [derived]).
 

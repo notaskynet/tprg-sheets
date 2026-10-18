@@ -1,3 +1,4 @@
+#:schema ../../schema/model.schema.json
 # D&D 5e (SRD 5.1) — mechanics only; see system.toml for the licence.
 
 [groups.abilities]

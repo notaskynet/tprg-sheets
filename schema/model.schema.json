@@ -1,0 +1,646 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "groups": {
+      "default": {},
+      "type": "object",
+      "propertyNames": {
+        "type": "string",
+        "pattern": "^[A-Za-z0-9_]+$"
+      },
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "categories": {
+            "default": [],
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_]+$"
+            }
+          },
+          "field": {
+            "oneOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "const": "text"
+                  },
+                  "default": {
+                    "default": "",
+                    "type": "string"
+                  },
+                  "suggest": {
+                    "type": "string",
+                    "pattern": "^[A-Za-z0-9_]+$"
+                  }
+                },
+                "required": [
+                  "type"
+                ]
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "const": "longtext"
+                  },
+                  "default": {
+                    "default": "",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "type"
+                ]
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "const": "number"
+                  },
+                  "min": {
+                    "type": "number"
+                  },
+                  "max": {
+                    "type": "number"
+                  },
+                  "default": {
+                    "default": 0,
+                    "type": "number"
+                  }
+                },
+                "required": [
+                  "type"
+                ]
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "const": "dots"
+                  },
+                  "min": {
+                    "default": 0,
+                    "type": "number"
+                  },
+                  "max": {
+                    "default": 5,
+                    "type": "number"
+                  },
+                  "default": {
+                    "type": "number"
+                  }
+                },
+                "required": [
+                  "type"
+                ]
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "const": "percent"
+                  },
+                  "default": {
+                    "default": 0,
+                    "type": "number"
+                  }
+                },
+                "required": [
+                  "type"
+                ]
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "const": "checkbox"
+                  },
+                  "default": {
+                    "default": false,
+                    "type": "boolean"
+                  }
+                },
+                "required": [
+                  "type"
+                ]
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "const": "select"
+                  },
+                  "from": {
+                    "type": "string",
+                    "pattern": "^[A-Za-z0-9_]+$"
+                  },
+                  "options": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "default": {
+                    "default": "",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "type"
+                ]
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "const": "list"
+                  },
+                  "item": {
+                    "default": "dots",
+                    "type": "string",
+                    "enum": [
+                      "dots",
+                      "number",
+                      "note",
+                      "text"
+                    ]
+                  },
+                  "suggest": {
+                    "type": "string",
+                    "pattern": "^[A-Za-z0-9_]+$"
+                  },
+                  "max": {
+                    "default": 5,
+                    "type": "number"
+                  }
+                },
+                "required": [
+                  "type"
+                ]
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "const": "damage-track"
+                  },
+                  "levels": {
+                    "minItems": 1,
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "pattern": "^[A-Za-z0-9_]+$"
+                    }
+                  },
+                  "kinds": {
+                    "default": [
+                      "bashing",
+                      "lethal",
+                      "aggravated"
+                    ],
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "pattern": "^[A-Za-z0-9_]+$"
+                    }
+                  }
+                },
+                "required": [
+                  "type",
+                  "levels"
+                ]
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "const": "pool"
+                  },
+                  "max": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "default": {
+                    "default": 0,
+                    "type": "number"
+                  },
+                  "full": {
+                    "default": false,
+                    "type": "boolean"
+                  },
+                  "initial": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "required": [
+                  "type",
+                  "max"
+                ]
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "const": "checkboxes"
+                  },
+                  "count": {
+                    "type": "integer",
+                    "exclusiveMinimum": 0,
+                    "maximum": 9007199254740991
+                  },
+                  "default": {
+                    "default": 0,
+                    "type": "number"
+                  }
+                },
+                "required": [
+                  "type",
+                  "count"
+                ]
+              }
+            ]
+          },
+          "items": {
+            "default": [],
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z0-9_]+$"
+                },
+                "cat": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z0-9_]+$"
+                }
+              },
+              "required": [
+                "id"
+              ],
+              "additionalProperties": {}
+            }
+          },
+          "itemsFrom": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_]+$"
+          }
+        },
+        "required": [
+          "field"
+        ]
+      }
+    },
+    "catalogs": {
+      "default": {},
+      "type": "object",
+      "propertyNames": {
+        "type": "string",
+        "pattern": "^[A-Za-z0-9_]+$"
+      },
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "default": [],
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z0-9_]+$"
+                }
+              },
+              "required": [
+                "id"
+              ],
+              "additionalProperties": {}
+            }
+          }
+        }
+      }
+    },
+    "fields": {
+      "default": {},
+      "type": "object",
+      "propertyNames": {
+        "type": "string"
+      },
+      "additionalProperties": {
+        "oneOf": [
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "const": "text"
+              },
+              "default": {
+                "default": "",
+                "type": "string"
+              },
+              "suggest": {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9_]+$"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "const": "longtext"
+              },
+              "default": {
+                "default": "",
+                "type": "string"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "const": "number"
+              },
+              "min": {
+                "type": "number"
+              },
+              "max": {
+                "type": "number"
+              },
+              "default": {
+                "default": 0,
+                "type": "number"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "const": "dots"
+              },
+              "min": {
+                "default": 0,
+                "type": "number"
+              },
+              "max": {
+                "default": 5,
+                "type": "number"
+              },
+              "default": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "const": "percent"
+              },
+              "default": {
+                "default": 0,
+                "type": "number"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "const": "checkbox"
+              },
+              "default": {
+                "default": false,
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "const": "select"
+              },
+              "from": {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9_]+$"
+              },
+              "options": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "default": {
+                "default": "",
+                "type": "string"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "const": "list"
+              },
+              "item": {
+                "default": "dots",
+                "type": "string",
+                "enum": [
+                  "dots",
+                  "number",
+                  "note",
+                  "text"
+                ]
+              },
+              "suggest": {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9_]+$"
+              },
+              "max": {
+                "default": 5,
+                "type": "number"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "const": "damage-track"
+              },
+              "levels": {
+                "minItems": 1,
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z0-9_]+$"
+                }
+              },
+              "kinds": {
+                "default": [
+                  "bashing",
+                  "lethal",
+                  "aggravated"
+                ],
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z0-9_]+$"
+                }
+              }
+            },
+            "required": [
+              "type",
+              "levels"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "const": "pool"
+              },
+              "max": {
+                "type": "string",
+                "minLength": 1
+              },
+              "default": {
+                "default": 0,
+                "type": "number"
+              },
+              "full": {
+                "default": false,
+                "type": "boolean"
+              },
+              "initial": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "type",
+              "max"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "const": "checkboxes"
+              },
+              "count": {
+                "type": "integer",
+                "exclusiveMinimum": 0,
+                "maximum": 9007199254740991
+              },
+              "default": {
+                "default": 0,
+                "type": "number"
+              }
+            },
+            "required": [
+              "type",
+              "count"
+            ]
+          }
+        ]
+      }
+    },
+    "derived": {
+      "default": {},
+      "type": "object",
+      "propertyNames": {
+        "type": "string",
+        "pattern": "^[A-Za-z0-9_]+$"
+      },
+      "additionalProperties": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "tables": {
+      "default": {},
+      "type": "object",
+      "propertyNames": {
+        "type": "string",
+        "pattern": "^[A-Za-z0-9_]+$"
+      },
+      "additionalProperties": {
+        "type": "object",
+        "propertyNames": {
+          "type": "string"
+        },
+        "additionalProperties": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "array",
+              "items": {
+                "type": "number"
+              }
+            }
+          ]
+        }
+      }
+    }
+  },
+  "title": "trpg-sheets model.toml"
+}

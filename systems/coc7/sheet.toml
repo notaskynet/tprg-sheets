@@ -1,3 +1,4 @@
+#:schema ../../schema/sheet.schema.json
 [roll]
 pools = [["skills", "characteristics"]]
 [roll.value]

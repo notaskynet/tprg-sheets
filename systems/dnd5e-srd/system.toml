@@ -1,3 +1,4 @@
+#:schema ../../schema/system.schema.json
 id = "dnd5e-srd"
 version = "1.0.0"
 languages = ["en", "ru"]

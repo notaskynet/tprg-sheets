@@ -1,3 +1,4 @@
+#:schema ../../schema/model.schema.json
 # Vampire: The Masquerade — 20th Anniversary Edition
 # Labels live in locales/*.toml: <group|catalog>.<id>, <group>.title, <group>.cat.<cat>, fields.<path>.
 

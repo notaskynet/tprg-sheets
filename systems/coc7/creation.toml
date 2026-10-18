@@ -1,3 +1,4 @@
+#:schema ../../schema/creation.schema.json
 [[steps]]
 id = "concept"
 kind = "fields"

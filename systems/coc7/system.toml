@@ -1,3 +1,4 @@
+#:schema ../../schema/system.schema.json
 id = "coc7"
 version = "1.0.0"
 languages = ["en", "ru"]

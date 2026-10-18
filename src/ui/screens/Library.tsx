@@ -1,7 +1,7 @@
 // Character library: cards for every saved character, sort, create, import.
 import { useMemo, useRef, useState } from 'react';
 import { toast } from 'sonner';
-import { MoreVertical, Plus, Smartphone, Users } from 'lucide-react';
+import { MoreVertical, Package, Plus, Smartphone, Users } from 'lucide-react';
 import { useI18n } from '@/i18n/I18nContext';
 import { AVAILABLE_LANGS, localize } from '@/i18n/lang';
 import { useCharacters, deleteCharacter, putCharacter, saveCharacter } from '@/storage/db';
@@ -15,6 +15,7 @@ import { readCharacterFile } from '@/share/file';
 import { AccentPicker } from '@/ui/AccentPicker';
 import { TransferDialog } from '@/ui/TransferDialog';
 import { SessionDialog } from '@/ui/SessionDialog';
+import { SystemsDialog } from '@/ui/SystemsDialog';
 
 type SortBy = 'recent' | 'name';
 
@@ -33,6 +34,7 @@ export function Library({ join, receive }: { join?: string; receive?: string }) 
   const [picking, setPicking] = useState(false);
   const [transfer, setTransfer] = useState(!!receive);
   const [session, setSession] = useState(!!join);
+  const [systems, setSystems] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
 
   const sorted = useMemo(() => {
@@ -68,6 +70,7 @@ export function Library({ join, receive }: { join?: string; receive?: string }) 
         <div className="flex items-center gap-3 shrink-0">
           <button onClick={() => setTransfer(true)} title={t('devices')} className="inline-flex items-center gap-1.5 border border-line2 text-text-mute rounded px-3 py-1.5 text-xs hover:text-text hover:border-text-mute transition-colors"><Smartphone className="size-3.5" /><span className="hidden sm:inline">{t('devices')}</span></button>
           <button onClick={() => setSession(true)} title={t('game')} className="inline-flex items-center gap-1.5 border border-line2 text-text-mute rounded px-3 py-1.5 text-xs hover:text-text hover:border-text-mute transition-colors"><Users className="size-3.5" /><span className="hidden sm:inline">{t('game')}</span></button>
+          <button onClick={() => setSystems(true)} title={t('systems')} className="inline-flex items-center gap-1.5 border border-line2 text-text-mute rounded px-3 py-1.5 text-xs hover:text-text hover:border-text-mute transition-colors"><Package className="size-3.5" /><span className="hidden sm:inline">{t('systems')}</span></button>
           <AccentPicker />
           <button onClick={() => fileRef.current?.click()} className="border border-line2 text-text-mute rounded px-3 py-1.5 text-xs hover:text-text hover:border-text-mute transition-colors">{t('importFile')}</button>
           <input ref={fileRef} type="file" accept=".json,application/json" hidden onChange={(e) => { onFile(e.target.files?.[0]); e.target.value = ''; }} />
@@ -107,6 +110,7 @@ export function Library({ join, receive }: { join?: string; receive?: string }) 
         )}
       </div>
 
+      <SystemsDialog open={systems} onOpenChange={setSystems} />
       <TransferDialog open={transfer} onOpenChange={(o) => { setTransfer(o); if (!o) clearParams(); }} initialReceive={receive} />
       <SessionDialog open={session} onOpenChange={(o) => { setSession(o); if (!o) clearParams(); }} initialJoin={join} />
 

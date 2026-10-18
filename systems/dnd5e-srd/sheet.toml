@@ -1,3 +1,4 @@
+#:schema ../../schema/sheet.schema.json
 # d20: one pick (a skill, a save or an ability check), rolled with its modifier.
 [roll]
 pools = [["skills", "saves", "abilities"]]

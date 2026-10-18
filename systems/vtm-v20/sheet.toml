@@ -1,3 +1,4 @@
+#:schema ../../schema/sheet.schema.json
 # Layout of the sheet. Block types are rendered by ui/sheet; `group-columns`
 # draws one column per category of a group.
 
