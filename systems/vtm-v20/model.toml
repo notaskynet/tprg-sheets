@@ -149,7 +149,7 @@ items = [
 "profile.nature" = { type = "text", suggest = "archetypes" }
 "profile.demeanor" = { type = "text", suggest = "archetypes" }
 "profile.clan" = { type = "select", from = "clans" }
-"profile.generation" = { type = "number", default = 13 }
+"profile.generation" = { type = "number", min = 4, max = 15, default = 13 }
 "profile.sire" = { type = "text" }
 weakness = { type = "text" }
 disciplines = { type = "list", item = "dots", suggest = "disciplines", max = 5 }

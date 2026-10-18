@@ -50,7 +50,7 @@ export function FieldEditor({ path, values, set, variant = 'plate', readOnly }: 
     case 'number':
       return (
         <label className={wrap}>{cap}
-          <NumberInput className={input} value={Number(value ?? 0)} readOnly={readOnly} onChange={(n) => set(path, n)} />
+          <NumberInput className={input} value={Number(value ?? 0)} min={def.min} max={def.max} readOnly={readOnly} onChange={(n) => set(path, n)} />
           {helpEl}
         </label>
       );
@@ -120,22 +120,37 @@ function MarkdownField({ value, onChange, readOnly }: { value: string; onChange:
   );
 }
 
-/** Free-typing number box: can be cleared while editing, no browser min/max validation. */
-function NumberInput({ value, onChange, className, readOnly }: { value: number; onChange: (n: number) => void; className?: string; readOnly?: boolean }) {
+/** Parses a typed number (comma allowed); null while the text is not a number yet. */
+export function parseNumber(text: string): number | null {
+  const n = Number(text.trim().replace(',', '.'));
+  return text.trim() !== '' && Number.isFinite(n) ? n : null;
+}
+
+export const clampNumber = (n: number, min?: number, max?: number) => Math.min(max ?? Infinity, Math.max(min ?? -Infinity, n));
+
+/**
+ * Free-typing number box with soft limits: while typing, only in-range values are
+ * committed (so "1" on the way to "12" changes nothing); on blur the text is clamped
+ * into [min, max]. No browser validation.
+ */
+function NumberInput({ value, onChange, className, readOnly, min, max }: { value: number; onChange: (n: number) => void; className?: string; readOnly?: boolean; min?: number; max?: number }) {
   const [draft, setDraft] = useState<string | null>(null);
   return (
     <input
       readOnly={readOnly}
       className={className}
-      inputMode="decimal"
+      inputMode={min != null && min >= 0 ? 'decimal' : 'text'}
       value={draft ?? String(value)}
       onChange={(e) => {
-        const v = e.target.value;
-        setDraft(v);
-        const n = Number(v.replace(',', '.'));
-        if (v.trim() !== '' && Number.isFinite(n)) onChange(n);
+        setDraft(e.target.value);
+        const n = parseNumber(e.target.value);
+        if (n != null && clampNumber(n, min, max) === n) onChange(n);
       }}
-      onBlur={() => setDraft(null)}
+      onBlur={() => {
+        const n = draft == null ? null : parseNumber(draft);
+        if (n != null) onChange(clampNumber(n, min, max));
+        setDraft(null);
+      }}
     />
   );
 }
