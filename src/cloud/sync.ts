@@ -9,6 +9,7 @@ import { allCharacters, deleteCharacter, onCharacterChange, putCharacter, type O
 import { addPackage, listCustomPackages, onPackageChange, removePackage } from '@/systems/registry';
 import { deleteRemote, putRemote, watchRemote, type Collection, type RemoteDoc } from './firebase';
 import { reconcile, type Stamped } from './reconcile';
+import { startShares } from './shares';
 
 const PUSH_DELAY = 2000;
 
@@ -45,11 +46,24 @@ interface Adapter<T extends Stamped> {
   onLocalChange: (cb: (id: string, item: T | null, origin: Origin) => void) => () => void;
 }
 
-function syncCollection<T extends Stamped>(uid: string, a: Adapter<T>): () => void {
+interface Handle {
+  stop: () => void;
+  flush: () => Promise<void>; // push everything still waiting, resolve when in flight pushes are done
+  unsynced: () => Promise<number>; // local items the cloud does not have in their current form
+}
+
+function syncCollection<T extends Stamped>(uid: string, a: Adapter<T>): Handle {
   const synced = loadSynced(uid, a.col);
   const timers = new Map<string, { timer: ReturnType<typeof setTimeout>; item: T }>();
+  const inflight = new Set<Promise<void>>();
+  const dirty = new Set<string>(); // pushes that failed (offline) and are not in the cloud yet
   let alive = true;
   let unwatch: (() => void) | undefined;
+
+  const track = (p: Promise<void>) => {
+    inflight.add(p);
+    void p.finally(() => inflight.delete(p));
+  };
 
   const mark = (id: string, on: boolean) => {
     if (on) synced.add(id); else synced.delete(id);
@@ -62,9 +76,11 @@ function syncCollection<T extends Stamped>(uid: string, a: Adapter<T>): () => vo
     try {
       await putRemote(uid, a.col, item.id, item.updatedAt, a.payload(item));
       failed = false;
+      dirty.delete(item.id);
       mark(item.id, true);
     } catch {
       failed = true;
+      dirty.add(item.id);
     } finally {
       pending--;
       refresh();
@@ -90,7 +106,7 @@ function syncCollection<T extends Stamped>(uid: string, a: Adapter<T>): () => vo
     if (origin === 'remote') return;
     const queued = timers.get(id);
     if (queued) { clearTimeout(queued.timer); timers.delete(id); pending--; }
-    if (!item) { void drop(id); return; }
+    if (!item) { dirty.delete(id); track(drop(id)); return; }
     pending++; // the debounce window counts as "syncing"
     refresh();
     timers.set(id, {
@@ -98,21 +114,22 @@ function syncCollection<T extends Stamped>(uid: string, a: Adapter<T>): () => vo
       timer: setTimeout(() => {
         timers.delete(id);
         pending--;
-        void push(item);
+        track(push(item));
       }, PUSH_DELAY),
     });
   });
 
-  const flush = () => {
-    // Tab is being hidden or closed: send what is still waiting out its debounce.
+  // Send what is still waiting out its debounce (tab hidden or closing, sign-out).
+  const flush = async () => {
     for (const { timer, item } of timers.values()) {
       clearTimeout(timer);
       pending--;
-      void push(item);
+      track(push(item));
     }
     timers.clear();
+    await Promise.all([...inflight]);
   };
-  const onHide = () => { if (document.visibilityState === 'hidden') flush(); };
+  const onHide = () => { if (document.visibilityState === 'hidden') void flush(); };
   document.addEventListener('visibilitychange', onHide);
 
   void watchRemote(
@@ -126,31 +143,38 @@ function syncCollection<T extends Stamped>(uid: string, a: Adapter<T>): () => vo
       for (const item of plan.toLocal) await a.apply(item);
       for (const id of plan.deleteLocal) { await a.remove(id); synced.delete(id); }
       saveSynced(uid, a.col, synced);
-      plan.toRemote.forEach((it) => void push(it));
+      plan.toRemote.forEach((it) => track(push(it)));
       failed = false;
       refresh();
     },
     () => { failed = true; refresh(); },
   ).then((fn) => { if (alive) unwatch = fn; else fn(); }).catch(() => { failed = true; refresh(); });
 
-  return () => {
-    alive = false;
-    unwatch?.();
-    unlisten();
-    document.removeEventListener('visibilitychange', onHide);
-    timers.forEach((q) => clearTimeout(q.timer));
-    pending -= timers.size;
+  return {
+    stop: () => {
+      if (!alive) return;
+      alive = false;
+      unwatch?.();
+      unlisten();
+      document.removeEventListener('visibilitychange', onHide);
+      timers.forEach((q) => clearTimeout(q.timer));
+      pending -= timers.size;
+    },
+    flush,
+    unsynced: async () => (await a.list()).filter((it) => !synced.has(it.id) || dirty.has(it.id)).length,
   };
 }
 
 type PackageItem = Stamped & { files: Files };
+
+let current: { uid: string; handles: Handle[]; stop: () => void } | null = null;
 
 /** Start syncing for this user; the returned function stops it (local data stays). */
 export function startSync(uid: string): () => void {
   pending = 0;
   failed = false;
   setState('syncing');
-  const stopSystems = syncCollection<PackageItem>(uid, {
+  const systems = syncCollection<PackageItem>(uid, {
     col: 'systems',
     list: listCustomPackages,
     fromRemote: (d) => (d.data && typeof d.data === 'object' ? { id: d.id, updatedAt: d.updatedAt, files: d.data as Files } : null),
@@ -159,7 +183,7 @@ export function startSync(uid: string): () => void {
     remove: (id) => removePackage(id, 'remote'),
     onLocalChange: (cb) => onPackageChange((id, files, updatedAt, origin) => cb(id, files ? { id, updatedAt, files } : null, origin)),
   });
-  const stopSheets = syncCollection<Character>(uid, {
+  const sheets = syncCollection<Character>(uid, {
     col: 'sheets',
     list: allCharacters,
     fromRemote: (d) => (d.data && typeof d.data === 'object' ? (d.data as Character) : null),
@@ -168,9 +192,34 @@ export function startSync(uid: string): () => void {
     remove: (id) => deleteCharacter(id, 'remote'),
     onLocalChange: onCharacterChange,
   });
-  return () => {
-    stopSystems();
-    stopSheets();
+  const stopShares = startShares(uid);
+  const stop = () => {
+    systems.stop();
+    sheets.stop();
+    stopShares();
+    if (current?.stop === stop) current = null;
     setState('off');
   };
+  current = { uid, handles: [systems, sheets], stop };
+  return stop;
+}
+
+/**
+ * Sign out of the account and clear this device: everything lives in the cloud, so the next person
+ * (or account) on this browser starts empty. Pending edits are sent first; if some cannot be sent
+ * (offline) `confirmLoss` decides. Returns false when the user backed out.
+ */
+export async function signOutAndClear(signOut: () => Promise<void>, confirmLoss: (n: number) => boolean): Promise<boolean> {
+  const cur = current;
+  if (cur) {
+    await Promise.all(cur.handles.map((h) => h.flush()));
+    const n = (await Promise.all(cur.handles.map((h) => h.unsynced()))).reduce((x, y) => x + y, 0);
+    if (n > 0 && !confirmLoss(n)) return false;
+    cur.stop();
+  }
+  await signOut();
+  allCharacters().forEach((c) => deleteCharacter(c.id, 'remote'));
+  for (const p of await listCustomPackages()) await removePackage(p.id, 'remote');
+  if (cur) for (const col of ['sheets', 'systems'] as const) try { localStorage.removeItem(syncedKey(cur.uid, col)); } catch { /* ignore */ }
+  return true;
 }

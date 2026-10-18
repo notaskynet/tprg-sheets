@@ -4,6 +4,7 @@ import type { Lang } from './lang';
 export const UI: Partial<Record<Lang, Record<string, string>>> = {
   ru: {
     appTitle: 'Лист персонажа',
+    liveLink: 'Живая ссылка', liveLinkHint: 'Смотрящий видит лист в реальном времени, но не может его менять. Ссылку можно отключить в любой момент.', liveLinkOn: 'Включить живую ссылку', liveLinkOff: 'Отключить ссылку', linkDisabled: 'Владелец отключил эту ссылку.', liveViewError: 'Не удалось открыть ссылку. Проверьте соединение.', readOnlyLive: 'Живой просмотр, только чтение', signOutUnsynced: 'Не отправлено в облако: {n}. После выхода эти изменения будут потеряны. Выйти?',
     signIn: 'Войти', signOut: 'Выйти', signInFailed: 'Не удалось войти', syncSynced: 'Синхронизировано', syncSyncing: 'Синхронизация…', syncError: 'Нет связи с облаком, изменения сохранены на устройстве',
     myCharacters: 'Мои персонажи',
     newCharacter: 'Новый персонаж',
@@ -57,6 +58,7 @@ export const UI: Partial<Record<Lang, Record<string, string>>> = {
   },
   en: {
     appTitle: 'Character Sheet',
+    liveLink: 'Live link', liveLinkHint: 'Viewers see the sheet update in real time but cannot edit it. You can switch the link off at any time.', liveLinkOn: 'Turn on live link', liveLinkOff: 'Turn link off', linkDisabled: 'The owner has turned this link off.', liveViewError: 'Could not open the link. Check your connection.', readOnlyLive: 'Live view, read-only', signOutUnsynced: 'Not sent to the cloud: {n}. These changes will be lost when you sign out. Sign out?',
     signIn: 'Sign in', signOut: 'Sign out', signInFailed: 'Sign-in failed', syncSynced: 'Synced', syncSyncing: 'Syncing…', syncError: 'Cloud unreachable, changes are kept on this device',
     myCharacters: 'My characters',
     newCharacter: 'New character',

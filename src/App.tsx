@@ -7,6 +7,7 @@ import { Lazy, lazyNamed } from '@/ui/lazy';
 
 const SessionScreen = lazyNamed(() => import('@/ui/screens/SessionScreen'), 'SessionScreen');
 const SharedView = lazyNamed(() => import('@/ui/screens/SharedView'), 'SharedView');
+const LiveView = lazyNamed(() => import('@/ui/screens/LiveView'), 'LiveView');
 import { SheetScreen } from '@/ui/screens/SheetScreen';
 import { initStorage } from '@/storage/db';
 import { initPackages } from '@/systems/registry';
@@ -24,6 +25,7 @@ function Router() {
   if (route.name === 'sheet') return <SheetScreen key={route.charId} charId={route.charId} />;
   if (route.name === 'session') return <Lazy><SessionScreen /></Lazy>;
   if (route.name === 'shared') return <Lazy><SharedView data={route.data} /></Lazy>;
+  if (route.name === 'view') return <Lazy><LiveView shareId={route.shareId} /></Lazy>;
   return <Library join={route.join} />;
 }
 

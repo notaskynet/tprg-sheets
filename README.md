@@ -19,6 +19,7 @@ Bring your own by importing a `.zip` — see [docs/package-format.md](docs/packa
   across devices; signed out, nothing leaves the browser.
 - **Sharing without a server** (WebRTC, signalling over public relays, end-to-end encrypted):
   - *Snapshot link / QR* — a read-only copy of a sheet inside the URL.
+  - *Live link* (signed in) — a read-only view that updates as you edit; switch it off any time.
   - *Live game session* — the GM hosts a room, players join with the code and choose which
     sheets to show; the GM sees them update live plus a shared roll feed.
 - Markdown notes, accent colour of your choice, RU / EN interface, print / PDF.
@@ -43,11 +44,13 @@ Without configuration the app is fully local and shows no sign-in button. To ena
 3. Put the web-app config in `.env.local` (see `.env.example`) for local development, and in
    the repository secrets `VITE_FIREBASE_*` for the Pages deploy.
 4. Deploy the rules: `firebase deploy --only firestore:rules` (`firestore.rules`: each user can
-   read and write only `/users/{uid}/…`).
+   read and write only `/users/{uid}/…`; live links in `/shares/{id}` are readable by whoever
+   holds the id, listable and writable only by their owner).
 
 Data layout: `/users/{uid}/sheets/{id}` and `/users/{uid}/systems/{id}`, each
 `{ updatedAt, data }` with `data` a JSON string. The newest `updatedAt` wins; a sheet deleted on
-one device is deleted on the others.
+one device is deleted on the others. Signing out clears this device (the data stays in the
+cloud), so another account on the same browser starts empty.
 
 ## Layout
 

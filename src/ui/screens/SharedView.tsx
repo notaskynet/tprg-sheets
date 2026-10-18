@@ -20,19 +20,29 @@ export function SharedView({ data }: { data: string }) {
     decodeSnapshot(data).then(setCh).catch((e) => setError((e as Error).message));
   }, [data]);
 
-  const pkg = ch ? getPackage(ch.system.id) : undefined;
-  if (error || (ch && !pkg)) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-full gap-4 text-text-mute text-center px-6">
-        <p>{error || `${t('unknownSystem')}: ${ch!.system.id}`}</p>
-        <button onClick={goLibrary} className="border border-line2 rounded px-4 py-2 hover:border-text-mute">← {t('myCharacters')}</button>
-      </div>
-    );
-  }
-  if (!ch || !pkg) return <div className="flex min-h-full items-center justify-center text-text-mute">{t('loading')}</div>;
+  if (error) return <ViewMessage text={error} />;
+  if (!ch) return <div className="flex min-h-full items-center justify-center text-text-mute">{t('loading')}</div>;
+  return <ReadOnlyView ch={ch} label={t('readOnlySnapshot')} />;
+}
+
+export function ViewMessage({ text }: { text: string }) {
+  const { t } = useI18n();
+  return (
+    <div className="flex flex-col items-center justify-center min-h-full gap-4 text-text-mute text-center px-6">
+      <p>{text}</p>
+      <button onClick={() => { window.history.replaceState({}, '', window.location.pathname); goLibrary(); }} className="border border-line2 rounded px-4 py-2 hover:border-text-mute">← {t('myCharacters')}</button>
+    </div>
+  );
+}
+
+/** A sheet someone else shared: read-only, with "save a copy to my library". */
+export function ReadOnlyView({ ch, label }: { ch: Character; label: string }) {
+  const { t } = useI18n();
+  const pkg = getPackage(ch.system.id);
+  if (!pkg) return <ViewMessage text={`${t('unknownSystem')}: ${ch.system.id}`} />;
 
   function save() {
-    const copy: Character = { ...ch!, id: getCharacter(ch!.id) ? crypto.randomUUID() : ch!.id, updatedAt: Date.now() };
+    const copy: Character = { ...ch, id: getCharacter(ch.id) ? crypto.randomUUID() : ch.id, updatedAt: Date.now() };
     putCharacter(copy);
     toast.success(t('savedToLibrary'));
     window.history.replaceState({}, '', window.location.pathname);
@@ -47,7 +57,7 @@ export function SharedView({ data }: { data: string }) {
           set={() => {}}
           readOnly
           banner={<>
-            <span>{t('readOnlySnapshot')}</span>
+            <span>{label}</span>
             <button onClick={save} className="bg-gold text-ink rounded px-3 py-1 normal-case tracking-normal font-body font-medium text-xs">{t('saveToLibrary')}</button>
             <button onClick={() => { window.history.replaceState({}, '', window.location.pathname); goLibrary(); }} className="underline normal-case tracking-normal font-body text-xs">{t('myCharacters')}</button>
           </>}

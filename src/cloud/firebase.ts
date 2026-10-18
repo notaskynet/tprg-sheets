@@ -88,3 +88,42 @@ export async function watchRemote(
     onError,
   );
 }
+
+// ---- live share links: /shares/{shareId} = { owner, sheetId, updatedAt, data } ----
+// Anyone holding the (unguessable) id can read one doc; the collection can only be listed by its
+// owner, so other people's links cannot be enumerated.
+export async function putShare(uid: string, shareId: string, sheetId: string, updatedAt: number, data: unknown): Promise<void> {
+  const { db } = await services();
+  const { doc, setDoc } = await import('firebase/firestore');
+  await setDoc(doc(db, 'shares', shareId), { owner: uid, sheetId, updatedAt, data: JSON.stringify(data) });
+}
+
+export async function deleteShare(shareId: string): Promise<void> {
+  const { db } = await services();
+  const { doc, deleteDoc } = await import('firebase/firestore');
+  await deleteDoc(doc(db, 'shares', shareId));
+}
+
+/** The signed-in user's own links: sheetId -> shareId. */
+export async function watchOwnShares(uid: string, cb: (shares: Map<string, string>) => void, onError: (e: Error) => void): Promise<() => void> {
+  const { db } = await services();
+  const { collection, onSnapshot, query, where } = await import('firebase/firestore');
+  return onSnapshot(
+    query(collection(db, 'shares'), where('owner', '==', uid)),
+    (snap) => cb(new Map(snap.docs.map((d) => [(d.data() as { sheetId: string }).sheetId, d.id]))),
+    onError,
+  );
+}
+
+/** Viewer side: live content of one link, or null once it was switched off. */
+export async function watchShare(shareId: string, cb: (data: unknown | null) => void, onError: (e: Error) => void): Promise<() => void> {
+  const { db } = await services();
+  const { doc, onSnapshot } = await import('firebase/firestore');
+  return onSnapshot(
+    doc(db, 'shares', shareId),
+    (snap) => {
+      try { cb(snap.exists() ? JSON.parse((snap.data() as { data: string }).data) : null); } catch { cb(null); }
+    },
+    onError,
+  );
+}

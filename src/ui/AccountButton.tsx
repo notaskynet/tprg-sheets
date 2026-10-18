@@ -3,7 +3,8 @@ import { Check, CloudAlert, LogIn, LogOut, RefreshCw } from 'lucide-react';
 import { toast } from 'sonner';
 import { useI18n } from '@/i18n/I18nContext';
 import { useAuth } from '@/cloud/AuthContext';
-import { useSyncState } from '@/cloud/sync';
+import { signOutAndClear, useSyncState } from '@/cloud/sync';
+import { goLibrary } from '@/routing';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/ui/components/dropdown-menu';
 
 const btn = 'inline-flex items-center gap-1.5 border border-line2 text-text-mute rounded px-3 py-1.5 text-xs hover:text-text hover:border-text-mute transition-colors';
@@ -12,6 +13,9 @@ export function AccountButton() {
   const { t } = useI18n();
   const { configured, ready, user, signIn, signOut } = useAuth();
   const sync = useSyncState();
+  const leave = async () => {
+    if (await signOutAndClear(signOut, (n) => window.confirm(t('signOutUnsynced').replace('{n}', String(n))))) goLibrary();
+  };
   if (!configured || !ready) return null;
 
   if (!user) {
@@ -42,7 +46,7 @@ export function AccountButton() {
           {user.name && user.email && <div className="text-xs text-text-mute truncate">{user.email}</div>}
           <div className="mt-1.5 flex items-center gap-1.5 text-xs text-text-mute">{status.icon}<span>{status.text}</span></div>
         </div>
-        <DropdownMenuItem onSelect={() => void signOut()}><LogOut className="size-3.5" />{t('signOut')}</DropdownMenuItem>
+        <DropdownMenuItem onSelect={() => void leave()}><LogOut className="size-3.5" />{t('signOut')}</DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );
