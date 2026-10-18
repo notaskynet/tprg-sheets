@@ -13,7 +13,7 @@ export type Msg =
 export interface RollEntry { who: string; label: string; summary: string; ts: number }
 
 const ALPHABET = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // no 0/O/1/I
-export const CODE_LENGTH = 6;
+export const CODE_LENGTH = 8; // 32^8 ≈ 1.1e12 codes
 
 export function newRoomCode(rand: (n: number) => Uint8Array = (n) => crypto.getRandomValues(new Uint8Array(n))): string {
   return Array.from(rand(CODE_LENGTH), (b) => ALPHABET[b % ALPHABET.length]).join('');
@@ -25,7 +25,7 @@ export function normalizeCode(input: string): string | null {
   return c.length === CODE_LENGTH && [...c].every((ch) => ALPHABET.includes(ch)) ? c : null;
 }
 
-export const formatCode = (code: string) => `${code.slice(0, 3)}-${code.slice(3)}`;
+export const formatCode = (code: string) => `${code.slice(0, 4)}-${code.slice(4)}`;
 
 export function isMsg(x: unknown): x is Msg {
   if (!x || typeof x !== 'object') return false;

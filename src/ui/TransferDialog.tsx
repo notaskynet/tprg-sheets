@@ -160,8 +160,8 @@ function Receive({ active, initialCode, onDone }: { active: boolean; initialCode
       <input
         value={input}
         onChange={(e) => setInput(e.target.value)}
-        placeholder="ABC-DEF"
-        maxLength={7}
+        placeholder="ABCD-EFGH"
+        maxLength={9}
         autoCapitalize="characters"
         spellCheck={false}
         className="h-12 bg-ink border border-line2 rounded-md px-3 font-mono text-2xl tracking-[0.2em] text-center uppercase outline-none focus:border-brand"

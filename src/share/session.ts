@@ -18,6 +18,7 @@ export interface SessionState {
   peerCount: number;
   players: PlayerView[]; // GM only
   feed: RollEntry[]; // newest first
+  conflict: boolean; // another GM is in this room (the code collided)
 }
 
 const FEED_MAX = 100;
@@ -28,6 +29,7 @@ export class Session {
   private players = new Map<string, PlayerRec>();
   private feed: RollEntry[] = [];
   private gmPeers = new Set<string>();
+  private conflict = false;
   private known = new Set<string>();
   private subs = new Set<() => void>();
   private snapshot: SessionState;
@@ -81,6 +83,7 @@ export class Session {
     switch (m.t) {
       case 'hello':
         if (m.role === 'gm') this.gmPeers.add(from);
+        if (m.role === 'gm' && this.role === 'gm') this.conflict = true;
         if (this.role === 'gm' && m.role === 'player') this.player(from, m.name);
         break;
       case 'chars':
@@ -132,6 +135,7 @@ export class Session {
       peerCount: this.peerCount,
       players: [...this.players.values()].map((p) => ({ name: p.name, online: p.online, peerId: p.peerId, chars: [...p.chars.values()] })),
       feed: this.feed,
+      conflict: this.conflict,
     };
   }
 }

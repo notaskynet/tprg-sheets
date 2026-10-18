@@ -5,6 +5,7 @@ import { formatCode, newRoomCode, normalizeCode, isMsg } from './protocol';
 import { memoryHub } from './transport';
 import { planImport, runReceiver, runSender } from './transfer';
 import { Session } from './session';
+import { roomId } from './transport';
 
 const pkg = BUILTIN_PACKAGES[0];
 const mk = (id: string, name: string, at = 1): Character =>
@@ -14,10 +15,11 @@ const tick = () => new Promise((r) => setTimeout(r, 5));
 describe('room codes', () => {
   it('generates readable codes and normalizes input', () => {
     const c = newRoomCode();
-    expect(c).toMatch(/^[A-HJ-NP-Z2-9]{6}$/);
+    expect(c).toMatch(/^[A-HJ-NP-Z2-9]{8}$/);
     expect(normalizeCode(formatCode(c).toLowerCase())).toBe(c);
     expect(normalizeCode('abc-12')).toBeNull(); // too short
-    expect(normalizeCode('ABC-OIO')).toBeNull(); // ambiguous letters are not in the alphabet
+    expect(normalizeCode('ABCD-OIOO')).toBeNull(); // ambiguous letters are not in the alphabet
+    expect(formatCode('ABCDEFGH')).toBe('ABCD-EFGH');
   });
   it('validates messages', () => {
     expect(isMsg({ t: 'roll', who: 'a', label: '', summary: '+2', ts: 1 })).toBe(true);
@@ -46,13 +48,36 @@ describe('transfer', () => {
   });
 });
 
+describe('room id', () => {
+  it('is derived from the code without revealing it, and differs per kind', async () => {
+    const a = await roomId('ABCD2345', 's');
+    expect(a).toBe(await roomId('ABCD2345', 's'));
+    expect(a).not.toContain('ABCD2345');
+    expect(a).not.toBe(await roomId('ABCD2345', 'x'));
+    expect(a).not.toBe(await roomId('ABCD2346', 's'));
+  });
+  it('codes do not repeat in practice', () => {
+    const seen = new Set(Array.from({ length: 50_000 }, () => newRoomCode()));
+    expect(seen.size).toBe(50_000);
+  });
+});
+
 describe('session', () => {
+  it('detects two GMs in one room', async () => {
+    const hub = memoryHub();
+    const a = new Session(hub.join('g1'), 'gm', 'A', 'ABCD2345');
+    const b = new Session(hub.join('g2'), 'gm', 'B', 'ABCD2345');
+    await tick();
+    expect(a.getState().conflict).toBe(true);
+    expect(b.getState().conflict).toBe(true);
+  });
+
   it('GM sees players, their characters, live updates, and the roll feed', async () => {
     const hub = memoryHub();
-    const gm = new Session(hub.join('g'), 'gm', 'Мастер', 'ABC234');
+    const gm = new Session(hub.join('g'), 'gm', 'Мастер', 'ABCD2345');
     const hero = mk('c1', 'Нокс');
-    const p1 = new Session(hub.join('p1'), 'player', 'Даня', 'ABC234', () => [hero]);
-    const p2 = new Session(hub.join('p2'), 'player', 'Лена', 'ABC234', () => []);
+    const p1 = new Session(hub.join('p1'), 'player', 'Даня', 'ABCD2345', () => [hero]);
+    const p2 = new Session(hub.join('p2'), 'player', 'Лена', 'ABCD2345', () => []);
     await tick();
 
     let s = gm.getState();
@@ -71,16 +96,16 @@ describe('session', () => {
 
   it('keeps a disconnected player cached and re-attaches on reconnect', async () => {
     const hub = memoryHub();
-    const gm = new Session(hub.join('g'), 'gm', 'Мастер', 'ABC234');
+    const gm = new Session(hub.join('g'), 'gm', 'Мастер', 'ABCD2345');
     const hero = mk('c1', 'Нокс');
-    const first = new Session(hub.join('p1'), 'player', 'Даня', 'ABC234', () => [hero]);
+    const first = new Session(hub.join('p1'), 'player', 'Даня', 'ABCD2345', () => [hero]);
     await tick();
     await first.leave();
     await tick();
     expect(gm.getState().players[0]).toMatchObject({ name: 'Даня', online: false });
     expect(gm.getState().players[0].chars).toHaveLength(1); // cached
 
-    new Session(hub.join('p1b'), 'player', 'Даня', 'ABC234', () => [hero]);
+    new Session(hub.join('p1b'), 'player', 'Даня', 'ABCD2345', () => [hero]);
     await tick();
     const players = gm.getState().players;
     expect(players).toHaveLength(1);
@@ -89,9 +114,9 @@ describe('session', () => {
 
   it('a late-joining GM receives characters from players already in the room', async () => {
     const hub = memoryHub();
-    new Session(hub.join('p1'), 'player', 'Даня', 'ABC234', () => [mk('c1', 'Нокс')]);
+    new Session(hub.join('p1'), 'player', 'Даня', 'ABCD2345', () => [mk('c1', 'Нокс')]);
     await tick();
-    const gm = new Session(hub.join('g'), 'gm', 'Мастер', 'ABC234');
+    const gm = new Session(hub.join('g'), 'gm', 'Мастер', 'ABCD2345');
     await tick();
     expect(gm.getState().players[0].chars).toHaveLength(1);
   });

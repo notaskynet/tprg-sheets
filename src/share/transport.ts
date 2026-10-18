@@ -17,12 +17,23 @@ export interface RoomOptions {
   turn?: { urls: string; username?: string; credential?: string }; // optional own TURN server
 }
 
-/** WebRTC room. The room code is also the encryption password, so only code holders can read traffic. */
+/**
+ * The relays see the room id, so it must not reveal the code (which is the encryption
+ * password): the id is a hash of the code. Only people who know the code can derive
+ * the id, find the room and decrypt its traffic.
+ */
+export async function roomId(code: string, kind: RoomOptions['kind']): Promise<string> {
+  const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(`trpg-sheets/${kind}/${code}`));
+  const hex = Array.from(new Uint8Array(digest), (b) => b.toString(16).padStart(2, '0')).join('');
+  return `${kind}-${hex.slice(0, 24)}`;
+}
+
+/** WebRTC room, end-to-end encrypted with the room code as password. */
 export async function openRoom({ code, kind, turn }: RoomOptions): Promise<Transport> {
   const { joinRoom, selfId } = await import('trystero');
   const room = joinRoom(
     { appId: 'trpg-sheets', password: code, ...(turn ? { turnConfig: [turn] } : {}) },
-    `${kind}-${code}`,
+    await roomId(code, kind),
   );
   const action = room.makeAction<never>('m');
   const peers = new Set<string>();

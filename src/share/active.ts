@@ -38,6 +38,12 @@ export async function startSession(opts: { role: 'gm' | 'player'; name: string; 
     const transport = await openRoom({ code, kind: 's' });
     const shared = () => sharedIds.map(getCharacter).filter((c): c is NonNullable<typeof c> => !!c);
     const session = new Session(transport, opts.role, opts.name, code, shared);
+    // Two GMs in one room means the code collided: the host moves to a fresh code.
+    if (opts.role === 'gm') {
+      const off = session.subscribe(() => {
+        if (session.getState().conflict && info.session === session) { off(); void startSession({ role: 'gm', name: opts.name }); }
+      });
+    }
     try { sessionStorage.setItem(KEY, JSON.stringify({ role: opts.role, code, name: opts.name, sharedIds } satisfies Saved)); } catch { /* ignore */ }
 
     // Players: push edits of shared characters (debounced) so the GM sees them live.
