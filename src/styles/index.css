@@ -210,9 +210,15 @@ body {
   /* Compact the sheet for A4. The multi-column layout is forced on via
      print:grid-cols-* in the markup (the md: breakpoint doesn't trigger at
      page width); here we just trim wasted vertical space. */
-  .print-sheet,
-  .print-sheet * {
-    min-width: 0 !important;
+  /* Grid/flex cells may shrink to the page width, but dots and boxes must keep their size
+     (shrinking them clips the circles at the right edge). */
+  .print-sheet section > div > *,
+  .print-sheet section > div > * > * {
+    min-width: 0;
+  }
+  .print-sheet button,
+  .print-sheet input[type='checkbox'] {
+    flex-shrink: 0;
   }
   .print-sheet {
     width: 100%;
@@ -230,10 +236,15 @@ body {
   .print-sheet textarea {
     min-height: 32px !important;
   }
-  /* Don't split a section across the page break. */
-  .print-sheet > section,
+  /* Don't split a section across the page break (sections sit inside a wrapper,
+     so no child selector), and never leave a heading alone at the bottom of a page. */
+  .print-sheet section,
   .print-sheet > header {
     break-inside: avoid;
+  }
+  .print-sheet h2,
+  .print-sheet .eyebrow {
+    break-after: avoid;
   }
 
   @page {

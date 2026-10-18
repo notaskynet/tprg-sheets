@@ -71,7 +71,7 @@ function Block({ cfg, ...p }: { cfg: BlockCfg } & SheetProps) {
       return <div className="flex flex-col gap-[18px]">{(cfg.blocks as BlockCfg[]).map((b, i) => <Block key={i} cfg={b} {...p} />)}</div>;
 
     case 'text':
-      return <FieldEditor path={str('field')} variant="form" {...p} />;
+      return <FieldEditor path={str('field')} variant="form" bare {...p} />;
 
     case 'group-columns':
     case 'group': {

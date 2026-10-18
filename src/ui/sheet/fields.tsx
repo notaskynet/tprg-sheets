@@ -11,12 +11,13 @@ import { useI18n } from '@/i18n/I18nContext';
 
 const base = 'bg-transparent border-0 border-b border-line2 text-text py-0.5 outline-none focus:border-brand min-w-0 w-full';
 
-export function FieldEditor({ path, values, set, variant = 'plate', readOnly }: {
+export function FieldEditor({ path, values, set, variant = 'plate', readOnly, bare }: {
   path: string;
   values: Record<string, unknown>;
   set: (path: string, value: unknown) => void;
   variant?: 'plate' | 'form';
   readOnly?: boolean;
+  bare?: boolean; // no caption (the section heading already names the field)
 }) {
   const { pkg, tr } = useSystem();
   const def = pkg.model.fields[path] as FieldDef | undefined;
@@ -57,7 +58,7 @@ export function FieldEditor({ path, values, set, variant = 'plate', readOnly }: 
     case 'longtext':
       return (
         <div className={wrap}>
-          {cap}
+          {!bare && cap}
           <MarkdownField value={String(value ?? '')} onChange={(v) => set(path, v)} readOnly={readOnly} />
         </div>
       );
@@ -94,7 +95,7 @@ function MarkdownField({ value, onChange, readOnly }: { value: string; onChange:
   const ta = useRef<HTMLTextAreaElement>(null);
   useEffect(() => { if (editing) ta.current?.focus(); }, [editing]);
 
-  const box = 'w-full min-h-40 bg-bg border border-line rounded p-3 text-[13px] leading-relaxed';
+  const box = 'w-full min-h-40 print:min-h-10 bg-bg border border-line rounded p-3 text-[13px] leading-relaxed';
   if (editing && !readOnly) {
     return (
       <textarea
@@ -115,7 +116,7 @@ function MarkdownField({ value, onChange, readOnly }: { value: string; onChange:
       onKeyDown={(e) => { if (!readOnly && (e.key === 'Enter' || e.key === ' ') && e.target === e.currentTarget) { e.preventDefault(); setEditing(true); } }}
       className={cn(box, !readOnly && 'cursor-text hover:border-line2 focus-visible:border-brand outline-none')}
     >
-      {value.trim() ? <Markdown source={value} onChange={readOnly ? undefined : onChange} /> : <span className="text-text-dim italic">{t('notesPlaceholder')}</span>}
+      {value.trim() ? <Markdown source={value} onChange={readOnly ? undefined : onChange} /> : <span className="text-text-dim italic print:hidden">{t('notesPlaceholder')}</span>}
     </div>
   );
 }
