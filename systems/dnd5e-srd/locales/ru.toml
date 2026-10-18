@@ -1,0 +1,183 @@
+[labels]
+combat = "Бой"
+notes = "Заметки"
+addItem = "Добавить"
+
+[abilities]
+title = "Характеристики"
+str = "Сила"
+dex = "Ловкость"
+con = "Телосложение"
+int = "Интеллект"
+wis = "Мудрость"
+cha = "Харизма"
+
+[saves]
+title = "Спасброски"
+str = "Сила"
+dex = "Ловкость"
+con = "Телосложение"
+int = "Интеллект"
+wis = "Мудрость"
+cha = "Харизма"
+
+[skills]
+title = "Навыки"
+cat.str = "Сила"
+cat.dex = "Ловкость"
+cat.int = "Интеллект"
+cat.wis = "Мудрость"
+cat.cha = "Харизма"
+acrobatics = "Акробатика"
+animal_handling = "Уход за животными"
+arcana = "Магия"
+athletics = "Атлетика"
+deception = "Обман"
+history = "История"
+insight = "Проницательность"
+intimidation = "Запугивание"
+investigation = "Расследование"
+medicine = "Медицина"
+nature = "Природа"
+perception = "Внимательность"
+performance = "Выступление"
+persuasion = "Убеждение"
+religion = "Религия"
+sleight_of_hand = "Ловкость рук"
+stealth = "Скрытность"
+survival = "Выживание"
+
+[races]
+dwarf = "Дварф"
+elf = "Эльф"
+halfling = "Полурослик"
+human = "Человек"
+dragonborn = "Драконорождённый"
+gnome = "Гном"
+half_elf = "Полуэльф"
+half_orc = "Полуорк"
+tiefling = "Тифлинг"
+
+[classes]
+barbarian = "Варвар"
+bard = "Бард"
+cleric = "Жрец"
+druid = "Друид"
+fighter = "Воин"
+monk = "Монах"
+paladin = "Паладин"
+ranger = "Следопыт"
+rogue = "Плут"
+sorcerer = "Чародей"
+warlock = "Колдун"
+wizard = "Волшебник"
+
+[alignments]
+lg = "Законно-добрый"
+ng = "Нейтрально-добрый"
+cg = "Хаотично-добрый"
+ln = "Законно-нейтральный"
+n = "Истинно нейтральный"
+cn = "Хаотично-нейтральный"
+le = "Законно-злой"
+ne = "Нейтрально-злой"
+ce = "Хаотично-злой"
+
+[backgrounds]
+acolyte = "Служитель"
+
+[desc.races]
+dwarf = "Крепкий и выносливый горный народ."
+elf = "Грациозный долгожитель с острыми чувствами."
+halfling = "Маленький, ловкий и на удивление везучий."
+human = "Приспособляемый и амбициозный; +1 ко всему."
+dragonborn = "Гордые воины с драконьей кровью."
+gnome = "Любопытный изобретатель небольшого роста."
+half_elf = "Обаятельный, живёт между двумя мирами (ещё +1 к двум характеристикам на выбор)."
+half_orc = "Сильный и неудержимый."
+tiefling = "Отмечен адской родословной."
+
+[desc.classes]
+barbarian = "Яростный боец первой линии."
+bard = "Вдохновляющий артист и заклинатель."
+cleric = "Божественный маг: лечит и карает."
+druid = "Маг природы, принимает облик зверей."
+fighter = "Мастер оружия и доспехов."
+monk = "Дисциплинированный мастер боевых искусств."
+paladin = "Святой воин, связанный клятвой."
+ranger = "Охотник и разведчик дикой местности."
+rogue = "Скрытный эксперт с точными ударами."
+sorcerer = "Прирождённый маг с врождённой силой."
+warlock = "Маг, получивший силу по договору."
+wizard = "Учёный маг со своей книгой заклинаний."
+
+[desc.backgrounds]
+acolyte = "Вырос на службе храму."
+
+[fields]
+"profile.name" = "Имя"
+"profile.player" = "Игрок"
+"profile.race" = "Раса"
+"profile.class" = "Класс"
+"profile.background" = "Предыстория"
+"profile.alignment" = "Мировоззрение"
+"level" = "Уровень"
+"xp" = "Опыт"
+"ac" = "Класс доспеха"
+"hpBonus" = "Бонус к максимуму ПЗ"
+"hp" = "Очки здоровья"
+"inspiration" = "Вдохновение"
+"deathSuccesses" = "Спасброски от смерти: успехи"
+"deathFailures" = "Спасброски от смерти: провалы"
+"gold" = "Золото"
+"attacks" = "Атаки"
+"spells" = "Заклинания"
+"equipment" = "Снаряжение"
+"features" = "Умения и особенности"
+"notes" = "Заметки"
+
+[derived]
+proficiency = "Бонус мастерства"
+hitDie = "Кость хитов"
+speed = "Скорость"
+initiative = "Инициатива"
+passive_perception = "Пассивная внимательность"
+hpMax = "Максимум ПЗ"
+ac = "Класс доспеха"
+level = "Уровень"
+str_mod = "Мод. (Сила)"
+dex_mod = "Мод. (Ловкость)"
+con_mod = "Мод. (Телосложение)"
+int_mod = "Мод. (Интеллект)"
+wis_mod = "Мод. (Мудрость)"
+cha_mod = "Мод. (Харизма)"
+
+[steps]
+concept = "Концепт"
+race = "Раса"
+class = "Класс"
+abilities = "Характеристики"
+skills = "Навыки"
+saves = "Спасброски"
+recap = "Итоги"
+
+[hints]
+concept = "Кто ваш герой? Имя, предыстория и мировоззрение."
+race = "Раса даёт бонусы к характеристикам и скорость."
+class = "Класс определяет кость хитов, число навыков и стиль игры."
+abilities = "Задайте шесть характеристик: покупка очков, стандартный набор или броски."
+skills = "Отметьте навыки, в которых вы мастер."
+saves = "Отметьте два спасброска, которые даёт ваш класс."
+recap = "Проверьте итоги."
+
+[guide]
+abilities = """
+**Three ways to set your scores.**
+
+- **Point buy:** 27 points, each score 8–15. Predictable and balanced.
+- **Standard array:** assign 15, 14, 13, 12, 10, 8 once each.
+- **Roll:** 4d6 drop the lowest, six times. Swingy, ask your DM first.
+
+Racial bonuses are added automatically on the sheet."""
+skills = """
+Pick as many skills as your class allows (shown as the budget). Your **proficiency bonus** is added to every skill you tick."""

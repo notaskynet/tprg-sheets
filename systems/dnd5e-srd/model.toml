@@ -1,0 +1,161 @@
+# D&D 5e (SRD 5.1) — mechanics only; see system.toml for the licence.
+
+[groups.abilities]
+field = { type = "number", min = 1, max = 30, default = 10 }
+items = [
+  { id = "str" },
+  { id = "dex" },
+  { id = "con" },
+  { id = "int" },
+  { id = "wis" },
+  { id = "cha" },
+]
+
+[groups.saves]
+field = { type = "checkbox" }
+items = [
+  { id = "str" },
+  { id = "dex" },
+  { id = "con" },
+  { id = "int" },
+  { id = "wis" },
+  { id = "cha" },
+]
+
+[groups.skills]
+categories = ["str", "dex", "int", "wis", "cha"]
+field = { type = "checkbox" }
+items = [
+  { id = "acrobatics", cat = "dex" },
+  { id = "animal_handling", cat = "wis" },
+  { id = "arcana", cat = "int" },
+  { id = "athletics", cat = "str" },
+  { id = "deception", cat = "cha" },
+  { id = "history", cat = "int" },
+  { id = "insight", cat = "wis" },
+  { id = "intimidation", cat = "cha" },
+  { id = "investigation", cat = "int" },
+  { id = "medicine", cat = "wis" },
+  { id = "nature", cat = "int" },
+  { id = "perception", cat = "wis" },
+  { id = "performance", cat = "cha" },
+  { id = "persuasion", cat = "cha" },
+  { id = "religion", cat = "int" },
+  { id = "sleight_of_hand", cat = "dex" },
+  { id = "stealth", cat = "dex" },
+  { id = "survival", cat = "wis" },
+]
+
+[catalogs.races]
+items = [
+  { id = "dwarf", con = 2,  speed = 25 },
+  { id = "elf", dex = 2,  speed = 30 },
+  { id = "halfling", dex = 2,  speed = 25 },
+  { id = "human", str = 1, dex = 1, con = 1, int = 1, wis = 1, cha = 1,  speed = 30 },
+  { id = "dragonborn", str = 2, cha = 1,  speed = 30 },
+  { id = "gnome", int = 2,  speed = 25 },
+  { id = "half_elf", cha = 2,  speed = 30 },
+  { id = "half_orc", str = 2, con = 1,  speed = 30 },
+  { id = "tiefling", int = 1, cha = 2,  speed = 30 },
+]
+
+[catalogs.classes]
+items = [
+  { id = "barbarian", hitDie = 12, skillChoices = 2 },
+  { id = "bard", hitDie = 8, skillChoices = 3 },
+  { id = "cleric", hitDie = 8, skillChoices = 2 },
+  { id = "druid", hitDie = 8, skillChoices = 2 },
+  { id = "fighter", hitDie = 10, skillChoices = 2 },
+  { id = "monk", hitDie = 8, skillChoices = 2 },
+  { id = "paladin", hitDie = 10, skillChoices = 2 },
+  { id = "ranger", hitDie = 10, skillChoices = 3 },
+  { id = "rogue", hitDie = 8, skillChoices = 4 },
+  { id = "sorcerer", hitDie = 6, skillChoices = 2 },
+  { id = "warlock", hitDie = 8, skillChoices = 2 },
+  { id = "wizard", hitDie = 6, skillChoices = 2 },
+]
+
+[catalogs.alignments]
+items = [
+  { id = "lg" },
+  { id = "ng" },
+  { id = "cg" },
+  { id = "ln" },
+  { id = "n" },
+  { id = "cn" },
+  { id = "le" },
+  { id = "ne" },
+  { id = "ce" },
+]
+
+[catalogs.backgrounds]
+items = [
+  { id = "acolyte" },
+]
+
+[fields]
+"profile.name" = { type = "text" }
+"profile.player" = { type = "text" }
+"profile.race" = { type = "select", from = "races" }
+"profile.class" = { type = "select", from = "classes" }
+"profile.background" = { type = "text", suggest = "backgrounds" }
+"profile.alignment" = { type = "text", suggest = "alignments" }
+level = { type = "number", min = 1, max = 20, default = 1 }
+xp = { type = "number", min = 0, default = 0 }
+ac = { type = "number", min = 0, default = 10 }
+hpBonus = { type = "number", default = 0 }
+hp = { type = "pool", max = "hpMax", full = true }
+inspiration = { type = "checkbox" }
+deathSuccesses = { type = "checkboxes", count = 3 }
+deathFailures = { type = "checkboxes", count = 3 }
+gold = { type = "number", min = 0, default = 0 }
+attacks = { type = "list", item = "note" }
+spells = { type = "list", item = "note" }
+equipment = { type = "list", item = "note" }
+features = { type = "longtext" }
+notes = { type = "longtext" }
+
+[derived]
+proficiency = "2 + floor((min(max(level, 1), 20) - 1) / 4)"
+hitDie = "lookup('classes', profile.class, 'hitDie')"
+speed = "lookup('races', profile.race, 'speed')"
+str_score = "abilities.str + lookup('races', profile.race, 'str')"
+str_mod = "floor((str_score - 10) / 2)"
+save_str = "str_mod + if(saves.str, proficiency, 0)"
+dex_score = "abilities.dex + lookup('races', profile.race, 'dex')"
+dex_mod = "floor((dex_score - 10) / 2)"
+save_dex = "dex_mod + if(saves.dex, proficiency, 0)"
+con_score = "abilities.con + lookup('races', profile.race, 'con')"
+con_mod = "floor((con_score - 10) / 2)"
+save_con = "con_mod + if(saves.con, proficiency, 0)"
+int_score = "abilities.int + lookup('races', profile.race, 'int')"
+int_mod = "floor((int_score - 10) / 2)"
+save_int = "int_mod + if(saves.int, proficiency, 0)"
+wis_score = "abilities.wis + lookup('races', profile.race, 'wis')"
+wis_mod = "floor((wis_score - 10) / 2)"
+save_wis = "wis_mod + if(saves.wis, proficiency, 0)"
+cha_score = "abilities.cha + lookup('races', profile.race, 'cha')"
+cha_mod = "floor((cha_score - 10) / 2)"
+save_cha = "cha_mod + if(saves.cha, proficiency, 0)"
+skill_acrobatics = "dex_mod + if(skills.acrobatics, proficiency, 0)"
+skill_animal_handling = "wis_mod + if(skills.animal_handling, proficiency, 0)"
+skill_arcana = "int_mod + if(skills.arcana, proficiency, 0)"
+skill_athletics = "str_mod + if(skills.athletics, proficiency, 0)"
+skill_deception = "cha_mod + if(skills.deception, proficiency, 0)"
+skill_history = "int_mod + if(skills.history, proficiency, 0)"
+skill_insight = "wis_mod + if(skills.insight, proficiency, 0)"
+skill_intimidation = "cha_mod + if(skills.intimidation, proficiency, 0)"
+skill_investigation = "int_mod + if(skills.investigation, proficiency, 0)"
+skill_medicine = "wis_mod + if(skills.medicine, proficiency, 0)"
+skill_nature = "int_mod + if(skills.nature, proficiency, 0)"
+skill_perception = "wis_mod + if(skills.perception, proficiency, 0)"
+skill_performance = "cha_mod + if(skills.performance, proficiency, 0)"
+skill_persuasion = "cha_mod + if(skills.persuasion, proficiency, 0)"
+skill_religion = "int_mod + if(skills.religion, proficiency, 0)"
+skill_sleight_of_hand = "dex_mod + if(skills.sleight_of_hand, proficiency, 0)"
+skill_stealth = "dex_mod + if(skills.stealth, proficiency, 0)"
+skill_survival = "wis_mod + if(skills.survival, proficiency, 0)"
+initiative = "dex_mod"
+passive_perception = "10 + skill_perception"
+# average-roll hit points: full die at 1st level, then half die + 1 per level, plus Constitution each level
+hpMax = "max(1, hitDie + con_mod + (level - 1) * (floor(hitDie / 2) + 1 + con_mod) + hpBonus)"

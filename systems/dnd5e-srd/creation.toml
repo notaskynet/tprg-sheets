@@ -1,0 +1,48 @@
+[[steps]]
+id = "concept"
+kind = "fields"
+fields = ["profile.name", "profile.player", "profile.background", "profile.alignment"]
+required = ["profile.name"]
+
+[[steps]]
+id = "race"
+kind = "pick"
+field = "profile.race"
+from = "races"
+show = ["speed"]
+
+[[steps]]
+id = "class"
+kind = "pick"
+field = "profile.class"
+from = "classes"
+fields = ["level"]
+show = ["hitDie", "hpMax"]
+
+[[steps]]
+id = "abilities"
+kind = "scores"
+group = "abilities"
+methods = ["pointbuy", "array", "roll"]
+array = [15, 14, 13, 12, 10, 8]
+pointbuy = { budget = 27, min = 8, max = 15, costs = { "8" = 0, "9" = 1, "10" = 2, "11" = 3, "12" = 4, "13" = 5, "14" = 7, "15" = 9 } }
+roll = { formula = "4d6dl1" }
+show = ["str_mod", "dex_mod", "con_mod"]
+
+[[steps]]
+id = "skills"
+kind = "spend"
+group = "skills"
+budget = "lookup('classes', profile.class, 'skillChoices')"
+maxPerItem = 1
+
+[[steps]]
+id = "saves"
+kind = "spend"
+group = "saves"
+budget = 2
+
+[[steps]]
+id = "recap"
+kind = "recap"
+show = ["hpMax", "ac", "proficiency"]
