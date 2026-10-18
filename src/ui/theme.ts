@@ -1,8 +1,8 @@
 // Brand colour: a user preference (per device) over the system's default `accent`.
 // Everything reads three CSS variables, so applying a colour is just setting them.
 export const PRESETS = [
+  { id: 'ochre', hex: '#c8862a' },
   { id: 'blood', hex: '#a01e2e' },
-  { id: 'gold', hex: '#b8892e' },
   { id: 'emerald', hex: '#2f8f5b' },
   { id: 'indigo', hex: '#4a5bd0' },
   { id: 'violet', hex: '#8a4fc4' },
@@ -64,7 +64,7 @@ export function applyAccent(hex: string | null | undefined): void {
   const el = document.documentElement.style;
   if (!hex) {
     ['--color-brand', '--color-brand-bright', '--color-on-brand'].forEach((v) => el.removeProperty(v));
-    setFavicon('#a01e2e', '#c9304a');
+    setFavicon('#c8862a', '#e0a64a');
     return;
   }
   const { brand, bright, onBrand } = deriveAccent(hex);
