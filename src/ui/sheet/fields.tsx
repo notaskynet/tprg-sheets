@@ -1,10 +1,12 @@
 // Single-field editors shared by the sheet (plate / fields blocks) and the wizard.
-import { useId } from 'react';
+import { useEffect, useId, useRef, useState } from 'react';
 import type { FieldDef } from '@/engine/schema';
 import { getIn } from '@/engine/expr/eval';
 import { useSystem } from '@/ui/context';
 import { DotRow } from '@/ui/primitives';
 import { cn } from '@/ui/lib/utils';
+import { Markdown } from '@/ui/Markdown';
+import { useI18n } from '@/i18n/I18nContext';
 
 const base = 'bg-transparent border-0 border-b border-line2 text-text py-0.5 outline-none focus:border-brand min-w-0 w-full';
 
@@ -45,9 +47,10 @@ export function FieldEditor({ path, values, set, variant = 'plate', readOnly }: 
       );
     case 'longtext':
       return (
-        <label className={wrap}>{cap}
-          <textarea readOnly={readOnly} className="w-full min-h-40 bg-bg border border-line rounded text-text p-3 text-[13px] leading-relaxed outline-none resize-y focus:border-brand" value={String(value ?? '')} onChange={(e) => set(path, e.target.value)} />
-        </label>
+        <div className={wrap}>
+          {cap}
+          <MarkdownField value={String(value ?? '')} onChange={(v) => set(path, v)} readOnly={readOnly} />
+        </div>
       );
     case 'dots':
       return <label className={wrap}>{cap}<DotRow value={Number(value ?? 0)} max={def.max} onChange={readOnly ? undefined : (n) => set(path, Math.max(def.min, n))} /></label>;
@@ -69,4 +72,37 @@ export function FieldEditor({ path, values, set, variant = 'plate', readOnly }: 
     default:
       return null; // list / damage-track / pool / checkboxes / percent have dedicated blocks
   }
+}
+
+/** Rendered markdown until focused; click (or tap) to edit, blur to render again. */
+function MarkdownField({ value, onChange, readOnly }: { value: string; onChange: (v: string) => void; readOnly?: boolean }) {
+  const { t } = useI18n();
+  const [editing, setEditing] = useState(false);
+  const ta = useRef<HTMLTextAreaElement>(null);
+  useEffect(() => { if (editing) ta.current?.focus(); }, [editing]);
+
+  const box = 'w-full min-h-40 bg-bg border border-line rounded p-3 text-[13px] leading-relaxed';
+  if (editing && !readOnly) {
+    return (
+      <textarea
+        ref={ta}
+        className={cn(box, 'outline-none resize-y focus:border-brand font-mono print:hidden')}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        onBlur={() => setEditing(false)}
+        placeholder={t('notesPlaceholder')}
+      />
+    );
+  }
+  return (
+    <div
+      role={readOnly ? undefined : 'button'}
+      tabIndex={readOnly ? undefined : 0}
+      onClick={() => !readOnly && setEditing(true)}
+      onKeyDown={(e) => { if (!readOnly && (e.key === 'Enter' || e.key === ' ') && e.target === e.currentTarget) { e.preventDefault(); setEditing(true); } }}
+      className={cn(box, !readOnly && 'cursor-text hover:border-line2 focus-visible:border-brand outline-none')}
+    >
+      {value.trim() ? <Markdown source={value} onChange={readOnly ? undefined : onChange} /> : <span className="text-text-dim italic">{t('notesPlaceholder')}</span>}
+    </div>
+  );
 }
