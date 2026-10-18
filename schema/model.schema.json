@@ -152,6 +152,10 @@
                       "type": "string"
                     }
                   },
+                  "scope": {
+                    "type": "string",
+                    "minLength": 1
+                  },
                   "default": {
                     "default": "",
                     "type": "string"
@@ -301,6 +305,10 @@
           "itemsFrom": {
             "type": "string",
             "pattern": "^[A-Za-z0-9_]+$"
+          },
+          "granted": {
+            "type": "string",
+            "minLength": 1
           }
         },
         "required": [
@@ -475,6 +483,10 @@
                 "items": {
                   "type": "string"
                 }
+              },
+              "scope": {
+                "type": "string",
+                "minLength": 1
               },
               "default": {
                 "default": "",

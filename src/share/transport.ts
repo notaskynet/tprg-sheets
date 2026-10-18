@@ -13,7 +13,7 @@ export interface Transport {
 
 export interface RoomOptions {
   code: string;
-  kind: 'x' | 's'; // x = device transfer, s = game session
+  kind: 's'; // s = game session; reserved so other room types get distinct ids
   turn?: { urls: string; username?: string; credential?: string }; // optional own TURN server
 }
 

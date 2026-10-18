@@ -1,19 +1,18 @@
-// Wire protocol shared by device transfer and live sessions. One JSON message type.
+// Wire protocol for live sessions. One JSON message type.
 import type { Character } from '@/engine/character';
-import type { Files } from '@/engine/loader';
 
-export type Role = 'gm' | 'player' | 'sender' | 'receiver';
+export type Role = 'gm' | 'player';
 
 export type Msg =
   | { t: 'hello'; role: Role; name: string }
-  | { t: 'chars'; chars: Character[]; pkgs?: Record<string, Files> } // transfer payload / full player sync
+  | { t: 'chars'; chars: Character[] } // full player sync
   | { t: 'char'; char: Character } // live update of one character
   | { t: 'roll'; who: string; label: string; summary: string; ts: number };
 
 export interface RollEntry { who: string; label: string; summary: string; ts: number }
 
 const ALPHABET = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // no 0/O/1/I
-export const CODE_LENGTH = 8; // 32^8 ≈ 1.1e12 codes
+const CODE_LENGTH = 8; // 32^8 ≈ 1.1e12 codes
 
 export function newRoomCode(rand: (n: number) => Uint8Array = (n) => crypto.getRandomValues(new Uint8Array(n))): string {
   return Array.from(rand(CODE_LENGTH), (b) => ALPHABET[b % ALPHABET.length]).join('');
@@ -25,9 +24,9 @@ export function normalizeCode(input: string): string | null {
   return c.length === CODE_LENGTH && [...c].every((ch) => ALPHABET.includes(ch)) ? c : null;
 }
 
-/** A code typed by hand, or pasted as an invite link (`?join=` / `?receive=`). */
+/** A code typed by hand, or pasted as an invite link (`?join=`). */
 export function codeFromInput(input: string): string | null {
-  const m = /[?&](?:join|receive)=([A-Za-z0-9-]+)/.exec(input);
+  const m = /[?&]join=([A-Za-z0-9-]+)/.exec(input);
   return normalizeCode(m ? m[1] : input);
 }
 

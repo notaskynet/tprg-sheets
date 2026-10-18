@@ -26,6 +26,7 @@ export const FieldDef = z.discriminatedUnion('type', [
     type: z.literal('select'),
     from: id.optional(), // catalog id
     options: z.array(z.string()).optional(),
+    scope: expr.optional(), // expr yielding the catalog ids offered (narrows `from`)
     default: z.string().default(''),
   }),
   z.object({
@@ -57,6 +58,7 @@ export const Group = z
     field: FieldDef,
     items: z.array(GroupItem).default([]),
     itemsFrom: id.optional(), // reuse another group's items (e.g. specialties per ability)
+    granted: expr.optional(), // expr yielding item ids that are on for free (checkbox groups): read as ticked, locked, not charged
   })
   .refine((g) => g.items.length > 0 || g.itemsFrom, { message: 'needs items or itemsFrom' });
 export type Group = z.infer<typeof Group>;
@@ -108,6 +110,7 @@ export const Section = z.object({
   id,
   title: z.string().optional(), // label key
   columns: z.number().int().min(1).max(4).default(1),
+  when: expr.optional(), // section is shown only while this is truthy
   blocks: z.array(Block).default([]),
 });
 export const Sheet = z.object({
@@ -118,8 +121,9 @@ export type Sheet = z.infer<typeof Sheet>;
 
 // ---------- creation ----------
 
-// title = label key (default `steps.<id>`); show = derived names displayed as live stat boxes on the step
-const stepBase = { id, title: z.string().optional(), show: z.array(id).default([]) };
+// title = label key (default `steps.<id>`); show = derived names displayed as live stat boxes on the step;
+// when = expr, the step exists only while it is truthy (e.g. a subclass step once the level allows one)
+const stepBase = { id, title: z.string().optional(), show: z.array(id).default([]), when: expr.optional() };
 
 export const CreationStep = z.discriminatedUnion('kind', [
   z.object({
@@ -172,6 +176,7 @@ export const CreationStep = z.discriminatedUnion('kind', [
     group: id,
     budget: z.union([z.number(), z.string()]), // number, or an expression over the character
     maxPerItem: z.number().optional(),
+    scope: expr.optional(), // expr yielding the item ids that may be chosen; the rest are locked
   }),
   z.object({
     ...stepBase,

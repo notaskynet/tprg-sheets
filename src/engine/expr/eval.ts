@@ -12,6 +12,8 @@ export interface Scope {
   derived(name: string): unknown;
   /** Resolve a dotted path: character values first, then derived. */
   get(path: string[]): unknown;
+  /** Item ids of a group that its `granted` expression switches on for free. */
+  granted(group: string): Set<string>;
 }
 
 const astCache = new Map<string, Node>();
@@ -72,7 +74,19 @@ export function createScope(model: Model, values: Values): Scope {
     }
   }
 
+  const grantedMemo = new Map<string, Set<string>>();
+  function granted(group: string): Set<string> {
+    let g = grantedMemo.get(group);
+    if (!g) {
+      const src = model.groups[group]?.granted;
+      grantedMemo.set(group, (g = new Set()));
+      if (src) for (const x of toList(ev(compile(src)))) g.add(String(x));
+    }
+    return g;
+  }
+
   function get(path: string[]): unknown {
+    if (path.length === 2 && granted(path[0]).has(path[1])) return true;
     const v = getIn(values, path);
     if (v !== undefined) return v;
     if (path.length === 1) return derived(path[0]);
@@ -87,7 +101,8 @@ export function createScope(model: Model, values: Values): Scope {
     if (group) {
       const items = groupItems(model, head).filter((it) => n.p.length === 1 || it.cat === second);
       const store = (values[head] ?? {}) as Record<string, unknown>;
-      return items.reduce((s, it) => s + num(store[it.id] ?? defaultOf(group.field)), 0);
+      const free = granted(head);
+      return items.reduce((s, it) => s + (free.has(it.id) ? 1 : num(store[it.id] ?? defaultOf(group.field))), 0);
     }
     return sumOf(get(n.p));
   }
@@ -148,6 +163,22 @@ export function createScope(model: Model, values: Values): Scope {
       case 'ceil': return Math.ceil(num(ev(args[0])));
       case 'round': return Math.round(num(ev(args[0])));
       case 'abs': return Math.abs(num(ev(args[0])));
+      case 'has': {
+        const list = ev(args[0]);
+        const x = ev(args[1]);
+        return Array.isArray(list) && list.some((y) => y === x);
+      }
+      case 'concat': return args.flatMap((a) => toList(ev(a)));
+      case 'upto': {
+        const map = ev(args[0]);
+        const level = num(ev(args[1]));
+        if (!map || typeof map !== 'object' || Array.isArray(map)) return [];
+        return Object.keys(map)
+          .map(Number)
+          .filter((k) => !isNaN(k) && k <= level)
+          .sort((a, b) => a - b)
+          .flatMap((k) => toList((map as Record<string, unknown>)[String(k)]));
+      }
       case 'table': return tableLookup(model.tables[String(ev(args[0]))], ev(args[1]));
       case 'lookup': {
         const cat = model.catalogs[String(ev(args[0]))];
@@ -160,7 +191,12 @@ export function createScope(model: Model, values: Values): Scope {
     }
   }
 
-  return { run: (src) => ev(compile(src)), derived, get };
+  return { run: (src) => ev(compile(src)), derived, get, granted };
+}
+
+/** A list value: arrays as they are, a single string as one element, anything else as empty. */
+function toList(v: unknown): unknown[] {
+  return Array.isArray(v) ? v : typeof v === 'string' && v !== '' ? [v] : [];
 }
 
 function defaultOf(f: { type: string; default?: unknown; min?: number }): unknown {

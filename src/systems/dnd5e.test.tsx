@@ -86,10 +86,101 @@ describe('D&D 5e package: dice and rendering', () => {
     expect(html).not.toContain('unknown block');
   });
   it('renders every wizard step', () => {
+    // steps with a `when` only exist for some characters: build one for which each is visible
+    const forStep: Record<string, Record<string, unknown>> = {
+      subrace: { 'profile.race': 'dwarf' },
+      ancestry: { 'profile.race': 'dragonborn' },
+      subclass: { 'profile.class': 'cleric' },
+    };
     pkg.creation.steps.forEach((s, i) => {
-      const ch = { ...blank(), creation: { step: i, done: false } };
+      const ch = { ...set(blank(), forStep[s.id] ?? {}), creation: { step: i, done: false } };
       const html = wrap(<Wizard ch={ch} set={() => {}} onStep={() => {}} onMethod={() => {}} onFinish={() => {}} onExit={() => {}} />);
       expect(html, s.id).toContain(pkg.locales.ru[`steps.${s.id}`]);
     });
+  });
+});
+
+describe('D&D 5e package: class, race and background data', () => {
+  const step = (ch: Character, id: string) => evaluateCreation(pkg, ch).steps.find((s) => s.id === id);
+  const ids = (ch: Character) => d(ch, 'featureIds') as string[];
+
+  it('has the twelve SRD classes with a subclass each, and every referenced feature exists', () => {
+    const m = pkg.model.catalogs;
+    expect(m.classes.items).toHaveLength(12);
+    const features = new Set(m.features.items.map((i) => i.id));
+    const subclasses = new Set(m.subclasses.items.map((i) => i.id));
+    for (const c of m.classes.items) {
+      const cls = c as unknown as { subclasses: string[]; features: Record<string, string[]> };
+      cls.subclasses.forEach((sc) => expect(subclasses.has(sc), `${c.id} → ${sc}`).toBe(true));
+      Object.values(cls.features).flat().forEach((f) => expect(features.has(f), `${c.id}: ${f}`).toBe(true));
+    }
+    for (const sc of m.subclasses.items) Object.values((sc as unknown as { features: Record<string, string[]> }).features).flat().forEach((f) => expect(features.has(f), `${sc.id}: ${f}`).toBe(true));
+  });
+  it('saving throws come from the class and are not charged', () => {
+    const fighter = set(blank(), { 'profile.class': 'fighter', level: 1 });
+    expect(d(fighter, 'save_str')).toBe(2); // 0 mod + proficiency
+    expect(d(fighter, 'save_dex')).toBe(0);
+    expect(d(set(fighter, { 'profile.class': 'wizard' }), 'save_int')).toBe(2);
+  });
+  it('a class only offers its own skills; ticks outside the list are flagged', () => {
+    const rogue = set(blank(), { 'profile.class': 'rogue', 'skills.stealth': true, 'skills.arcana': true });
+    expect(step(rogue, 'skills')).toMatchObject({ ok: false, invalid: ['arcana'], spent: 1 });
+  });
+  it('an acolyte gets Insight and Religion free; a custom background adds two picks from any skill', () => {
+    const cleric = set(blank(), { 'profile.class': 'cleric', 'profile.background': 'acolyte' });
+    expect(d(cleric, 'skill_religion')).toBe(2);
+    expect(d(cleric, 'skill_insight')).toBe(2);
+    expect(step(cleric, 'skills')).toMatchObject({ budget: 2, spent: 0 }); // the two free skills do not count
+    const custom = set(blank(), { 'profile.class': 'fighter', 'profile.background': 'custom', 'skills.athletics': true, 'skills.history': true, 'skills.stealth': true, 'skills.arcana': true });
+    expect(step(custom, 'skills')).toMatchObject({ budget: 4, ok: true });
+  });
+  it('a sub-race adds its bonus and hill dwarves gain hit points', () => {
+    const base = set(blank(), { 'profile.class': 'fighter', 'profile.race': 'dwarf', 'abilities.con': 14, 'abilities.wis': 10 });
+    const hill = set(base, { 'profile.subrace': 'hill_dwarf' });
+    expect(d(hill, 'wis_score')).toBe(11);
+    expect(d(hill, 'hpMax')).toBe(d(base, 'hpMax') as number + 1);
+    // a stale sub-race of another race is ignored
+    expect(d(set(hill, { 'profile.race': 'human' }), 'wis_score')).toBe(11); // human +1, no hill bonus
+  });
+  it('every class accepts a custom subclass with its own name', () => {
+    for (const c of pkg.model.catalogs.classes.items) {
+      const ch = set(blank(), { 'profile.class': c.id, 'profile.subclass': 'other', 'profile.subclassName': 'Homebrew', level: 20 });
+      expect(ids(ch), c.id).toContain('custom_subclass');
+    }
+  });
+  it('subclass features unlock by level', () => {
+    const cleric = (level: number) => set(blank(), { 'profile.class': 'cleric', 'profile.subclass': 'life', level });
+    expect(ids(cleric(1))).toContain('disciple_of_life');
+    expect(ids(cleric(1))).not.toContain('preserve_life');
+    expect(ids(cleric(2))).toContain('preserve_life');
+    expect(ids(cleric(2))).toContain('channel_divinity');
+    // a subclass picked for another class does not leak in
+    expect(ids(set(cleric(8), { 'profile.class': 'fighter' }))).not.toContain('disciple_of_life');
+  });
+  it('the subclass step appears at the class\'s subclass level', () => {
+    const has = (cls: string, level: number) => evaluateCreation(pkg, set(blank(), { 'profile.class': cls, level })).steps.some((s) => s.id === 'subclass');
+    expect(has('cleric', 1)).toBe(true);
+    expect(has('fighter', 2)).toBe(false);
+    expect(has('fighter', 3)).toBe(true);
+    expect(has('wizard', 2)).toBe(true);
+  });
+  it('spellcasters get a save DC, attack bonus and slots; others do not', () => {
+    const wizard = set(blank(), { 'profile.class': 'wizard', level: 5, 'abilities.int': 16 });
+    expect(d(wizard, 'spell_dc')).toBe(8 + 3 + 3);
+    expect(d(wizard, 'spell_attack')).toBe(3 + 3);
+    expect([1, 2, 3, 4].map((n) => d(wizard, `slot_${n}`))).toEqual([4, 3, 2, 0]);
+    expect(d(set(blank(), { 'profile.class': 'fighter' }), 'spell_dc')).toBe(0);
+    const paladin = set(blank(), { 'profile.class': 'paladin', level: 5, 'abilities.cha': 14 });
+    expect([1, 2, 3].map((n) => d(paladin, `slot_${n}`))).toEqual([4, 2, 0]);
+    const warlock = set(blank(), { 'profile.class': 'warlock', level: 5 });
+    expect([d(warlock, 'pact_slots'), d(warlock, 'pact_level'), d(warlock, 'slot_1')]).toEqual([2, 3, 0]);
+  });
+  it('the sheet lists reached features in Russian and hides the spell section for non-casters', () => {
+    const wrap = (node: React.ReactNode) => renderToString(<I18nProvider><SystemProvider pkg={pkg}><DiceProvider values={{}}>{node}</DiceProvider></SystemProvider></I18nProvider>);
+    const html = (v: Record<string, unknown>) => wrap(<SheetRenderer values={set(blank(), v).values} set={() => {}} />);
+    const barb = html({ 'profile.class': 'barbarian', level: 3 });
+    expect(barb).toContain('Ярость');
+    expect(barb).not.toContain('Ячейки'); // no spellcasting
+    expect(html({ 'profile.class': 'wizard', level: 3 })).toContain('Ячейки 1-го уровня');
   });
 });

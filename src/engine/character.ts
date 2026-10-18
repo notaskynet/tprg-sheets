@@ -1,7 +1,7 @@
 // Generic character: system ref + a values tree shaped by the system's model.
 // Derived values are never stored; see expr/createScope.
 import { groupItems, type FieldDef, type Model } from './schema';
-import { getIn, type Values } from './expr/eval';
+import { type Values } from './expr/eval';
 
 export const CHARACTER_SCHEMA = 1;
 
@@ -14,7 +14,7 @@ export interface Character {
   creation?: { step: number; done: boolean; methods?: Record<string, string> };
 }
 
-export function defaultOfField(f: FieldDef): unknown {
+function defaultOfField(f: FieldDef): unknown {
   switch (f.type) {
     case 'text':
     case 'longtext':
@@ -36,14 +36,14 @@ export function defaultOfField(f: FieldDef): unknown {
   }
 }
 
-export function setIn<T>(obj: T, path: string[], value: unknown): T {
+function setIn<T>(obj: T, path: string[], value: unknown): T {
   if (!path.length) return value as T;
   const [head, ...rest] = path;
   const base = (obj && typeof obj === 'object' ? obj : {}) as Record<string, unknown>;
   return { ...base, [head]: setIn(base[head], rest, value) } as T;
 }
 
-export function defaultValues(model: Model): Values {
+function defaultValues(model: Model): Values {
   let v: Values = {};
   for (const [gid, g] of Object.entries(model.groups)) {
     for (const it of groupItems(model, gid)) v = setIn(v, [gid, it.id], defaultOfField(g.field));
@@ -76,8 +76,6 @@ export function newCharacter(model: Model, system: { id: string; version: string
     creation: { step: 0, done: false },
   };
 }
-
-export const getValue = (ch: Character, path: string): unknown => getIn(ch.values, path.split('.'));
 
 export function setValue(ch: Character, path: string, value: unknown): Character {
   return { ...ch, updatedAt: Date.now(), values: setIn(ch.values, path.split('.'), value) };

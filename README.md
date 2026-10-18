@@ -6,7 +6,7 @@ package*); one generic engine draws the sheet, rolls the dice and guides charact
 Built in: **Vampire: The Masquerade V20**, **D&D 5e (SRD)**, **Call of Cthulhu 7e**.
 Bring your own by importing a `.zip` — see [docs/package-format.md](docs/package-format.md).
 
-**Stack:** Vite · React 19 · TypeScript · Tailwind v4 · shadcn/ui · no backend.
+**Stack:** Vite · React 19 · TypeScript · Tailwind v4 · shadcn/ui · optional Firebase account.
 
 ## Features
 
@@ -14,10 +14,12 @@ Bring your own by importing a `.zip` — see [docs/package-format.md](docs/packa
   descriptions, hints and a “what is wrong” checklist that jumps to the right step.
 - Sheet rendered from `sheet.toml`; dice roller per mechanic (pools, d20, d100, notation);
   tap traits to build a roll.
-- **Local-first.** Characters live in your browser (IndexedDB). Nothing is uploaded.
+- **Local-first.** Characters live in your browser (IndexedDB) and work offline.
+- **Optional Google account** (Firebase). Signed in, your sheets and imported systems sync
+  across devices; signed out, nothing leaves the browser.
 - **Sharing without a server** (WebRTC, signalling over public relays, end-to-end encrypted):
   - *Snapshot link / QR* — a read-only copy of a sheet inside the URL.
-  - *Move to another device* — a one-off room with an 8-character code.
+  - *Live link* (signed in) — a read-only view that updates as you edit; switch it off any time.
   - *Live game session* — the GM hosts a room, players join with the code and choose which
     sheets to show; the GM sees them update live plus a shared roll feed.
 - Markdown notes, accent colour of your choice, RU / EN interface, print / PDF.
@@ -32,6 +34,24 @@ pnpm schema       # regenerate schema/*.schema.json (editor autocomplete for pac
 pnpm build        # typecheck + production build → dist/
 ```
 
+## Cloud account (optional)
+
+Without configuration the app is fully local and shows no sign-in button. To enable it:
+
+1. Create a Firebase project; enable **Authentication → Google** and **Firestore**.
+2. Authentication → Settings → Authorized domains: add the site's domain (for example
+   `<user>.github.io`).
+3. Put the web-app config in `.env.local` (see `.env.example`) for local development, and in
+   the repository secrets `VITE_FIREBASE_*` for the Pages deploy.
+4. Deploy the rules: `firebase deploy --only firestore:rules` (`firestore.rules`: each user can
+   read and write only `/users/{uid}/…`; live links in `/shares/{id}` are readable by whoever
+   holds the id, listable and writable only by their owner).
+
+Data layout: `/users/{uid}/sheets/{id}` and `/users/{uid}/systems/{id}`, each
+`{ updatedAt, data }` with `data` a JSON string. The newest `updatedAt` wins; a sheet deleted on
+one device is deleted on the others. Signing out clears this device (the data stays in the
+cloud), so another account on the same browser starts empty.
+
 ## Layout
 
 ```text
@@ -40,8 +60,9 @@ schema/             generated JSON Schemas for those files
 docs/               package-format.md — the format reference
 src/
   engine/           pure TypeScript: schema, loader, expressions, dice, creation rules
-  storage/          IndexedDB + import of old v20.* localStorage characters
-  share/            snapshot links, transports (Trystero / in-memory), transfer, sessions
+  storage/          IndexedDB (characters, imported systems)
+  cloud/            optional Firebase sign-in and sheet / system sync
+  share/            snapshot links, transports (Trystero / in-memory), sessions
   systems/          registry of bundled + imported packages
   ui/               sheet renderer, wizard, dice dialog, screens, shadcn components
   i18n/             interface strings (system texts live in each package)
@@ -57,8 +78,10 @@ zip) — nothing else changes.
   (supported by the transport, no UI yet).
 - The room code is both the room name (hashed) and the encryption password.
 - Printing uses the browser: **Print / PDF → Save as PDF** gives a vector A4 sheet.
-- D&D and CoC packages cover the core sheet and creation, not every rule (no spell tables,
-  no age modifiers).
+- D&D 5e (SRD): all 12 classes with saves, skill lists, spellcasting and features by level, one
+  subclass each (plus “Other” with a free-text name for subclasses from other books), the 9 races with the 4 SRD sub-races and the dragonborn ancestry, and the
+  Acolyte / Custom backgrounds. Spells, equipment and feats are not modelled (free-text lists).
+  CoC covers the core sheet and creation, without age modifiers.
 
 ## Licence
 

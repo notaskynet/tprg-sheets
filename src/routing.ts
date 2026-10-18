@@ -2,16 +2,18 @@
 //   /            -> library
 //   /?c=<id>     -> character sheet
 //   /?session    -> live session (GM table / player view)
-//   /?join=CODE  -> library with the join dialog prefilled; /?receive=CODE likewise for transfer
+//   /?join=CODE  -> library with the join dialog prefilled
 //   /#s=<data>   -> shared read-only snapshot (see share/snapshot.ts)
+//   /?view=<id>  -> live read-only link to someone's sheet (see cloud/shares.ts)
 import { useSyncExternalStore } from 'react';
 import { snapshotFromHash } from '@/share/snapshot';
 
 export type Route =
-  | { name: 'library'; join?: string; receive?: string }
+  | { name: 'library'; join?: string }
   | { name: 'sheet'; charId: string }
   | { name: 'session' }
-  | { name: 'shared'; data: string };
+  | { name: 'shared'; data: string }
+  | { name: 'view'; shareId: string };
 
 function parse(): Route {
   const snap = snapshotFromHash(window.location.hash);
@@ -20,7 +22,9 @@ function parse(): Route {
   const c = q.get('c');
   if (c) return { name: 'sheet', charId: c };
   if (q.has('session')) return { name: 'session' };
-  return { name: 'library', join: q.get('join') ?? undefined, receive: q.get('receive') ?? undefined };
+  const view = q.get('view');
+  if (view) return { name: 'view', shareId: view };
+  return { name: 'library', join: q.get('join') ?? undefined };
 }
 
 function subscribe(cb: () => void): () => void {
@@ -29,6 +33,7 @@ function subscribe(cb: () => void): () => void {
   window.addEventListener('trpg:navigate', cb);
   return () => {
     window.removeEventListener('popstate', cb);
+    window.removeEventListener('hashchange', cb);
     window.removeEventListener('trpg:navigate', cb);
   };
 }
@@ -45,7 +50,7 @@ function getSnapshot(): Route {
 
 export const useRoute = (): Route => useSyncExternalStore(subscribe, getSnapshot);
 
-export function navigate(to: Route): void {
+function navigate(to: Route): void {
   const url = new URL(window.location.href);
   url.search = '';
   url.hash = '';

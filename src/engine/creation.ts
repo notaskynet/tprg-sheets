@@ -17,6 +17,7 @@ export interface StepStatus {
   capViolations?: string[]; // item ids above maxPerItem
   missing?: string[]; // fields/pick: required paths still empty
   method?: string; // scores: the chosen method
+  invalid?: string[]; // spend: ticked items outside the step's `scope`
 }
 
 export interface CheckItem {
@@ -37,6 +38,7 @@ export interface CreationReport {
   checklist: CheckItem[];
 }
 
+const toIds = (v: unknown): string[] => (Array.isArray(v) ? v.map(String) : []);
 const nonEmpty = (v: unknown) => v != null && v !== '' && v !== 0;
 const n = (v: unknown) => (typeof v === 'number' ? v : v === true ? 1 : 0);
 
@@ -108,6 +110,7 @@ export function evaluateCreation(pkg: SystemPackage, ch: Character, scope: Scope
   const get = (path: string) => getIn(ch.values, path.split('.'));
 
   for (const step of pkg.creation.steps) {
+    if (step.when && !scope.run(step.when)) continue; // step is not part of this character's creation
     switch (step.kind) {
       case 'fields': {
         const req = step.required ?? step.fields;
@@ -151,12 +154,16 @@ export function evaluateCreation(pkg: SystemPackage, ch: Character, scope: Scope
       }
       case 'spend': {
         const budget = typeof step.budget === 'number' ? step.budget : Number(scope.run(step.budget) ?? 0);
-        const items = groupItems(pkg.model, step.group);
+        const allowed = step.scope ? new Set(toIds(scope.run(step.scope))) : null;
+        const free = scope.granted(step.group); // granted items are on for free and not charged
+        const items = groupItems(pkg.model, step.group).filter((i) => !free.has(i.id));
         const store = (ch.values[step.group] ?? {}) as Record<string, unknown>;
         const min = (pkg.model.groups[step.group].field as { min?: number }).min ?? 0;
-        const spent = items.reduce((sum, i) => sum + n(store[i.id]) - min, 0);
+        const chosen = items.filter((i) => n(store[i.id]) > min);
+        const invalid = allowed ? chosen.filter((i) => !allowed.has(i.id)).map((i) => i.id) : [];
+        const spent = chosen.filter((i) => !invalid.includes(i.id)).reduce((sum, i) => sum + n(store[i.id]) - min, 0);
         const capViolations = step.maxPerItem != null ? items.filter((i) => n(store[i.id]) > step.maxPerItem!).map((i) => i.id) : [];
-        const st: StepStatus = { id: step.id, kind: step.kind, ok: spent >= budget, spent: Math.min(spent, budget), budget, overflow: Math.max(0, spent - budget), capViolations };
+        const st: StepStatus = { id: step.id, kind: step.kind, ok: spent >= budget && invalid.length === 0, spent: Math.min(spent, budget), budget, overflow: Math.max(0, spent - budget), capViolations, invalid };
         steps.push(st);
         checklist.push({ id: step.id, ok: st.ok, labelKey: `steps.${step.id}`, val: spent, need: budget, stepId: step.id, missing: Math.max(0, budget - spent), over: st.overflow });
         break;

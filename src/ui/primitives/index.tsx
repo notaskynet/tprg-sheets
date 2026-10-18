@@ -50,50 +50,6 @@ export function DotRow({ value, max = 5, onChange, dimFrom, size = 'md' }: {
   );
 }
 
-// ---------- Inputs ----------
-
-export function Field({ label, value, onChange, type = 'text', placeholder, options, list }: {
-  label: string;
-  value: string | number;
-  onChange: (v: string | number) => void;
-  type?: string;
-  placeholder?: string;
-  options?: { value: string; label: string }[];
-  list?: string;
-}) {
-  const inputCls =
-    'bg-transparent border-0 border-b border-line2 text-text text-sm py-1.5 outline-none ' +
-    'focus:border-brand placeholder:text-text-dim placeholder:italic min-w-0';
-  return (
-    <label className="flex flex-col gap-1 min-w-0">
-      <span className="font-body font-medium text-[11px] tracking-[0.1em] uppercase text-text-mute">{label}</span>
-      {options ? (
-        <select
-          className={inputCls + ' field-select cursor-pointer font-body'}
-          value={String(value || '')}
-          onChange={(e) => onChange(e.target.value)}
-        >
-          <option value="">—</option>
-          {options.map((o) => (
-            <option key={o.value} value={o.value} className="bg-surf text-text">
-              {o.label}
-            </option>
-          ))}
-        </select>
-      ) : (
-        <input
-          className={inputCls}
-          type={type}
-          value={value ?? ''}
-          placeholder={placeholder}
-          list={list}
-          onChange={(e) => onChange(type === 'number' ? Number(e.target.value) : e.target.value)}
-        />
-      )}
-    </label>
-  );
-}
-
 // ---------- Save indicator ----------
 
 export type SaveState = 'saving' | 'saved' | 'offline';

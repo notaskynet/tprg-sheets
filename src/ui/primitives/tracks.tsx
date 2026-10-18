@@ -63,7 +63,7 @@ export function DamageTrack({ kinds, levels, value, onChange, levelLabel, penalt
   );
 }
 
-export function PoolTrack({ value, max, onChange, tone = 'blood', groupBy = Infinity }: {
+function PoolTrack({ value, max, onChange, tone = 'blood', groupBy = Infinity }: {
   value: number;
   max: number;
   onChange?: (v: number) => void;
@@ -88,7 +88,7 @@ export function PoolTrack({ value, max, onChange, tone = 'blood', groupBy = Infi
   );
 }
 
-export function BigCounter({ value, max, onChange, tone = 'blood', hint }: {
+function BigCounter({ value, max, onChange, tone = 'blood', hint }: {
   value: number; max: number; onChange: (v: number) => void; tone?: 'blood' | 'light'; hint?: string;
 }) {
   const step = 'bg-bg border border-line2 text-text-mute w-10 h-10 rounded-md cursor-pointer font-mono text-xl hover:text-text hover:border-text-mute transition-colors';

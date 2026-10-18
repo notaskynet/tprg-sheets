@@ -75,6 +75,9 @@ items = [
 ]
 ```
 `itemsFrom = "abilities"` reuses another group's items (e.g. one specialty text per ability).
+`granted = "<expression>"` (checkbox groups) yields item ids that are on for free, for example the
+saving throws of the chosen class. They read as ticked in every formula, are drawn locked, and a
+`spend` step does not charge them.
 Values live at `attributes.strength`. Item defaults come from the field (`default`, else `min`).
 
 ### Catalogs: lists of options
@@ -83,7 +86,8 @@ Values live at `attributes.strength`. Item defaults come from the field (`defaul
 [catalogs.clans]
 items = [{ id = "brujah", disciplines = ["celerity", "potence"] }]   # any extra properties
 ```
-Read them in formulas with `lookup('clans', profile.clan, 'disciplines')`.
+Read them in formulas with `lookup('clans', profile.clan, 'disciplines')`. A property can be a list
+(`saves = ["str", "con"]`) or a table of lists keyed by level (`features = { "1" = ["rage"], "3" = ["path"] }`).
 
 ### Fields
 
@@ -95,7 +99,7 @@ Read them in formulas with `lookup('clans', profile.clan, 'disciplines')`.
 | `number` | `min`, `max`, `default`. Limits are soft: clamped when the box loses focus |
 | `dots` | `min`, `max`, `default` |
 | `percent`, `checkbox` | |
-| `select` | `from = "<catalog>"` or `options = ["a", "b"]` |
+| `select` | `from = "<catalog>"` or `options = ["a", "b"]`; `scope = "<expression>"` offers only the catalog ids it yields (sub-races of the chosen race…) |
 | `list` | rows of `{ name, level, note }`; `item = "dots" \| "number" \| "note" \| "text"`, `suggest = "<catalog>"`, `max` |
 | `damage-track` | `levels = [...]`, `kinds = ["bashing", "lethal", "aggravated"]` (weakest → strongest) |
 | `pool` | `max = "<expression>"`; `full = true` (untouched means full) or `initial = "<expression>"` |
@@ -130,6 +134,9 @@ Numbers, `'strings'`, `true/false`, dotted paths (`attributes.strength`, derived
 | `min(...)`, `max(...)`, `floor(x)`, `ceil(x)`, `round(x)`, `abs(x)` | |
 | `table('name', key)` | table lookup |
 | `lookup('catalog', id, 'property')` | read a property of a catalog item; unknown → 0 / empty |
+| `has(list, x)` | whether a list contains `x` |
+| `concat(a, b, ...)` | join lists (a single string counts as a one-item list, anything else as empty) |
+| `upto(table, level)` | join the lists of a level-keyed table for every key `<= level` |
 
 Missing values count as 0 in arithmetic. Cycles between derived values are reported.
 
@@ -149,6 +156,7 @@ skills = "skill_{id}"
 id = "attributes"
 title = "attributes.title"                # a locale key
 columns = 3                               # 1-4
+when = "level >= 2"                       # optional: shown only while this is truthy
 blocks = [{ type = "group-columns", group = "attributes" }]
 ```
 Groups listed in the same slot of `pools` are alternatives (D&D: one skill *or* save *or* check);
@@ -170,6 +178,9 @@ separate slots add up (WoD: attribute + ability).
 | `checkboxes` | `field` |
 | `stats` | `items = [...]` derived names (read-only) or field paths; `signed = true` |
 | `stack` | `blocks = [...]` blocks stacked in one column |
+| `refs` | `catalog`, `ids = "<expression>"`: entries of a catalog (e.g. class features up to the level), each with its `desc.<catalog>.<id>` text |
+
+Any block accepts `when = "<expression>"` and is then shown only while it is truthy.
 
 `group` blocks accept `derived = ["{id}_score", "+{id}_mod"]`: derived columns per item
 (`{id}` is the item id; a leading `+` always shows a sign).
@@ -180,7 +191,8 @@ The control per item follows the group's field type (dots, checkbox, number).
 ## creation.toml
 
 A list of steps. Every step has `id`, optional `title` (a label key, default `steps.<id>`) and
-`show = [derived names]` (stat boxes shown on the step).
+`show = [derived names]` (stat boxes shown on the step) and `when = "<expression>"`: the step exists
+only while it is truthy (a sub-class step once the level allows one); hidden steps leave the wizard and the checklist.
 
 | kind | settings |
 |---|---|
@@ -189,7 +201,7 @@ A list of steps. Every step has `id`, optional `title` (a label key, default `st
 | `priority` | `group`, `budgets = [7, 5, 3]` (largest budget goes to the category with most points), `base`, `maxPerItem` |
 | `list` | `field`, `budget`, `scope = "<expression>"` |
 | `scores` | `group`, `methods = ["pointbuy", "array", "roll"]` with `[pointbuy] budget min max costs`, `array = [...]`, `[roll] formula, items.<id>` |
-| `spend` | `group`, `budget` (a number or an expression), `maxPerItem` |
+| `spend` | `group`, `budget` (a number or an expression), `maxPerItem`, `scope = "<expression>"` (only these item ids may be chosen; the rest are locked and flagged if already ticked) |
 | `freebies` | `budget`, `costs = [{ step = "<id>", per = 5 }, { field = "<path>", per = 2 }]` — extra points beyond earlier budgets, and stored bonus fields |
 | `recap` | the checklist |
 

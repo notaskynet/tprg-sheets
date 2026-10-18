@@ -16,7 +16,7 @@ const subs = new Set<() => void>();
 const set = (next: ActiveInfo) => { info = next; subs.forEach((cb) => cb()); };
 let unsubStorage: (() => void) | null = null;
 
-export const getActive = () => info;
+const getActive = () => info;
 export const getActiveSession = () => info.session;
 export const useActive = (): ActiveInfo => useSyncExternalStore((cb) => (subs.add(cb), () => void subs.delete(cb)), getActive);
 

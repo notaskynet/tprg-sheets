@@ -323,6 +323,8 @@ function SpendStep({ step, status, values, set }: StepProps<'spend'>) {
   const derivedName = (pkg.sheet.roll?.value as Record<string, string> | undefined)?.[step.group];
   const min = field.min ?? 0;
   const left = (status.budget ?? 0) - ((status.spent ?? 0) + (status.overflow ?? 0));
+  const allowed = step.scope ? new Set(((scope.run(step.scope) as unknown[] | undefined) ?? []).map(String)) : null;
+  const free = scope.granted(step.group);
 
   return (
     <div className="flex flex-col gap-5">
@@ -337,13 +339,15 @@ function SpendStep({ step, status, values, set }: StepProps<'spend'>) {
               const v = Number(getIn(values, [step.group, it.id]) ?? min);
               const total = derivedName ? scope.get([derivedName.replace('{id}', it.id)]) : undefined;
               if (field.type === 'checkbox') {
-                const on = !!getIn(values, [step.group, it.id]);
+                const given = free.has(it.id); // granted for free: ticked and locked
+                const locked = given || (allowed != null && !allowed.has(it.id));
+                const on = given || !!getIn(values, [step.group, it.id]);
                 return (
-                  <div key={it.id} className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 py-1.5 border-b border-dashed border-line">
+                  <div key={it.id} className={cn('grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 py-1.5 border-b border-dashed border-line', locked && !given && 'opacity-40')}>
                     <span className="text-[13px]">{tr(`${step.group}.${it.id}`)}</span>
                     <span className="inline-flex items-center gap-3">
                       {total != null && <span className="font-mono text-xs text-text-mute">{Number(total) >= 0 ? '+' : ''}{String(total)}</span>}
-                      <Dot on={on} size="lg" onClick={() => set(`${step.group}.${it.id}`, !on)} />
+                      <Dot on={on} size="lg" onClick={locked && !(on && !given) ? undefined : () => set(`${step.group}.${it.id}`, !on)} />
                     </span>
                   </div>
                 );
@@ -367,6 +371,9 @@ function SpendStep({ step, status, values, set }: StepProps<'spend'>) {
       </div>
       {status.capViolations && status.capViolations.length > 0 && (
         <p className="text-xs text-gold">{status.capViolations.map((id) => tr(`${step.group}.${id}`)).join(', ')} &gt; {step.maxPerItem}</p>
+      )}
+      {status.invalid && status.invalid.length > 0 && (
+        <p className="text-xs text-gold">{t('notAllowedNow')}: {status.invalid.map((id) => tr(`${step.group}.${id}`)).join(', ')}</p>
       )}
       <ShownStats names={step.show} values={values} />
     </div>

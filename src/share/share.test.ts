@@ -3,7 +3,6 @@ import { BUILTIN_PACKAGES } from '@/systems/builtin';
 import { newCharacter, setValue, type Character } from '@/engine/character';
 import { formatCode, newRoomCode, normalizeCode, isMsg } from './protocol';
 import { memoryHub } from './transport';
-import { planImport, runReceiver, runSender } from './transfer';
 import { Session } from './session';
 import { roomId } from './transport';
 
@@ -28,32 +27,11 @@ describe('room codes', () => {
   });
 });
 
-describe('transfer', () => {
-  it('delivers characters to a receiver that joins later', async () => {
-    const hub = memoryHub();
-    const sender = hub.join('s');
-    const sentTo: string[] = [];
-    runSender(sender, { chars: [mk('a', 'Нокс'), mk('b', 'Лена')] }, { sent: (p) => sentTo.push(p) });
-    await tick();
-    const recv = hub.join('r');
-    const got = new Promise<Character[]>((res) => runReceiver(recv, { received: (p) => res(p.chars) }));
-    const chars = await got;
-    expect(chars.map((c) => c.id)).toEqual(['a', 'b']);
-    expect(sentTo).toEqual(['r']);
-  });
-  it('plans imports by updatedAt', () => {
-    const local = new Map([['same', mk('same', 'x', 5)], ['old', mk('old', 'x', 9)], ['new', mk('new', 'x', 1)]]);
-    const plan = planImport((id) => local.get(id), [mk('fresh', 'f'), mk('same', 'x', 5), mk('old', 'x', 5), mk('new', 'x', 7)]);
-    expect(plan.map((p) => p.status)).toEqual(['new', 'same', 'older', 'newer']);
-  });
-});
-
 describe('room id', () => {
-  it('is derived from the code without revealing it, and differs per kind', async () => {
+  it('is derived from the code without revealing it, and differs per code', async () => {
     const a = await roomId('ABCD2345', 's');
     expect(a).toBe(await roomId('ABCD2345', 's'));
     expect(a).not.toContain('ABCD2345');
-    expect(a).not.toBe(await roomId('ABCD2345', 'x'));
     expect(a).not.toBe(await roomId('ABCD2346', 's'));
   });
   it('codes do not repeat in practice', () => {
@@ -126,7 +104,7 @@ import { codeFromInput } from './protocol';
 describe('codeFromInput', () => {
   it('accepts a typed code or a pasted invite link', () => {
     expect(codeFromInput('abcd-2345')).toBe('ABCD2345');
-    expect(codeFromInput('https://x.github.io/tprg-sheets/?receive=ABCD2345')).toBe('ABCD2345');
+    expect(codeFromInput('https://x.github.io/tprg-sheets/?join=ABCD2345')).toBe('ABCD2345');
     expect(codeFromInput('https://x.dev/?join=abcd-2345')).toBe('ABCD2345');
     expect(codeFromInput('https://x.dev/?c=1')).toBeNull();
     expect(codeFromInput('')).toBeNull();

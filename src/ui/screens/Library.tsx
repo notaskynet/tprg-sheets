@@ -1,7 +1,7 @@
 // Character library: cards for every saved character, sort, create, import.
 import { useMemo, useRef, useState } from 'react';
 import { toast } from 'sonner';
-import { MoreVertical, Package, Plus, Smartphone, Users } from 'lucide-react';
+import { MoreVertical, Package, Plus, Users } from 'lucide-react';
 import { useI18n } from '@/i18n/I18nContext';
 import { AVAILABLE_LANGS, localize } from '@/i18n/lang';
 import { useCharacters, deleteCharacter, putCharacter, saveCharacter } from '@/storage/db';
@@ -13,28 +13,27 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/ui/component
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/ui/components/dropdown-menu';
 import { readCharacterFile } from '@/share/file';
 import { AccentPicker } from '@/ui/AccentPicker';
+import { AccountButton } from '@/ui/AccountButton';
 import { Lazy, lazyNamed } from '@/ui/lazy';
 
-const TransferDialog = lazyNamed(() => import('@/ui/TransferDialog'), 'TransferDialog');
 const SessionDialog = lazyNamed(() => import('@/ui/SessionDialog'), 'SessionDialog');
 const SystemsDialog = lazyNamed(() => import('@/ui/SystemsDialog'), 'SystemsDialog');
 
 type SortBy = 'recent' | 'name';
 
-// Drop ?join= / ?receive= once their dialog is closed so a reload doesn't reopen it.
+// Drop ?join= once its dialog is closed so a reload doesn't reopen it.
 const clearParams = () => { if (location.search) window.history.replaceState({}, '', location.pathname); };
 
 function loadSort(): SortBy {
   try { return localStorage.getItem('trpg.sort') === 'name' ? 'name' : 'recent'; } catch { return 'recent'; }
 }
 
-export function Library({ join, receive }: { join?: string; receive?: string }) {
+export function Library({ join }: { join?: string }) {
   const { t, lang, setLang } = useI18n();
   const characters = useCharacters();
   const packages = usePackages();
   const [sortBy, setSortBy] = useState<SortBy>(loadSort);
   const [picking, setPicking] = useState(false);
-  const [transfer, setTransfer] = useState(!!receive);
   const [session, setSession] = useState(!!join);
   const [systems, setSystems] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
@@ -70,10 +69,10 @@ export function Library({ join, receive }: { join?: string; receive?: string }) 
       <header className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2 px-4 sm:px-9 py-3 sm:py-4 border-b border-line">
         <span className="eyebrow truncate min-w-0"><span className="hidden sm:inline">{t('appTitle')} · </span>{t('myCharacters')}</span>
         <div className="flex items-center gap-3 shrink-0">
-          <button onClick={() => setTransfer(true)} title={t('devices')} className="inline-flex items-center gap-1.5 border border-line2 text-text-mute rounded px-3 py-1.5 text-xs hover:text-text hover:border-text-mute transition-colors"><Smartphone className="size-3.5" /><span className="hidden sm:inline">{t('devices')}</span></button>
           <button onClick={() => setSession(true)} title={t('game')} className="inline-flex items-center gap-1.5 border border-line2 text-text-mute rounded px-3 py-1.5 text-xs hover:text-text hover:border-text-mute transition-colors"><Users className="size-3.5" /><span className="hidden sm:inline">{t('game')}</span></button>
           <button onClick={() => setSystems(true)} title={t('systems')} className="inline-flex items-center gap-1.5 border border-line2 text-text-mute rounded px-3 py-1.5 text-xs hover:text-text hover:border-text-mute transition-colors"><Package className="size-3.5" /><span className="hidden sm:inline">{t('systems')}</span></button>
           <AccentPicker />
+          <AccountButton />
           <button onClick={() => fileRef.current?.click()} className="border border-line2 text-text-mute rounded px-3 py-1.5 text-xs hover:text-text hover:border-text-mute transition-colors">{t('importFile')}</button>
           <input ref={fileRef} type="file" accept=".json,application/json" hidden onChange={(e) => { onFile(e.target.files?.[0]); e.target.value = ''; }} />
           <div className="inline-flex p-0.5 border border-line2 rounded font-mono text-[11px]">
@@ -114,7 +113,6 @@ export function Library({ join, receive }: { join?: string; receive?: string }) 
 
       <Lazy>
         {systems && <SystemsDialog open onOpenChange={setSystems} />}
-        {transfer && <TransferDialog open onOpenChange={(o) => { setTransfer(o); if (!o) clearParams(); }} initialReceive={receive} />}
         {session && <SessionDialog open onOpenChange={(o) => { setSession(o); if (!o) clearParams(); }} initialJoin={join} />}
       </Lazy>
 

@@ -187,7 +187,7 @@ export function DiceProvider({ values, onRoll, children }: {
   );
 }
 
-export function summarize(r: RollResult, t: (k: string) => string): string {
+function summarize(r: RollResult, t: (k: string) => string): string {
   switch (r.mechanic) {
     case 'pool-successes': return r.kind === 'success' ? `+${r.result}` : r.kind === 'botch' ? '✱' : '—';
     case 'd20-modifier': return `${r.result}${r.kind === 'crit' ? ' ★' : r.kind === 'critfail' ? ' ✱' : ''}`;
