@@ -2,7 +2,7 @@
 # draws one column per category of a group.
 
 [roll]
-pools = [["attributes", "abilities"]]
+pools = [["attributes"], ["abilities"]]
 specialties = "specialties"
 penalty = "healthPenalty"
 

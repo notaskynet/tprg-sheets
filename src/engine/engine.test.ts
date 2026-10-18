@@ -143,3 +143,22 @@ describe('character + loader', () => {
     }
   });
 });
+
+import { rollNotation } from './dice/notation';
+describe('dice notation', () => {
+  const faces = (sides: number, ...f: number[]) => { let i = 0; return () => (f[i++ % f.length] - 1) / sides + 0.0001; };
+  it('drops and keeps dice', () => {
+    expect(rollNotation('4d6dl1', faces(6, 6, 1, 4, 3))).toMatchObject({ total: 13, dice: [6, 1, 4, 3] });
+    expect(rollNotation('4d6kh3', faces(6, 6, 1, 4, 3)).total).toBe(13);
+    expect(rollNotation('2d20kl1', faces(20, 15, 4)).total).toBe(4);
+  });
+  it('handles arithmetic like CoC characteristic rolls', () => {
+    expect(rollNotation('3d6*5', faces(6, 3, 4, 5)).total).toBe(60);
+    expect(rollNotation('(2d6+6)*5', faces(6, 3, 4)).total).toBe(65);
+    expect(rollNotation('d20+5', faces(20, 7)).total).toBe(12);
+    expect(rollNotation('2d6 - 1', faces(6, 2, 3)).total).toBe(4);
+  });
+  it('rejects garbage', () => {
+    for (const bad of ['', 'abc', '2d', '2d6+', '(2d6']) expect(() => rollNotation(bad, Math.random), bad).toThrow();
+  });
+});

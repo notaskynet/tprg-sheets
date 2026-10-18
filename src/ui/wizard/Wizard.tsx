@@ -14,10 +14,11 @@ import { cn } from '@/ui/lib/utils';
 type Tone = 'ok' | 'over' | 'under';
 const toneOf = (s: StepStatus): Tone => ((s.overflow ?? 0) > 0 ? 'over' : s.ok ? 'ok' : 'under');
 
-export function Wizard({ ch, set, onStep, onFinish, onExit }: {
+export function Wizard({ ch, set, onStep, onMethod, onFinish, onExit }: {
   ch: Character;
   set: (path: string, value: unknown) => void;
   onStep: (step: number) => void;
+  onMethod: (stepId: string, method: string) => void;
   onFinish: () => void; // leave the wizard for the sheet (done)
   onExit: () => void; // leave to the library
 }) {
@@ -59,6 +60,8 @@ export function Wizard({ ch, set, onStep, onFinish, onExit }: {
       return status.ok && !status.overflow ? want : `${status.ranks?.map((r) => r.spent).join('/')} → ${want}`;
     }
     if (step.kind === 'list') return `${(status.spent ?? 0) + (status.overflow ?? 0)}/${step.budget}`;
+    if (step.kind === 'scores') return status.budget != null ? `${status.spent}/${status.budget}` : status.ok ? t('filled') : '';
+    if (step.kind === 'spend') return `${(status.spent ?? 0) + (status.overflow ?? 0)}/${status.budget}`;
     if (step.kind === 'freebies') return status.ok ? `${status.spent}/${status.budget}` : `+${status.overflow}`;
     return '';
   })();
@@ -111,7 +114,7 @@ export function Wizard({ ch, set, onStep, onFinish, onExit }: {
             {hint && hint !== step.id && <p className="text-text-mute text-sm leading-relaxed max-w-[620px] mt-2.5">{hint}</p>}
           </div>
           <HintCard stepId={step.id} />
-          <StepBody key={step.id} step={step} status={status} report={report} values={ch.values} set={set} onGoto={(id) => onStep(Math.max(0, steps.findIndex((x) => x.id === id)))} />
+          <StepBody key={step.id} step={step} status={status} report={report} values={ch.values} set={set} onGoto={(id) => onStep(Math.max(0, steps.findIndex((x) => x.id === id)))} onMethod={onMethod} />
         </div>
       </main>
 

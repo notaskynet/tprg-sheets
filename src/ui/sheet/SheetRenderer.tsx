@@ -4,10 +4,10 @@ import type { ReactNode } from 'react';
 import { getIn, tableLookup } from '@/engine/expr/eval';
 import { groupItems } from '@/engine/schema';
 import { useScope, useSystem } from '@/ui/context';
-import { DotRow } from '@/ui/primitives';
+import { Dot, DotRow } from '@/ui/primitives';
 import { DamageTrack, AdaptivePool } from '@/ui/primitives/tracks';
 import { useDice } from '@/ui/dice/DiceProvider';
-import { FieldEditor } from './fields';
+import { FieldEditor, NumberInput } from './fields';
 import { ListEditor } from './ListEditor';
 import { cn } from '@/ui/lib/utils';
 
@@ -82,13 +82,19 @@ function Block({ cfg, ...p }: { cfg: BlockCfg } & SheetProps) {
       const spec = cfg.specialties as string | undefined;
       const canRoll = dice.enabled(gid);
       const field = g.field as { type: string; min?: number; max?: number };
+      const derivedTpl = ([] as string[]).concat((cfg.derived as string | string[] | undefined) ?? []);
+      // a leading "+" in a derived template shows that column with an explicit sign
+      const DerivedCell = ({ name: raw, signed: all }: { name: string; signed: boolean }) => {
+        const signed = all || raw.startsWith('+');
+        const v = scope.get([raw.replace(/^\+/, '')]);
+        return <span className="font-mono text-[13px] min-w-7 text-right tabular-nums">{typeof v === 'number' && signed && v >= 0 ? `+${v}` : String(v ?? '')}</span>;
+      };
       return (
         <>
           {cats.map((cat) => (
             <div key={cat ?? 'all'}>
               <div className="eyebrow mb-1.5">{cat ? tr(`${gid}.cat.${cat}`) : tr(`${gid}.title`)}</div>
               {items.filter((i) => !cat || i.cat === cat).map((it) => {
-                const val = Number(getIn(p.values, [gid, it.id]) ?? field.min ?? 0);
                 const sp = spec ? String(getIn(p.values, [spec, it.id]) ?? '') : '';
                 return (
                   <div key={it.id} className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-2.5 py-[5px] print:py-[2px] border-b border-dashed border-line last:border-0">
@@ -98,7 +104,10 @@ function Block({ cfg, ...p }: { cfg: BlockCfg } & SheetProps) {
                       ) : tr(`${gid}.${it.id}`)}
                       {sp && <span className="text-[10px] text-text-dim italic">({sp})</span>}
                     </span>
-                    <DotRow value={val} max={field.max ?? 5} onChange={p.readOnly ? undefined : (n) => p.set(`${gid}.${it.id}`, Math.max(field.min ?? 0, n))} />
+                    <span className="inline-flex items-center gap-3">
+                      <ItemControl field={field} value={getIn(p.values, [gid, it.id])} readOnly={p.readOnly} onChange={(v) => p.set(`${gid}.${it.id}`, v)} />
+                      {derivedTpl.map((tpl) => <DerivedCell key={tpl} name={tpl.replace('{id}', it.id)} signed={!!cfg.signed} />)}
+                    </span>
                   </div>
                 );
               })}
@@ -169,7 +178,8 @@ function Block({ cfg, ...p }: { cfg: BlockCfg } & SheetProps) {
       const def = pkg.model.fields[path];
       if (def?.type !== 'pool') return null;
       const max = Math.max(Number(scope.run(def.max) ?? 0), 1);
-      const value = Number(getIn(p.values, path.split('.')) ?? 0);
+      const raw = getIn(p.values, path.split('.'));
+      const value = raw === undefined && def.full ? max : Number(raw ?? 0);
       const noteKey = cfg.note as string | undefined;
       const hint = noteKey ? `${tr(`derived.${noteKey}`)}: ${scope.get([noteKey])}` : undefined;
       return (
@@ -180,7 +190,53 @@ function Block({ cfg, ...p }: { cfg: BlockCfg } & SheetProps) {
       );
     }
 
+    case 'checkboxes': {
+      const path = str('field');
+      const def = pkg.model.fields[path];
+      if (def?.type !== 'checkboxes') return null;
+      const n = Number(getIn(p.values, path.split('.')) ?? 0);
+      return (
+        <div className="flex items-center justify-between gap-3">
+          <span className="eyebrow">{tr(`fields.${path}`)}</span>
+          <span className="inline-flex gap-1.5">
+            {Array.from({ length: def.count }).map((_, i) => <Dot key={i} on={i < n} onClick={p.readOnly ? undefined : () => p.set(path, i + 1 === n ? i : i + 1)} />)}
+          </span>
+        </div>
+      );
+    }
+
+    case 'stats': {
+      const signed = !!cfg.signed;
+      return (
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+          {(cfg.items as string[]).map((name) => {
+            if (pkg.model.fields[name]) return <FieldEditor key={name} path={name} variant="plate" {...p} />;
+            const v = scope.get([name]);
+            return (
+              <div key={name} className="flex flex-col gap-[3px]">
+                <span className="font-mono text-[11px] tracking-[0.1em] uppercase text-text-mute">{tr(`derived.${name}`)}</span>
+                <span className="font-display text-2xl font-semibold leading-none">{typeof v === 'number' && signed && v >= 0 ? `+${v}` : String(v ?? '—')}</span>
+              </div>
+            );
+          })}
+        </div>
+      );
+    }
+
     default:
       return <div className="text-xs text-brand-bright font-mono">unknown block: {cfg.type as ReactNode as string}</div>;
+  }
+}
+
+/** Control for one group item, chosen by the group's field type. */
+function ItemControl({ field, value, onChange, readOnly }: { field: { type: string; min?: number; max?: number }; value: unknown; onChange: (v: unknown) => void; readOnly?: boolean }) {
+  switch (field.type) {
+    case 'checkbox':
+      return <Dot on={!!value} size="lg" onClick={readOnly ? undefined : () => onChange(!value)} />;
+    case 'number':
+    case 'percent':
+      return <NumberInput className="w-14 bg-transparent border-b border-line2 text-right font-mono text-sm outline-none focus:border-brand" value={Number(value ?? 0)} min={field.min} max={field.max} readOnly={readOnly} onChange={onChange as (n: number) => void} />;
+    default:
+      return <DotRow value={Number(value ?? field.min ?? 0)} max={field.max ?? 5} onChange={readOnly ? undefined : (n) => onChange(Math.max(field.min ?? 0, n))} />;
   }
 }

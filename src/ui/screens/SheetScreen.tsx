@@ -46,7 +46,8 @@ export function SheetScreen({ charId }: { charId: string }) {
         <Wizard
           ch={editor.ch}
           set={editor.set}
-          onStep={(step) => editor.replace({ ...editor.ch!, creation: { step, done: false } })}
+          onStep={(step) => editor.replace({ ...editor.ch!, creation: { ...editor.ch!.creation, step, done: false } })}
+          onMethod={(stepId, method) => editor.replace({ ...editor.ch!, creation: { step: 0, ...editor.ch!.creation, done: false, methods: { ...editor.ch!.creation?.methods, [stepId]: method } } })}
           onFinish={() => editor.replace({ ...editor.ch!, creation: { step: 0, done: true } })}
           onExit={goLibrary}
         />

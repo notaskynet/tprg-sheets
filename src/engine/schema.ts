@@ -39,7 +39,12 @@ export const FieldDef = z.discriminatedUnion('type', [
     levels: z.array(id).min(1), // ordered level ids
     kinds: z.array(id).default(['bashing', 'lethal', 'aggravated']), // weakest → strongest
   }),
-  z.object({ type: z.literal('pool'), max: expr, default: z.number().default(0) }),
+  z.object({
+    type: z.literal('pool'),
+    max: expr,
+    default: z.number().default(0),
+    full: z.boolean().default(false), // untouched value means "at max" (hit points start full)
+  }),
   z.object({ type: z.literal('checkboxes'), count: z.number().int().positive(), default: z.number().default(0) }),
 ]);
 export type FieldDef = z.infer<typeof FieldDef>;
@@ -137,17 +142,36 @@ export const CreationStep = z.discriminatedUnion('kind', [
     base: z.number().default(0), // value every item starts at (not counted against the budget)
     maxPerItem: z.number().optional(),
   }),
+  // Fill every item of a group by one of several methods the player chooses between.
   z.object({
     ...stepBase,
-    kind: z.literal('pointbuy'),
+    kind: z.literal('scores'),
     group: id,
-    budget: z.union([z.number(), expr]),
-    costs: z.record(z.string(), z.number()), // value → cumulative cost
-    min: z.number(),
-    max: z.number(),
+    methods: z.array(z.enum(['pointbuy', 'array', 'roll'])).min(1),
+    pointbuy: z
+      .object({
+        budget: z.number(),
+        min: z.number(),
+        max: z.number(),
+        costs: z.record(z.string(), z.number()), // value → cumulative cost
+      })
+      .optional(),
+    array: z.array(z.number()).min(1).optional(), // standard array: assign each value once
+    roll: z
+      .object({
+        formula: z.string(), // dice notation, e.g. "4d6dl1"
+        items: z.record(id, z.string()).default({}), // per-item override, e.g. { siz = "(2d6+6)*5" }
+      })
+      .optional(),
   }),
-  z.object({ ...stepBase, kind: z.literal('array'), group: id, values: z.array(z.number()).min(1) }),
-  z.object({ ...stepBase, kind: z.literal('roll'), group: id, formula: z.string() }),
+  // Spend a pool of points across a group (each item's value counts, above the field minimum).
+  z.object({
+    ...stepBase,
+    kind: z.literal('spend'),
+    group: id,
+    budget: z.union([z.number(), z.string()]), // number, or an expression over the character
+    maxPerItem: z.number().optional(),
+  }),
   z.object({
     ...stepBase,
     kind: z.literal('list'),
@@ -182,6 +206,7 @@ export const Manifest = z.object({
   version: z.string(),
   name: z.record(z.string(), z.string()),
   languages: z.array(z.string()).min(1),
+  credits: z.string().optional(), // licence / attribution line shown with the system
   accent: z.string().regex(/^#[0-9a-fA-F]{6}$/, 'use #rrggbb').optional(), // default brand colour for this system
   dice: DiceConfig,
   /** Library card: title path + subtitle paths (select fields show the catalog label). */

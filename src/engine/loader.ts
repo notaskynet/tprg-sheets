@@ -5,6 +5,7 @@ import { unzipSync, strFromU8 } from 'fflate';
 import { z } from 'zod';
 import { Creation, Manifest, Model, Sheet, type Locale, type SystemPackage } from './schema';
 import { compile } from './expr/eval';
+import { rollNotation } from './dice/notation';
 
 export class PackageError extends Error {
   constructor(public issues: string[]) {
@@ -86,8 +87,13 @@ export function loadPackage(files: Files): SystemPackage {
     if (f.type === 'select' && f.from && !model.catalogs[f.from]) issues.push(`model.toml: fields.${k}.from — unknown catalog "${f.from}"`);
   }
   for (const s of creation.steps) {
-    if ((s.kind === 'priority' || s.kind === 'pointbuy' || s.kind === 'array' || s.kind === 'roll') && !model.groups[s.group])
+    if ((s.kind === 'priority' || s.kind === 'scores' || s.kind === 'spend') && !model.groups[s.group])
       issues.push(`creation.toml: step "${s.id}" — unknown group "${s.group}"`);
+    if (s.kind === 'scores') {
+      for (const m of s.methods) if (!s[m]) issues.push(`creation.toml: step "${s.id}" — method "${m}" is listed but has no [${m}] settings`);
+      if (s.roll) for (const f of [s.roll.formula, ...Object.values(s.roll.items)]) { try { rollNotation(f, () => 0.5); } catch (e) { issues.push(`creation.toml: step "${s.id}" — ${(e as Error).message}`); } }
+    }
+    if (s.kind === 'spend' && typeof s.budget === 'string') checkExpr(`creation.toml: step "${s.id}" budget`, s.budget);
     if (s.kind === 'pick' && !model.catalogs[s.from]) issues.push(`creation.toml: step "${s.id}" — unknown catalog "${s.from}"`);
     if (s.kind === 'priority' && model.groups[s.group] && s.budgets.length !== (model.groups[s.group].categories.length || 1))
       issues.push(`creation.toml: step "${s.id}" — ${s.budgets.length} budgets for ${model.groups[s.group].categories.length || 1} categories`);

@@ -133,7 +133,7 @@ export const clampNumber = (n: number, min?: number, max?: number) => Math.min(m
  * committed (so "1" on the way to "12" changes nothing); on blur the text is clamped
  * into [min, max]. No browser validation.
  */
-function NumberInput({ value, onChange, className, readOnly, min, max }: { value: number; onChange: (n: number) => void; className?: string; readOnly?: boolean; min?: number; max?: number }) {
+export function NumberInput({ value, onChange, className, readOnly, min, max }: { value: number; onChange: (n: number) => void; className?: string; readOnly?: boolean; min?: number; max?: number }) {
   const [draft, setDraft] = useState<string | null>(null);
   return (
     <input

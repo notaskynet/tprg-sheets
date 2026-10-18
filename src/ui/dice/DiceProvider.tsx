@@ -39,11 +39,13 @@ export function DiceProvider({ values, onRoll, children }: {
   const { t } = useI18n();
   const scope = useScope(values);
   const cfg = pkg.manifest.dice;
-  const rollCfg = (pkg.sheet.roll ?? {}) as { pools?: string[][]; specialties?: string; penalty?: string };
-  const poolGroups = useMemo(() => new Set((rollCfg.pools ?? []).flat()), [rollCfg.pools]);
+  // pools = slots; groups listed in one slot are alternatives (one pick), slots add up.
+  // value = per-group derived template ("skill_{id}") when a pick's number isn't the stored value.
+  const rollCfg = (pkg.sheet.roll ?? {}) as { pools?: string[][]; specialties?: string; penalty?: string; value?: Record<string, string> };
+  const slotOf = useCallback((g: string) => (rollCfg.pools ?? []).findIndex((slot) => slot.includes(g)), [rollCfg.pools]);
 
   const [isOpen, setOpen] = useState(false);
-  const [picks, setPicks] = useState<Record<string, string>>({});
+  const [picks, setPicks] = useState<Record<number, { g: string; id: string }>>({});
   const [difficulty, setDifficulty] = useState(cfg.mechanic === 'pool-successes' ? cfg.defaultDifficulty : 10);
   const [extra, setExtra] = useState(0); // manual +/- on top of the picked traits
   const [specialty, setSpecialty] = useState(false);
@@ -57,13 +59,18 @@ export function DiceProvider({ values, onRoll, children }: {
   useEffect(() => { try { localStorage.setItem(HISTORY_KEY, JSON.stringify(history.slice(0, 20))); } catch { /* ignore */ } }, [history]);
 
   const api = useMemo<DiceApi>(() => ({
-    pick: (group, id) => { setPicks((p) => ({ ...p, [group]: id })); setResult(null); setOpen(true); },
+    pick: (group, id) => { setPicks((p) => ({ ...p, [slotOf(group)]: { g: group, id } })); setResult(null); setOpen(true); },
     open: () => setOpen(true),
-    enabled: (g) => poolGroups.has(g),
-  }), [poolGroups]);
+    enabled: (g) => slotOf(g) >= 0,
+  }), [slotOf]);
 
-  const pickedRows = Object.entries(picks).map(([g, id]) => ({
-    g, id, label: tr(`${g}.${id}`), value: Number(getIn(values, [g, id]) ?? 0),
+  const valueOf = (g: string, id: string): number => {
+    const tpl = rollCfg.value?.[g];
+    return Number((tpl ? scope.get([tpl.replace('{id}', id)]) : getIn(values, [g, id])) ?? 0);
+  };
+
+  const pickedRows = Object.entries(picks).map(([slot, { g, id }]) => ({
+    slot, g, id, label: tr(`${g}.${id}`), value: valueOf(g, id),
     specialty: rollCfg.specialties ? String(getIn(values, [rollCfg.specialties, id]) ?? '') : '',
   }));
   const base = pickedRows.reduce((s, r) => s + r.value, 0);
@@ -110,9 +117,9 @@ export function DiceProvider({ values, onRoll, children }: {
                 ) : (
                   <div className="flex flex-wrap gap-1.5">
                     {pickedRows.map((r) => (
-                      <span key={r.g} className="inline-flex items-center gap-1.5 border border-line2 rounded px-2 py-1 text-xs">
+                      <span key={r.slot} className="inline-flex items-center gap-1.5 border border-line2 rounded px-2 py-1 text-xs">
                         {r.label} <b className="font-mono">{r.value}</b>
-                        <button aria-label="remove" onClick={() => setPicks(({ [r.g]: _, ...rest }) => rest)} className="text-text-dim hover:text-brand-bright"><X className="size-3" /></button>
+                        <button aria-label="remove" onClick={() => setPicks(({ [Number(r.slot)]: _, ...rest }) => rest)} className="text-text-dim hover:text-brand-bright"><X className="size-3" /></button>
                       </span>
                     ))}
                   </div>

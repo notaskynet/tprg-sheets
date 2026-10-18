@@ -11,7 +11,7 @@ export interface Character {
   schema: number;
   updatedAt: number;
   values: Values;
-  creation?: { step: number; done: boolean };
+  creation?: { step: number; done: boolean; methods?: Record<string, string> };
 }
 
 export function defaultOfField(f: FieldDef): unknown {
@@ -20,10 +20,11 @@ export function defaultOfField(f: FieldDef): unknown {
     case 'longtext':
     case 'select':
       return f.default;
+    case 'pool':
+      return f.full ? undefined : f.default;
     case 'number':
     case 'percent':
     case 'checkbox':
-    case 'pool':
     case 'checkboxes':
       return f.default;
     case 'dots':

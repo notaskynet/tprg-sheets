@@ -1,6 +1,9 @@
 // Dice mechanics, selected per system by `dice.mechanic`. All take an injectable
 // RNG (returns [0,1)) so tests are deterministic.
 import type { DiceConfig } from '../schema';
+import { rollNotation } from './notation';
+
+export { rollNotation };
 
 export type Rng = () => number;
 const d = (rng: Rng, sides: number) => Math.floor(rng() * sides) + 1;
@@ -86,10 +89,6 @@ function d100(req: RollRequest, rng: Rng): RollResult {
 }
 
 function notation(src: string, rng: Rng): RollResult {
-  const m = /^\s*(\d*)d(\d+)\s*(?:([+-])\s*(\d+))?\s*$/i.exec(src);
-  if (!m) throw new Error(`Bad dice notation "${src}"`);
-  const n = Number(m[1] || 1);
-  const dice = Array.from({ length: n }, () => d(rng, Number(m[2])));
-  const mod = m[3] ? (m[3] === '-' ? -1 : 1) * Number(m[4]) : 0;
-  return { mechanic: 'notation', dice, kind: 'success', result: dice.reduce((a, b) => a + b, 0) + mod };
+  const r = rollNotation(src, rng);
+  return { mechanic: 'notation', dice: r.dice, kind: 'success', result: r.total };
 }

@@ -16,7 +16,7 @@ function render(step: number, patch: Record<string, unknown> = {}) {
   return renderToString(
     <I18nProvider>
       <SystemProvider pkg={pkg}>
-        <Wizard ch={ch} set={() => {}} onStep={() => {}} onFinish={() => {}} onExit={() => {}} />
+        <Wizard ch={ch} set={() => {}} onStep={() => {}} onMethod={() => {}} onFinish={() => {}} onExit={() => {}} />
       </SystemProvider>
     </I18nProvider>,
   );

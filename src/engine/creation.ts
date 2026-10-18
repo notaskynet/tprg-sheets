@@ -16,6 +16,7 @@ export interface StepStatus {
   ranks?: { cat: string | null; spent: number; budget: number }[];
   capViolations?: string[]; // item ids above maxPerItem
   missing?: string[]; // fields/pick: required paths still empty
+  method?: string; // scores: the chosen method
 }
 
 export interface CheckItem {
@@ -37,7 +38,7 @@ export interface CreationReport {
 }
 
 const nonEmpty = (v: unknown) => v != null && v !== '' && v !== 0;
-const n = (v: unknown) => (typeof v === 'number' ? v : 0);
+const n = (v: unknown) => (typeof v === 'number' ? v : v === true ? 1 : 0);
 
 function priorityStatus(pkg: SystemPackage, step: Extract<CreationStep, { kind: 'priority' }>, ch: Character): StepStatus {
   const group = pkg.model.groups[step.group];
@@ -76,6 +77,29 @@ function listStatus(step: Extract<CreationStep, { kind: 'list' }>, ch: Character
     budget: step.budget,
     overflow: Math.max(0, total - step.budget),
   };
+}
+
+function scoresStatus(pkg: SystemPackage, step: Extract<CreationStep, { kind: 'scores' }>, ch: Character): StepStatus {
+  const method = ch.creation?.methods?.[step.id] ?? step.methods[0];
+  const items = groupItems(pkg.model, step.group);
+  const store = (ch.values[step.group] ?? {}) as Record<string, unknown>;
+  const vals = items.map((i) => n(store[i.id]));
+  const base: StepStatus = { id: step.id, kind: step.kind, ok: true, method };
+  if (method === 'pointbuy' && step.pointbuy) {
+    const pb = step.pointbuy;
+    const inRange = vals.every((v) => v >= pb.min && v <= pb.max);
+    const spent = vals.reduce((s, v) => s + (pb.costs[String(v)] ?? 0), 0);
+    return { ...base, ok: inRange && spent <= pb.budget, spent, budget: pb.budget, overflow: Math.max(0, spent - pb.budget), missing: inRange ? [] : ['range'] };
+  }
+  if (method === 'array' && step.array) {
+    const a = [...step.array].sort((x, y) => x - y).join();
+    return { ...base, ok: [...vals].sort((x, y) => x - y).join() === a };
+  }
+  if (method === 'roll') {
+    const def = (pkg.model.groups[step.group].field as { default?: number }).default ?? 0;
+    return { ...base, ok: vals.some((v) => v !== def) };
+  }
+  return base;
 }
 
 export function evaluateCreation(pkg: SystemPackage, ch: Character, scope: Scope = createScope(pkg.model, ch.values)): CreationReport {
@@ -119,11 +143,24 @@ export function evaluateCreation(pkg: SystemPackage, ch: Character, scope: Scope
         checklist.push({ id: step.id, ok: st.ok, labelKey: `steps.${step.id}`, val: st.spent! + st.overflow!, need: step.budget, stepId: step.id, missing: step.budget - st.spent!, over: st.overflow });
         break;
       }
-      case 'pointbuy':
-      case 'array':
-      case 'roll':
-        steps.push({ id: step.id, kind: step.kind, ok: true }); // evaluated when D&D/CoC packages land
+      case 'scores': {
+        const st = scoresStatus(pkg, step, ch);
+        steps.push(st);
+        checklist.push({ id: step.id, ok: st.ok, labelKey: `steps.${step.id}`, stepId: step.id, ...(st.budget != null ? { val: st.spent, need: st.budget, missing: Math.max(0, st.budget - (st.spent ?? 0)), over: st.overflow } : { empty: !st.ok }) });
         break;
+      }
+      case 'spend': {
+        const budget = typeof step.budget === 'number' ? step.budget : Number(scope.run(step.budget) ?? 0);
+        const items = groupItems(pkg.model, step.group);
+        const store = (ch.values[step.group] ?? {}) as Record<string, unknown>;
+        const min = (pkg.model.groups[step.group].field as { min?: number }).min ?? 0;
+        const spent = items.reduce((sum, i) => sum + n(store[i.id]) - min, 0);
+        const capViolations = step.maxPerItem != null ? items.filter((i) => n(store[i.id]) > step.maxPerItem!).map((i) => i.id) : [];
+        const st: StepStatus = { id: step.id, kind: step.kind, ok: spent >= budget, spent: Math.min(spent, budget), budget, overflow: Math.max(0, spent - budget), capViolations };
+        steps.push(st);
+        checklist.push({ id: step.id, ok: st.ok, labelKey: `steps.${step.id}`, val: spent, need: budget, stepId: step.id, missing: Math.max(0, budget - spent), over: st.overflow });
+        break;
+      }
       case 'freebies':
       case 'recap':
         break; // handled below (need the other steps' overflow)
