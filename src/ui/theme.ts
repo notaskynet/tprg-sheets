@@ -48,13 +48,27 @@ export function deriveAccent(hex: string): { brand: string; bright: string; onBr
   return { brand: hex, bright: hslToHex(h, s, Math.min(0.68, l + 0.12)), onBrand: contrastWhite >= 3.5 ? '#ffffff' : '#14121a' };
 }
 
+/** The d20 favicon in the current brand colours (same artwork as public/favicon.svg). */
+export function faviconSvg(brand: string, bright: string): string {
+  const d = 'M16 4.5 26 10.25v11.5L16 27.5 6 21.75V10.25z';
+  const t = 'M16 9.8 21.6 19.4H10.4z';
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><rect width="32" height="32" rx="7" fill="#14121a"/><path d="${d}" fill="${brand}"/><path d="${t}" fill="${bright}"/><g fill="none" stroke="#14121a" stroke-width="1.3" stroke-linejoin="round" stroke-linecap="round"><path d="${d}"/><path d="${t}"/><path d="M16 9.8V4.5M16 9.8 6 10.25M16 9.8l10 .45M21.6 19.4l4.4-8.15M21.6 19.4 26 21.75M21.6 19.4 16 27.5M10.4 19.4 6 10.25M10.4 19.4 6 21.75M10.4 19.4 16 27.5"/></g></svg>`;
+}
+
+function setFavicon(brand: string, bright: string): void {
+  const link = document.querySelector<HTMLLinkElement>('link[rel="icon"]');
+  if (link) link.href = `data:image/svg+xml,${encodeURIComponent(faviconSvg(brand, bright))}`;
+}
+
 export function applyAccent(hex: string | null | undefined): void {
   const el = document.documentElement.style;
   if (!hex) {
     ['--color-brand', '--color-brand-bright', '--color-on-brand'].forEach((v) => el.removeProperty(v));
+    setFavicon('#a01e2e', '#c9304a');
     return;
   }
   const { brand, bright, onBrand } = deriveAccent(hex);
+  setFavicon(brand, bright);
   el.setProperty('--color-brand', brand);
   el.setProperty('--color-brand-bright', bright);
   el.setProperty('--color-on-brand', onBrand);

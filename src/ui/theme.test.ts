@@ -19,3 +19,13 @@ describe('hsv', () => {
     for (const hex of ['#a01e2e', '#4a5bd0', '#ffffff', '#000000', '#8a4fc4']) expect(hsvToHex(hexToHsv(hex))).toBe(hex);
   });
 });
+
+import { faviconSvg } from './theme';
+describe('favicon', () => {
+  it('uses the brand colours', () => {
+    const svg = faviconSvg('#112233', '#445566');
+    expect(svg).toContain('fill="#112233"');
+    expect(svg).toContain('fill="#445566"');
+    expect(svg.startsWith('<svg')).toBe(true);
+  });
+});
