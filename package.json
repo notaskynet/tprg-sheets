@@ -10,11 +10,9 @@
     "preview": "vite preview",
     "test": "vitest run",
     "test:watch": "vitest",
-    "lint": "eslint .",
     "schema": "node scripts/gen-schema.mjs"
   },
   "dependencies": {
-    "@react-pdf/renderer": "^4.5.1",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
@@ -47,5 +45,6 @@
     "typescript": "^6.0.3",
     "vite": "^8.0.14",
     "vitest": "^4.1.7"
-  }
+  },
+  "description": "Character sheets for tabletop RPGs, driven by declarative system packages (TOML)"
 }
