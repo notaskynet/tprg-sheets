@@ -6,6 +6,8 @@ import type { FieldDef } from '@/engine/schema';
 import { useScope, useSystem } from '@/ui/context';
 import { useI18n } from '@/i18n/I18nContext';
 import { DotRow } from '@/ui/primitives';
+import { Popover, PopoverContent, PopoverTrigger } from '@/ui/components/popover';
+import { Command, CommandEmpty, CommandInput, CommandItem, CommandList } from '@/ui/components/command';
 
 export interface Row { id: string; name: string; level: number; note?: string; ref?: string }
 
@@ -21,6 +23,7 @@ export function ListEditor({ path, def, values, set, scopeExpr, readOnly }: {
   const { t } = useI18n();
   const scope = useScope(values);
   const [picker, setPicker] = useState(false);
+  const [query, setQuery] = useState('');
   const rows = (getIn(values, path.split('.')) ?? []) as Row[];
   const catalog = def.suggest;
   const nameOf = (r: Row) => (r.ref && catalog ? tr(`${catalog}.${r.ref}`) : r.name);
@@ -61,16 +64,32 @@ export function ListEditor({ path, def, values, set, scopeExpr, readOnly }: {
       ))}
       {!readOnly && (
         <div className="pt-2.5 print:hidden">
-          {picker ? (
-            <div className="flex flex-wrap gap-1.5">
-              {offered.map((id) => (
-                <button key={id} onClick={() => add({ ref: id })} className="border border-line2 text-text-mute px-2.5 py-1 rounded-sm text-xs hover:text-text hover:border-text-mute transition-colors">{tr(`${catalog}.${id}`)}</button>
-              ))}
-              <button onClick={() => add({})} className="border border-line2 text-text-mute px-2.5 py-1 rounded-sm text-xs">{t('custom')}</button>
-              <button onClick={() => setPicker(false)} className="text-text-dim px-1.5 py-1 text-xs" aria-label="close">×</button>
-            </div>
+          {catalog ? (
+            <Popover open={picker} onOpenChange={(o) => { setPicker(o); if (!o) setQuery(''); }}>
+              <PopoverTrigger className="text-text-dim text-xs py-1 hover:text-text transition-colors">+ {t('addItem').toLowerCase()}</PopoverTrigger>
+              <PopoverContent align="start" className="p-0 w-[min(340px,92vw)] bg-surf border-line2">
+                <Command>
+                  <CommandInput value={query} onValueChange={setQuery} placeholder={t('search')} />
+                  <CommandList className="max-h-[300px]">
+                    <CommandEmpty>{t('noMatch')}</CommandEmpty>
+                    {offered.map((id) => {
+                      const d = tr(`desc.${catalog}.${id}`);
+                      return (
+                        <CommandItem key={id} value={`${tr(`${catalog}.${id}`)} ${d}`} onSelect={() => add({ ref: id })} className="flex-col items-start gap-0.5 py-2">
+                          <span className="text-sm">{tr(`${catalog}.${id}`)}</span>
+                          {d !== id && <span className="text-xs text-text-mute leading-snug">{d}</span>}
+                        </CommandItem>
+                      );
+                    })}
+                    <CommandItem forceMount value={`__custom ${query}`} onSelect={() => add({ name: query.trim() })} className="py-2">
+                      {query.trim() ? `${t('useCustom')} «${query.trim()}»` : t('custom')}
+                    </CommandItem>
+                  </CommandList>
+                </Command>
+              </PopoverContent>
+            </Popover>
           ) : (
-            <button onClick={() => (catalog ? setPicker(true) : add({}))} className="text-text-dim text-xs py-1 hover:text-text transition-colors">+ {t('addItem').toLowerCase()}</button>
+            <button onClick={() => add({})} className="text-text-dim text-xs py-1 hover:text-text transition-colors">+ {t('addItem').toLowerCase()}</button>
           )}
         </div>
       )}

@@ -12,6 +12,7 @@ import { DotRow } from '@/ui/primitives';
 import { FieldEditor } from '@/ui/sheet/fields';
 import { ListEditor } from '@/ui/sheet/ListEditor';
 import { cn } from '@/ui/lib/utils';
+import { reasonOf } from '@/ui/reason';
 
 export interface StepProps<K extends CreationStep['kind'] = CreationStep['kind']> {
   step: Extract<CreationStep, { kind: K }>;
@@ -19,6 +20,7 @@ export interface StepProps<K extends CreationStep['kind'] = CreationStep['kind']
   report: CreationReport;
   values: Record<string, unknown>;
   set: (path: string, value: unknown) => void;
+  onGoto: (stepId: string) => void;
 }
 
 export function StepBody(p: StepProps) {
@@ -184,7 +186,7 @@ function FreebiesStep({ step, status, report, values, set }: StepProps<'freebies
   );
 }
 
-function RecapStep({ step, report, values }: StepProps<'recap'>) {
+function RecapStep({ step, report, values, onGoto }: StepProps<'recap'>) {
   const { pkg, tr } = useSystem();
   const { t } = useI18n();
   const scope = useScope(values);
@@ -209,9 +211,10 @@ function RecapStep({ step, report, values }: StepProps<'recap'>) {
         {issues.length === 0 ? (
           <div className="text-sm text-text-mute">{t('allChecksPassed')}</div>
         ) : issues.map((i) => (
-          <div key={i.id} className="text-[12.5px] text-text-mute py-0.5">
-            · {tr(i.labelKey)}{i.val != null && <span className="font-mono text-text-dim"> — {i.val}{i.need != null ? ` / ${i.need}` : ''}</span>}
-          </div>
+          <button key={i.id} onClick={() => onGoto(i.stepId)} title={t('goToStep')} className="w-full text-left grid grid-cols-[minmax(0,1fr)_auto] gap-x-3 py-1.5 border-b border-dashed border-line last:border-0 hover:bg-surf2 rounded-sm px-1 -mx-1 transition-colors">
+            <span className="text-[13px]">{tr(i.labelKey)}<span className="block text-xs text-text-mute">{reasonOf(i, t)}</span></span>
+            {i.val != null && <span className="font-mono text-[11px] text-text-dim self-center">{i.val}{i.need != null ? ` / ${i.need}` : ''}</span>}
+          </button>
         ))}
       </div>
     </div>

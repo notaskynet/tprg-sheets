@@ -24,6 +24,10 @@ export interface CheckItem {
   labelKey: string; // locale key
   val?: string | number;
   need?: string | number;
+  stepId: string; // the creation step that fixes this item
+  empty?: boolean; // a field that still has no value
+  missing?: number; // points still to spend inside the budget
+  over?: number; // points beyond the budget
 }
 
 export interface CreationReport {
@@ -85,13 +89,13 @@ export function evaluateCreation(pkg: SystemPackage, ch: Character, scope: Scope
         const req = step.required ?? step.fields;
         const missing = req.filter((f) => !nonEmpty(get(f)));
         steps.push({ id: step.id, kind: step.kind, ok: missing.length === 0, missing });
-        for (const f of req) checklist.push({ id: f, ok: nonEmpty(get(f)), labelKey: `fields.${f}` });
+        for (const f of req) checklist.push({ id: f, ok: nonEmpty(get(f)), labelKey: `fields.${f}`, stepId: step.id, empty: !nonEmpty(get(f)) });
         break;
       }
       case 'pick': {
         const ok = nonEmpty(get(step.field));
         steps.push({ id: step.id, kind: step.kind, ok, missing: ok ? [] : [step.field] });
-        checklist.push({ id: step.field, ok, labelKey: `fields.${step.field}` });
+        checklist.push({ id: step.field, ok, labelKey: `fields.${step.field}`, stepId: step.id, empty: !ok });
         break;
       }
       case 'priority': {
@@ -103,13 +107,16 @@ export function evaluateCreation(pkg: SystemPackage, ch: Character, scope: Scope
           labelKey: `steps.${step.id}`,
           val: st.ranks!.map((r) => r.spent).join('/'),
           need: [...step.budgets].sort((a, b) => b - a).join('/'),
+          stepId: step.id,
+          missing: st.ranks!.reduce((m, r) => m + Math.max(0, r.budget - r.spent), 0),
+          over: st.overflow,
         });
         break;
       }
       case 'list': {
         const st = listStatus(step, ch);
         steps.push(st);
-        checklist.push({ id: step.id, ok: st.ok, labelKey: `steps.${step.id}`, val: st.spent! + st.overflow!, need: step.budget });
+        checklist.push({ id: step.id, ok: st.ok, labelKey: `steps.${step.id}`, val: st.spent! + st.overflow!, need: step.budget, stepId: step.id, missing: step.budget - st.spent!, over: st.overflow });
         break;
       }
       case 'pointbuy':
@@ -133,7 +140,7 @@ export function evaluateCreation(pkg: SystemPackage, ch: Character, scope: Scope
     }
     freebies = { spent, budget: fb.budget };
     steps.push({ id: fb.id, kind: 'freebies', ok: spent <= fb.budget, spent, budget: fb.budget, overflow: Math.max(0, spent - fb.budget) });
-    checklist.push({ id: fb.id, ok: spent <= fb.budget, labelKey: `steps.${fb.id}`, val: spent, need: fb.budget });
+    checklist.push({ id: fb.id, ok: spent <= fb.budget, labelKey: `steps.${fb.id}`, val: spent, need: fb.budget, stepId: fb.id, over: Math.max(0, spent - fb.budget) });
   }
   const recap = pkg.creation.steps.find((s) => s.kind === 'recap');
   if (recap) steps.push({ id: recap.id, kind: 'recap', ok: checklist.every((c) => c.ok) });

@@ -1,11 +1,12 @@
 // Single-field editors shared by the sheet (plate / fields blocks) and the wizard.
-import { useEffect, useId, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { FieldDef } from '@/engine/schema';
 import { getIn } from '@/engine/expr/eval';
 import { useSystem } from '@/ui/context';
 import { DotRow } from '@/ui/primitives';
 import { cn } from '@/ui/lib/utils';
 import { Markdown } from '@/ui/Markdown';
+import { Combobox, type Option } from '@/ui/Combobox';
 import { useI18n } from '@/i18n/I18nContext';
 
 const base = 'bg-transparent border-0 border-b border-line2 text-text py-0.5 outline-none focus:border-brand min-w-0 w-full';
@@ -19,24 +20,31 @@ export function FieldEditor({ path, values, set, variant = 'plate', readOnly }: 
 }) {
   const { pkg, tr } = useSystem();
   const def = pkg.model.fields[path] as FieldDef | undefined;
-  const listId = useId();
   if (!def) return null;
   const value = getIn(values, path.split('.'));
   const label = tr(`fields.${path}`);
   const input = cn(base, variant === 'plate' ? 'font-body text-[15px] font-medium' : 'text-sm');
   const wrap = 'flex flex-col gap-[3px] min-w-[100px]';
+  const rawHelp = variant === 'form' ? tr(`help.${path}`) : '';
+  const helpText = rawHelp && rawHelp !== path.split('.').pop() ? rawHelp : undefined;
+  const helpEl = helpText ? <p className="text-xs text-text-mute leading-snug mt-1">{helpText}</p> : null;
+  const desc = (catalog: string, id: string) => {
+    const k = `desc.${catalog}.${id}`;
+    const v = tr(k);
+    return v === id ? undefined : v;
+  };
   const cap = <span className={cn('font-body font-medium tracking-[0.1em] uppercase text-text-mute', variant === 'plate' ? 'text-[11px]' : 'text-[11px]')}>{label}</span>;
 
   switch (def.type) {
     case 'select': {
-      const opts = def.from ? pkg.model.catalogs[def.from].items.map((i) => ({ value: i.id, label: tr(`${def.from}.${i.id}`) })) : (def.options ?? []).map((o) => ({ value: o, label: o }));
+      const opts: Option[] = def.from
+        ? pkg.model.catalogs[def.from].items.map((i) => ({ value: i.id, label: tr(`${def.from}.${i.id}`), desc: desc(def.from!, i.id) }))
+        : (def.options ?? []).map((o) => ({ value: o, label: o }));
       return (
-        <label className={wrap}>{cap}
-          <select disabled={readOnly} className={cn(input, 'field-select cursor-pointer font-body text-sm')} value={String(value ?? '')} onChange={(e) => set(path, e.target.value)}>
-            <option value="">—</option>
-            {opts.map((o) => <option key={o.value} value={o.value} className="bg-surf text-text">{o.label}</option>)}
-          </select>
-        </label>
+        <div className={wrap}>{cap}
+          <Combobox value={String(value ?? '')} options={opts} disabled={readOnly} className={cn(input, 'font-body text-sm')} onChange={(v) => set(path, v)} />
+          {helpEl}
+        </div>
       );
     }
     case 'number':
@@ -61,12 +69,16 @@ export function FieldEditor({ path, values, set, variant = 'plate', readOnly }: 
         </label>
       );
     case 'text': {
-      const sug = def.suggest ? pkg.model.catalogs[def.suggest].items.map((i) => tr(`${def.suggest}.${i.id}`)) : [];
+      const field = (
+        <input readOnly={readOnly} className={input} value={String(value ?? '')} onChange={(e) => set(path, e.target.value)} />
+      );
+      if (!def.suggest) return <label className={wrap}>{cap}{field}{helpEl}</label>;
+      const opts: Option[] = pkg.model.catalogs[def.suggest].items.map((i) => ({ value: tr(`${def.suggest}.${i.id}`), label: tr(`${def.suggest}.${i.id}`), desc: desc(def.suggest!, i.id) }));
       return (
-        <label className={wrap}>{cap}
-          <input readOnly={readOnly} className={input} value={String(value ?? '')} list={sug.length ? listId : undefined} onChange={(e) => set(path, e.target.value)} />
-          {sug.length > 0 && <datalist id={listId}>{sug.map((s) => <option key={s} value={s} />)}</datalist>}
-        </label>
+        <div className={wrap}>{cap}
+          <Combobox value={String(value ?? '')} options={opts} allowCustom disabled={readOnly} className={cn(input, variant === 'plate' ? '' : 'font-body')} onChange={(v) => set(path, v)} />
+          {helpEl}
+        </div>
       );
     }
     default:

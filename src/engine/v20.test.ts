@@ -63,7 +63,13 @@ describe('V20 package', () => {
     for (const [cid, c] of Object.entries(pkg.model.catalogs)) keys.push(...c.items.map((i) => `${cid}.${i.id}`));
     keys.push(...Object.keys(pkg.model.fields).map((f) => `fields.${f}`));
     for (const f of Object.values(pkg.model.fields)) if (f.type === 'damage-track') keys.push(...f.levels.map((l) => `levels.${l}`), ...f.kinds.map((k) => `damage.${k}`));
-    keys.push(...pkg.creation.steps.flatMap((s) => [`steps.${s.id}`, `hints.${s.id}`]));
+    keys.push(...pkg.creation.steps.flatMap((s) => [`steps.${s.id}`, `hints.${s.id}`, `guide.${s.id}`]));
+    // a one-line description for every option the user picks from, and help for every wizard form field
+    for (const [cid, c] of Object.entries(pkg.model.catalogs)) keys.push(...c.items.map((i) => `desc.${cid}.${i.id}`));
+    for (const s of pkg.creation.steps) {
+      if (s.kind === 'fields') keys.push(...s.fields.map((f) => `help.${f}`));
+      if (s.kind === 'pick') keys.push(`help.${s.field}`, ...s.fields.map((f) => `help.${f}`));
+    }
     for (const lang of pkg.manifest.languages) {
       const missing = keys.filter((k) => k !== 'archetypes.title' && pkg.locales[lang][k] == null);
       expect(missing, lang).toEqual([]);
@@ -138,5 +144,18 @@ describe('V20 dice', () => {
     expect(roll(pkg.manifest.dice, { pool: 3, difficulty: 6, specialty: true }, seq(8)).dice).toHaveLength(4);
     expect(roll(pkg.manifest.dice, { pool: 4, difficulty: 6 }, seq(10, 1, 7, 3))).toMatchObject({ successes: 2, ones: 1, result: 1, kind: 'success' });
     expect(roll(pkg.manifest.dice, { pool: 2, difficulty: 6 }, seq(1, 4)).kind).toBe('botch');
+  });
+});
+
+describe('checklist reasons', () => {
+  it('tells what is wrong and which step fixes it', () => {
+    const items = evaluateCreation(pkg, blank()).checklist;
+    const by = (id: string) => items.find((c) => c.id === id)!;
+    expect(by('profile.clan')).toMatchObject({ empty: true, stepId: 'clan' });
+    expect(by('attributes')).toMatchObject({ missing: 15, over: 0, stepId: 'attributes' });
+    expect(by('disciplines')).toMatchObject({ missing: 3, stepId: 'disciplines' });
+    const over = evaluateCreation(pkg, set(budgeted(), { 'attributes.stamina': 2 })).checklist;
+    expect(over.find((c) => c.id === 'attributes')).toMatchObject({ over: 1 });
+    expect(over.find((c) => c.id === 'freebies')!.ok).toBe(true);
   });
 });

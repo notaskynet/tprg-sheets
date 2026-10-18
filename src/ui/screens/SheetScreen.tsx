@@ -19,6 +19,7 @@ import { getActiveSession } from '@/share/active';
 import { Popover, PopoverContent, PopoverTrigger } from '@/ui/components/popover';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/ui/components/dropdown-menu';
 import { cn } from '@/ui/lib/utils';
+import { reasonOf } from '@/ui/reason';
 import { AccentPicker } from '@/ui/AccentPicker';
 import { ShareDialog } from '@/ui/ShareDialog';
 import { applyAccent, getSavedAccent } from '@/ui/theme';
@@ -51,7 +52,7 @@ export function SheetScreen({ charId }: { charId: string }) {
         />
       ) : (
         <DiceProvider values={editor.ch.values} onRoll={(e) => getActiveSession()?.roll({ label: e.label, summary: e.summary })}>
-          <SheetBody ch={editor.ch} set={editor.set} saveState={editor.saveState} onWizard={() => editor.replace({ ...editor.ch!, creation: { step: 0, done: false } })} />
+          <SheetBody ch={editor.ch} set={editor.set} saveState={editor.saveState} onWizard={(stepId) => editor.replace({ ...editor.ch!, creation: { step: Math.max(0, pkg.creation.steps.findIndex((x) => x.id === stepId)), done: false } })} />
         </DiceProvider>
       )}
     </SystemProvider>
@@ -62,7 +63,7 @@ export function SheetBody({ ch, set, saveState = 'saved', onWizard, readOnly, ba
   ch: Character;
   set: (p: string, v: unknown) => void;
   saveState?: 'saving' | 'saved' | 'offline';
-  onWizard?: () => void;
+  onWizard?: (stepId?: string) => void;
   readOnly?: boolean;
   banner?: ReactNode;
   headerExtra?: ReactNode;
@@ -103,8 +104,8 @@ export function SheetBody({ ch, set, saveState = 'saved', onWizard, readOnly, ba
               </div>
               <AccentPicker systemAccent={pkg.manifest.accent} />
               {headerExtra}
-              {!readOnly && <Checklist report={report} okCount={okCount} allOk={allOk} />}
-              {!readOnly && <Actions ch={ch} title={title} onWizard={onWizard && pkg.creation.steps.length ? onWizard : undefined} />}
+              {!readOnly && <Checklist report={report} okCount={okCount} allOk={allOk} onGoto={onWizard && pkg.creation.steps.length ? onWizard : undefined} />}
+              {!readOnly && <Actions ch={ch} title={title} onWizard={onWizard && pkg.creation.steps.length ? () => onWizard() : undefined} />}
             </div>
           </div>
           {titlePath && (
@@ -123,7 +124,7 @@ export function SheetBody({ ch, set, saveState = 'saved', onWizard, readOnly, ba
   );
 }
 
-function Checklist({ report, okCount, allOk }: { report: ReturnType<typeof evaluateCreation>; okCount: number; allOk: boolean }) {
+function Checklist({ report, okCount, allOk, onGoto }: { report: ReturnType<typeof evaluateCreation>; okCount: number; allOk: boolean; onGoto?: (stepId: string) => void }) {
   const { tr } = useSystem();
   const { t } = useI18n();
   const total = report.checklist.length;
@@ -137,13 +138,20 @@ function Checklist({ report, okCount, allOk }: { report: ReturnType<typeof evalu
           <h3 className="font-display text-lg font-medium flex-1">{t('checklist')}</h3>
           <span className={cn('font-mono text-[10px] px-1.5 py-0.5 rounded-sm border', allOk ? 'bg-good/20 text-good border-good/35' : 'bg-brand/15 text-brand-bright border-brand/35')}>{okCount}/{total}</span>
         </div>
-        {report.checklist.map((c) => (
-          <div key={c.id} className="grid grid-cols-[16px_1fr_auto] items-center gap-2 py-1.5 text-xs">
-            <span className={cn('w-4 h-4 rounded-full border inline-flex items-center justify-center text-[10px] text-on-brand', c.ok ? 'bg-good border-good' : 'bg-brand border-brand')}>{c.ok ? '✓' : '!'}</span>
-            <span className="min-w-0 leading-tight">{tr(c.labelKey)}</span>
-            {c.val != null && <span className="font-mono text-[10.5px] text-text-dim whitespace-nowrap tabular-nums">{c.val}{c.need != null ? ` / ${c.need}` : ''}</span>}
-          </div>
-        ))}
+        {report.checklist.map((c) => {
+          const why = reasonOf(c, t);
+          const body = (
+            <>
+              <span className={cn('w-4 h-4 rounded-full border inline-flex items-center justify-center text-[10px] text-white mt-0.5', c.ok ? 'bg-good border-good' : 'bg-brand border-brand')}>{c.ok ? '✓' : '!'}</span>
+              <span className="min-w-0 leading-tight">{tr(c.labelKey)}{why && <span className="block text-[11px] text-text-mute mt-0.5">{why}</span>}</span>
+              {c.val != null && <span className="font-mono text-[10.5px] text-text-dim whitespace-nowrap tabular-nums">{c.val}{c.need != null ? ` / ${c.need}` : ''}</span>}
+            </>
+          );
+          const cls = 'grid grid-cols-[16px_1fr_auto] items-start gap-2 py-1.5 text-xs w-full text-left';
+          return !c.ok && onGoto
+            ? <button key={c.id} onClick={() => onGoto(c.stepId)} title={t('goToStep')} className={cn(cls, 'hover:bg-surf2 rounded-sm transition-colors')}>{body}</button>
+            : <div key={c.id} className={cls}>{body}</div>;
+        })}
       </PopoverContent>
     </Popover>
   );

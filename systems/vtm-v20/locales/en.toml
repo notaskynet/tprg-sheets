@@ -259,3 +259,139 @@ bloodMax = "Blood Pool"
 bloodPerTurn = "per turn"
 humanity = "Humanity"
 willpower = "Willpower"
+
+[desc.clans]
+brujah = "Passionate rebels and idealists; quick to anger."
+gangrel = "Feral loners who shift into beasts."
+malkavian = "Touched by madness, sees hidden truths."
+nosferatu = "Hideous spies and brokers of secrets."
+toreador = "Artists and aesthetes obsessed with beauty."
+tremere = "Blood-sorcerers with a rigid hierarchy."
+ventrue = "Aristocrats who rule the Camarilla."
+assamite = "Assassins bound by a blood oath."
+followers_of_set = "Serpent cult of tempters and corrupters."
+giovanni = "Necromancer family of wealth and death."
+lasombra = "Ambitious shadow-wielders of the Sabbat."
+ravnos = "Wandering illusionists and tricksters."
+tzimisce = "Fleshcrafting lords bound to their land."
+caitiff = "Clanless outcasts with no inherited disciplines."
+
+[desc.disciplines]
+animalism = "Speak to and command animals."
+auspex = "Heightened senses and supernatural insight."
+celerity = "Supernatural speed."
+chimerstry = "Illusions that fool every sense."
+dementation = "Spread madness and obsession."
+dominate = "Control minds with a glance."
+fortitude = "Withstand damage and harm."
+necromancy = "Magic of death and the dead."
+obfuscate = "Stay unseen and unnoticed."
+obtenebration = "Shape and command living shadow."
+potence = "Supernatural physical strength."
+presence = "Awe, charm and fear."
+protean = "Shift into beasts and mist."
+quietus = "Silence and blood-poison for killers."
+serpentis = "Serpent powers: hypnosis and venom."
+thaumaturgy = "Blood magic and rituals."
+vicissitude = "Sculpt flesh and bone."
+
+[desc.backgrounds]
+allies = "People who help with skills and favors."
+contacts = "Informants across society."
+fame = "Recognition among mortals."
+herd = "A reliable source of blood."
+influence = "Sway over mortal institutions."
+mentor = "An elder who guides and shields you."
+resources = "Wealth and material means."
+retainers = "Loyal servants or ghouls."
+status = "Standing among vampires."
+domain = "A place you control and defend."
+
+[desc.archetypes]
+architect = "Builds something that outlasts them."
+rebel = "Defies rules and authority on principle."
+caregiver = "Protects and nurtures others."
+bon_vivant = "Lives for pleasure and the moment."
+bravo = "Rules through force and intimidation."
+savage = "Driven by instinct, distrusts civilization."
+defender = "Guards a person, cause or place."
+gallant = "Seeks attention and admiration."
+conformist = "Follows a stronger leader or the group."
+critic = "Judges quality; nothing is good enough."
+curious = "Must know how and why things work."
+thinker = "Prefers ideas and analysis to action."
+loner = "Keeps people at a distance."
+perfectionist = "Chases an ideal, never satisfied."
+competitor = "Needs to win and be the best."
+servant = "Finds meaning in serving others."
+judge = "Weighs right and wrong, decides fates."
+trickster = "Mischief, humor and chaos."
+fanatic = "Lives for a single overriding cause."
+schemer = "Plots and manipulates from the shadows."
+
+[help]
+"profile.name" = "The name you go by now. It can be a mortal name, a nickname, or an alias."
+"profile.player" = "Your own name, so the table knows who plays whom."
+"profile.chronicle" = "The name of the game or campaign you play this character in."
+"profile.concept" = "One line that sums them up: who they were and who they are now. E.g. “disgraced detective”."
+"profile.nature" = "Your true self: what actually drives you and how you regain Willpower. Pick one or write your own."
+"profile.demeanor" = "The mask you show others. It can differ a lot from your Nature."
+"profile.clan" = "Your vampire lineage. It sets your three in-clan disciplines and a clan weakness."
+"profile.generation" = "How distant you are from Caine. Lower is more powerful. 13th is the default for new characters; it sets your blood pool."
+"profile.sire" = "The vampire who made you. Can be left blank for now."
+"weakness" = "The curse every member of your clan carries. See the rulebook for your clan."
+
+[guide]
+concept = """
+**Start with the idea, not the numbers.** Ask: who was this person before the Embrace, and what do they want now?
+
+- **Name & Concept** are enough to begin. Example: *“Marta Kowalska, night-shift nurse”*.
+- **Nature** is who they really are; **Demeanor** is the face they show. A gentle Demeanor over a ruthless Nature makes a great character.
+- You can change any of this later."""
+clan = """
+**Your clan is your vampire family.** It decides which three disciplines come easily to you and what curse you carry.
+
+- Read the one-line description under each clan and pick the one that fits your concept.
+- **Generation** is 13 for new characters unless your storyteller says otherwise. It sets your blood pool.
+- **Caitiff** have no clan and may choose any disciplines."""
+attributes = """
+**Attributes are what you are naturally capable of.** Every attribute starts at 1.
+
+- Choose which group matters most: that gets **7** dots, the next **5**, the last **3**.
+- Physical = Strength, Dexterity, Stamina. Social = Charisma, Manipulation, Appearance. Mental = Perception, Intelligence, Wits.
+- 1 is poor, 2 average, 3 good, 4 excellent, 5 peak of human ability."""
+abilities = """
+**Abilities are what you have learned.** They start at 0.
+
+- Again pick a primary, secondary and tertiary group: **13 / 9 / 5** dots between Talents, Skills and Knowledges.
+- No more than **3** dots in one ability at this stage (dots beyond that cost freebies).
+- Think of your concept: a nurse leans on Empathy and Medicine."""
+disciplines = """
+**Disciplines are your supernatural powers.**
+
+- Spend **3** dots, usually on your clan's disciplines (the quick-pick shows them first).
+- One dot in three different disciplines, or three dots in one, are both common.
+- Powers unlock by level: 1 is a taste, 5 is mastery."""
+backgrounds = """
+**Backgrounds are what you have in the world beyond your own skills.**
+
+- Spend **5** dots on allies, money, contacts, a mentor, a place to sleep…
+- Ask what helps your concept: a fixer wants Contacts, a noble wants Resources and Status.
+- Be ready to explain each one in a sentence."""
+virtues = """
+**Virtues are your moral compass.**
+
+- You get **7** dots over the starting 1 in each.
+- Conscience + Self-Control give your **Humanity**; Courage gives your **Willpower**.
+- Higher Humanity keeps the Beast at bay; higher Willpower lets you push through."""
+freebies = """
+**Freebie points are for fine-tuning.** You have **15**.
+
+- Cost per extra dot: attribute 5, ability 2, discipline 7, background 1, virtue 2, Willpower 1, Humanity 2.
+- Anything you put above the earlier budgets is charged here automatically.
+- You do not have to spend them all."""
+recap = """
+**Last look.** Everything marked with a cross still needs attention.
+
+- Tap an unresolved item to jump to its step.
+- You can finish with open items and fix them later from the sheet."""
