@@ -50,7 +50,8 @@ export function FieldEditor({ path, values, set, variant = 'plate', readOnly }: 
     case 'number':
       return (
         <label className={wrap}>{cap}
-          <input readOnly={readOnly} className={input} type="number" min={def.min} max={def.max} value={Number(value ?? 0)} onChange={(e) => set(path, Number(e.target.value))} />
+          <NumberInput className={input} value={Number(value ?? 0)} readOnly={readOnly} onChange={(n) => set(path, n)} />
+          {helpEl}
         </label>
       );
     case 'longtext':
@@ -116,5 +117,25 @@ function MarkdownField({ value, onChange, readOnly }: { value: string; onChange:
     >
       {value.trim() ? <Markdown source={value} onChange={readOnly ? undefined : onChange} /> : <span className="text-text-dim italic">{t('notesPlaceholder')}</span>}
     </div>
+  );
+}
+
+/** Free-typing number box: can be cleared while editing, no browser min/max validation. */
+function NumberInput({ value, onChange, className, readOnly }: { value: number; onChange: (n: number) => void; className?: string; readOnly?: boolean }) {
+  const [draft, setDraft] = useState<string | null>(null);
+  return (
+    <input
+      readOnly={readOnly}
+      className={className}
+      inputMode="decimal"
+      value={draft ?? String(value)}
+      onChange={(e) => {
+        const v = e.target.value;
+        setDraft(v);
+        const n = Number(v.replace(',', '.'));
+        if (v.trim() !== '' && Number.isFinite(n)) onChange(n);
+      }}
+      onBlur={() => setDraft(null)}
+    />
   );
 }
