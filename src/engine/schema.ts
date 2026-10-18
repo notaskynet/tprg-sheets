@@ -45,11 +45,14 @@ export const FieldDef = z.discriminatedUnion('type', [
 export type FieldDef = z.infer<typeof FieldDef>;
 
 const GroupItem = z.looseObject({ id, cat: id.optional() });
-export const Group = z.object({
-  categories: z.array(id).default([]),
-  field: FieldDef,
-  items: z.array(GroupItem).min(1),
-});
+export const Group = z
+  .object({
+    categories: z.array(id).default([]),
+    field: FieldDef,
+    items: z.array(GroupItem).default([]),
+    itemsFrom: id.optional(), // reuse another group's items (e.g. specialties per ability)
+  })
+  .refine((g) => g.items.length > 0 || g.itemsFrom, { message: 'needs items or itemsFrom' });
 export type Group = z.infer<typeof Group>;
 
 export const Catalog = z.object({ items: z.array(z.looseObject({ id })).default([]) });
@@ -64,6 +67,13 @@ export const Model = z.object({
   tables: z.record(id, z.record(z.string(), TableRow)).default({}),
 });
 export type Model = z.infer<typeof Model>;
+
+/** Items of a group, following `itemsFrom`. */
+export function groupItems(model: Model, gid: string): Group['items'] {
+  const g = model.groups[gid];
+  if (!g) return [];
+  return g.itemsFrom ? groupItems(model, g.itemsFrom) : g.items;
+}
 
 // ---------- dice ----------
 
@@ -94,7 +104,10 @@ export const Section = z.object({
   columns: z.number().int().min(1).max(4).default(1),
   blocks: z.array(Block).default([]),
 });
-export const Sheet = z.object({ sections: z.array(Section).default([]) });
+export const Sheet = z.object({
+  roll: z.looseObject({}).optional(), // which groups form a roll pool, specialties group, penalty derived
+  sections: z.array(Section).default([]),
+});
 export type Sheet = z.infer<typeof Sheet>;
 
 // ---------- creation ----------
@@ -102,12 +115,18 @@ export type Sheet = z.infer<typeof Sheet>;
 const stepBase = { id, title: z.string().optional() }; // title = label key, default `steps.<id>`
 
 export const CreationStep = z.discriminatedUnion('kind', [
-  z.object({ ...stepBase, kind: z.literal('fields'), fields: z.array(z.string()).min(1) }),
+  z.object({
+    ...stepBase,
+    kind: z.literal('fields'),
+    fields: z.array(z.string()).min(1),
+    required: z.array(z.string()).optional(), // default: all fields
+  }),
   z.object({
     ...stepBase,
     kind: z.literal('pick'),
     field: z.string(),
     from: id, // catalog id
+    fields: z.array(z.string()).default([]), // extra fields shown on the same step
   }),
   z.object({
     ...stepBase,
@@ -139,8 +158,15 @@ export const CreationStep = z.discriminatedUnion('kind', [
     ...stepBase,
     kind: z.literal('freebies'),
     budget: z.number(),
-    // cost per extra point, by group id / list-field path / derived-base pair
-    costs: z.record(z.string(), z.number()),
+    // Each rule charges `per` freebies for every point beyond a base:
+    //  - { step, per }: overflow of an earlier budget step (priority / list / pointbuy)
+    //  - { field, per }: a numeric field that stores points bought above the base (value × per)
+    costs: z.array(
+      z.union([
+        z.object({ step: id, per: z.number() }),
+        z.object({ field: z.string(), per: z.number() }),
+      ]),
+    ),
   }),
   z.object({ ...stepBase, kind: z.literal('recap') }),
 ]);

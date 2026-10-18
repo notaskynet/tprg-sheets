@@ -1,0 +1,68 @@
+# V20 creation: 7/5/3 attributes, 13/9/5 abilities (max 3 each), 3 disciplines,
+# 5 backgrounds, 7 virtue dots, then 15 freebie points.
+
+[[steps]]
+id = "concept"
+kind = "fields"
+fields = ["profile.name", "profile.player", "profile.chronicle", "profile.concept", "profile.nature", "profile.demeanor"]
+required = ["profile.name", "profile.concept"]
+
+[[steps]]
+id = "clan"
+kind = "pick"
+field = "profile.clan"
+from = "clans"
+fields = ["profile.generation", "profile.sire", "weakness"]
+
+[[steps]]
+id = "attributes"
+kind = "priority"
+group = "attributes"
+budgets = [7, 5, 3]
+base = 1
+
+[[steps]]
+id = "abilities"
+kind = "priority"
+group = "abilities"
+budgets = [13, 9, 5]
+base = 0
+maxPerItem = 3
+
+[[steps]]
+id = "disciplines"
+kind = "list"
+field = "disciplines"
+budget = 3
+scope = "lookup('clans', profile.clan, 'disciplines')"
+
+[[steps]]
+id = "backgrounds"
+kind = "list"
+field = "backgrounds"
+budget = 5
+
+[[steps]]
+id = "virtues"
+kind = "priority"
+group = "virtues"
+budgets = [7]
+base = 1
+
+[[steps]]
+id = "freebies"
+kind = "freebies"
+budget = 15
+costs = [
+  { step = "attributes", per = 5 },
+  { step = "abilities", per = 2 },
+  { step = "disciplines", per = 7 },
+  { step = "backgrounds", per = 1 },
+  { step = "virtues", per = 2 },
+  { field = "humanityBonus", per = 2 },
+  { field = "willpowerBonus", per = 1 },
+]
+
+[[steps]]
+id = "recap"
+kind = "recap"

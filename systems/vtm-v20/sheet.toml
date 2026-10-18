@@ -1,0 +1,60 @@
+# Layout of the sheet. Block types are rendered by ui/sheet; `group-columns`
+# draws one column per category of a group.
+
+[roll]
+pools = [["attributes", "abilities"]]
+specialties = "specialties"
+penalty = "healthPenalty"
+
+[[sections]]
+id = "plate"
+blocks = [
+  { type = "plate", fields = ["profile.player", "profile.chronicle", "profile.concept", "profile.clan", "profile.generation", "profile.nature", "profile.demeanor", "profile.sire"] },
+]
+
+[[sections]]
+id = "attributes"
+title = "attributes.title"
+columns = 3
+blocks = [{ type = "group-columns", group = "attributes" }]
+
+[[sections]]
+id = "abilities"
+title = "abilities.title"
+columns = 3
+blocks = [{ type = "group-columns", group = "abilities", specialties = "specialties" }]
+
+[[sections]]
+id = "advantages"
+title = "labels.advantages"
+columns = 3
+blocks = [
+  { type = "list", field = "disciplines" },
+  { type = "list", field = "backgrounds" },
+  { type = "group", group = "virtues" },
+]
+
+[[sections]]
+id = "state"
+columns = 3
+blocks = [
+  { type = "track", field = "health", penalty = "healthPenalty" },
+  { type = "stepper", field = "humanityBonus", derived = "humanity", max = 10 },
+  { type = "stepper", field = "willpowerBonus", derived = "willpower", max = 10 },
+  { type = "pool", field = "willpowerCurrent", display = "boxes" },
+  { type = "pool", field = "blood", display = "boxes", note = "bloodPerTurn" },
+  { type = "fields", fields = ["experience.total", "experience.spent", "weakness"] },
+]
+
+[[sections]]
+id = "extras"
+columns = 2
+blocks = [
+  { type = "list", field = "merits" },
+  { type = "list", field = "flaws" },
+]
+
+[[sections]]
+id = "notes"
+title = "labels.notes"
+blocks = [{ type = "text", field = "notes" }]

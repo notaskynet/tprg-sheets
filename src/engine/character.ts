@@ -1,6 +1,6 @@
 // Generic character: system ref + a values tree shaped by the system's model.
 // Derived values are never stored; see expr/createScope.
-import type { FieldDef, Model } from './schema';
+import { groupItems, type FieldDef, type Model } from './schema';
 import { getIn, type Values } from './expr/eval';
 
 export const CHARACTER_SCHEMA = 1;
@@ -45,7 +45,7 @@ export function setIn<T>(obj: T, path: string[], value: unknown): T {
 export function defaultValues(model: Model): Values {
   let v: Values = {};
   for (const [gid, g] of Object.entries(model.groups)) {
-    for (const it of g.items) v = setIn(v, [gid, it.id], defaultOfField(g.field));
+    for (const it of groupItems(model, gid)) v = setIn(v, [gid, it.id], defaultOfField(g.field));
   }
   for (const [path, f] of Object.entries(model.fields)) v = setIn(v, path.split('.'), defaultOfField(f));
   return v;

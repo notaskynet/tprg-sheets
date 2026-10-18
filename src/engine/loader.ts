@@ -89,8 +89,8 @@ export function loadPackage(files: Files): SystemPackage {
     if ((s.kind === 'priority' || s.kind === 'pointbuy' || s.kind === 'array' || s.kind === 'roll') && !model.groups[s.group])
       issues.push(`creation.toml: step "${s.id}" — unknown group "${s.group}"`);
     if (s.kind === 'pick' && !model.catalogs[s.from]) issues.push(`creation.toml: step "${s.id}" — unknown catalog "${s.from}"`);
-    if (s.kind === 'priority' && model.groups[s.group] && s.budgets.length !== model.groups[s.group].categories.length)
-      issues.push(`creation.toml: step "${s.id}" — ${s.budgets.length} budgets for ${model.groups[s.group].categories.length} categories`);
+    if (s.kind === 'priority' && model.groups[s.group] && s.budgets.length !== (model.groups[s.group].categories.length || 1))
+      issues.push(`creation.toml: step "${s.id}" — ${s.budgets.length} budgets for ${model.groups[s.group].categories.length || 1} categories`);
   }
   for (const l of manifest.languages) if (!locales[l]) issues.push(`locales/${l}.toml: declared in system.toml but missing`);
 

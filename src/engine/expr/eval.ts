@@ -1,6 +1,6 @@
 // Evaluator + scope for the expression language. A Scope binds a model to one
 // character's values and lazily computes (and memoizes) `derived` entries.
-import type { Model } from '../schema';
+import { groupItems, type Model } from '../schema';
 import { parse, type Node } from './parse';
 
 export type Values = Record<string, unknown>;
@@ -85,7 +85,7 @@ export function createScope(model: Model, values: Values): Scope {
     const [head, second] = n.p;
     const group = model.groups[head];
     if (group) {
-      const items = group.items.filter((it) => n.p.length === 1 || it.cat === second);
+      const items = groupItems(model, head).filter((it) => n.p.length === 1 || it.cat === second);
       const store = (values[head] ?? {}) as Record<string, unknown>;
       return items.reduce((s, it) => s + num(store[it.id] ?? defaultOf(group.field)), 0);
     }
