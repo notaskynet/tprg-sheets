@@ -39,7 +39,7 @@ export function ListEditor({ path, def, values, set, scopeExpr, readOnly }: {
     <div>
       {rows.length === 0 && <div className="text-text-dim text-xs py-1.5">—</div>}
       {rows.map((r, i) => (
-        <div key={r.id} className="grid grid-cols-[1fr_auto] items-center gap-2.5 py-[5px] border-b border-dashed border-line last:border-0 group">
+        <div key={r.id} className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-2.5 py-[5px] border-b border-dashed border-line last:border-0 group">
           <div className="flex items-center gap-1.5 text-[13px] min-w-0">
             <input
               readOnly={readOnly}

@@ -45,7 +45,7 @@ export function DamageTrack({ kinds, levels, value, onChange, levelLabel, penalt
       {levels.map((l, i) => {
         const k = kindAt(i);
         return (
-          <div key={l} className="grid grid-cols-[1fr_auto_auto] items-center gap-2.5 py-1.5 print:py-[2px] border-b border-dashed border-line last:border-0">
+          <div key={l} className="grid grid-cols-[minmax(0,1fr)_auto_auto] items-center gap-2.5 py-1.5 print:py-[2px] border-b border-dashed border-line last:border-0">
             <span className="text-xs">{levelLabel(l)}</span>
             <span className="font-mono text-[11px] text-text-mute min-w-7 text-right">{penaltyFor(i)}</span>
             <button

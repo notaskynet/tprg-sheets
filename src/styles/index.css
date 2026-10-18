@@ -165,12 +165,19 @@ body {
     print-color-adjust: exact;
   }
 
-  body {
-    background: #fff;
+  /* The page margin area is painted with the root/canvas background. */
+  html,
+  body,
+  #root {
+    background: #fff !important;
+    color-scheme: light;
+    height: auto !important;
+    margin: 0;
   }
 
   /* Belt-and-braces alongside Tailwind's print:hidden variant. */
-  .print-hidden {
+  .print-hidden,
+  [data-sonner-toaster] {
     display: none !important;
   }
 
@@ -181,7 +188,13 @@ body {
   /* Compact the sheet for A4. The multi-column layout is forced on via
      print:grid-cols-* in the markup (the md: breakpoint doesn't trigger at
      page width); here we just trim wasted vertical space. */
+  .print-sheet,
+  .print-sheet * {
+    min-width: 0 !important;
+  }
   .print-sheet {
+    width: 100%;
+    box-sizing: border-box;
     max-width: 100% !important;
     padding: 0 !important;
     gap: 9px !important;

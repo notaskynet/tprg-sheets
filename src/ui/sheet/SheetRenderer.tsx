@@ -91,7 +91,7 @@ function Block({ cfg, ...p }: { cfg: BlockCfg } & SheetProps) {
                 const val = Number(getIn(p.values, [gid, it.id]) ?? field.min ?? 0);
                 const sp = spec ? String(getIn(p.values, [spec, it.id]) ?? '') : '';
                 return (
-                  <div key={it.id} className="grid grid-cols-[1fr_auto] items-center gap-2.5 py-[5px] print:py-[2px] border-b border-dashed border-line last:border-0">
+                  <div key={it.id} className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-2.5 py-[5px] print:py-[2px] border-b border-dashed border-line last:border-0">
                     <span className="flex items-baseline gap-1.5 text-[13px] min-w-0">
                       {canRoll && !p.readOnly ? (
                         <button type="button" onClick={() => dice.pick(gid, it.id)} className="text-left hover:text-brand-bright transition-colors">{tr(`${gid}.${it.id}`)}</button>
