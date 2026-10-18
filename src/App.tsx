@@ -3,6 +3,7 @@ import { toast } from 'sonner';
 import { I18nProvider, useI18n } from '@/i18n/I18nContext';
 import { Toaster } from '@/ui/components/sonner';
 import { Library } from '@/ui/screens/Library';
+import { SharedView } from '@/ui/screens/SharedView';
 import { SheetScreen } from '@/ui/screens/SheetScreen';
 import { initStorage, putCharacter } from '@/storage/db';
 import { initPackages, getPackage } from '@/systems/registry';
@@ -27,7 +28,9 @@ async function boot(): Promise<number> {
 
 function Router() {
   const route = useRoute();
-  return route.name === 'sheet' ? <SheetScreen key={route.charId} charId={route.charId} /> : <Library />;
+  if (route.name === 'sheet') return <SheetScreen key={route.charId} charId={route.charId} />;
+  if (route.name === 'shared') return <SharedView data={route.data} />;
+  return <Library />;
 }
 
 function Shell() {

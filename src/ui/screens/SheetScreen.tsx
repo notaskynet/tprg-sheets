@@ -1,5 +1,5 @@
 // One character: header (back, name, language, checklist, actions) + rendered sheet.
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import { ArrowLeft, MoreVertical } from 'lucide-react';
 import { useI18n } from '@/i18n/I18nContext';
 import { AVAILABLE_LANGS } from '@/i18n/lang';
@@ -19,6 +19,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/ui/components/popover
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/ui/components/dropdown-menu';
 import { cn } from '@/ui/lib/utils';
 import { AccentPicker } from '@/ui/AccentPicker';
+import { ShareDialog } from '@/ui/ShareDialog';
 import { applyAccent, getSavedAccent } from '@/ui/theme';
 import type { Character } from '@/engine/character';
 
@@ -56,7 +57,15 @@ export function SheetScreen({ charId }: { charId: string }) {
   );
 }
 
-function SheetBody({ ch, set, saveState, onWizard }: { ch: Character; set: (p: string, v: unknown) => void; saveState: 'saving' | 'saved' | 'offline'; onWizard: () => void }) {
+export function SheetBody({ ch, set, saveState = 'saved', onWizard, readOnly, banner, headerExtra }: {
+  ch: Character;
+  set: (p: string, v: unknown) => void;
+  saveState?: 'saving' | 'saved' | 'offline';
+  onWizard?: () => void;
+  readOnly?: boolean;
+  banner?: ReactNode;
+  headerExtra?: ReactNode;
+}) {
   const { pkg } = useSystem();
   const { t, lang, setLang } = useI18n();
   const scope = useScope(ch.values);
@@ -73,14 +82,15 @@ function SheetBody({ ch, set, saveState, onWizard }: { ch: Character; set: (p: s
 
   return (
     <div>
+      {banner && <div className="print-hidden sticky top-0 z-50 px-4 py-2.5 bg-gold/10 border-b border-gold/30 text-gold font-mono text-[11px] tracking-[0.12em] uppercase flex flex-wrap items-center justify-center gap-x-4 gap-y-1.5 backdrop-blur">{banner}</div>}
       <div className="print-sheet max-w-[1200px] mx-auto px-4 sm:px-9 pt-6 sm:pt-8 pb-[60px] flex flex-col gap-[26px]">
         <header className="flex flex-col gap-3.5">
           <div className="h-0.5 bg-text" />
           <div className="flex flex-wrap items-center justify-between gap-y-2 gap-x-3">
             <div className="flex items-center gap-3.5 min-w-0">
-              <button onClick={goLibrary} className="print-hidden inline-flex items-center gap-1.5 border border-line2 text-text-mute rounded px-2.5 py-[5px] text-[11px] hover:text-text hover:border-text-mute transition-colors shrink-0">
+              {!readOnly && <button onClick={goLibrary} className="print-hidden inline-flex items-center gap-1.5 border border-line2 text-text-mute rounded px-2.5 py-[5px] text-[11px] hover:text-text hover:border-text-mute transition-colors shrink-0">
                 <ArrowLeft className="size-3" /> {t('myCharacters')}
-              </button>
+              </button>}
               <div className="hidden lg:block font-body font-medium text-[11px] tracking-[0.1em] text-text-mute truncate uppercase">{pkg.manifest.name[lang] ?? Object.values(pkg.manifest.name)[0]}</div>
             </div>
             <div className="print-hidden flex items-center gap-2.5">
@@ -91,20 +101,22 @@ function SheetBody({ ch, set, saveState, onWizard }: { ch: Character; set: (p: s
                 ))}
               </div>
               <AccentPicker systemAccent={pkg.manifest.accent} />
-              <Checklist report={report} okCount={okCount} allOk={allOk} />
-              <Actions ch={ch} title={title} onWizard={pkg.creation.steps.length ? onWizard : undefined} />
+              {headerExtra}
+              {!readOnly && <Checklist report={report} okCount={okCount} allOk={allOk} />}
+              {!readOnly && <Actions ch={ch} title={title} onWizard={onWizard && pkg.creation.steps.length ? onWizard : undefined} />}
             </div>
           </div>
           {titlePath && (
             <input
               className="bg-transparent border-0 outline-none font-display text-5xl print:text-3xl font-medium leading-none w-full min-w-0 placeholder:text-text-dim placeholder:italic"
               value={title}
+              readOnly={readOnly}
               onChange={(e) => set(titlePath, e.target.value)}
               placeholder={t('unnamed')}
             />
           )}
         </header>
-        <SheetRenderer values={ch.values} set={set} />
+        <div className={readOnly ? 'pointer-events-none contents' : 'contents'}><SheetRenderer values={ch.values} set={set} readOnly={readOnly} /></div>
       </div>
     </div>
   );
@@ -138,15 +150,20 @@ function Checklist({ report, okCount, allOk }: { report: ReturnType<typeof evalu
 
 function Actions({ ch, title, onWizard }: { ch: Character; title: string; onWizard?: () => void }) {
   const { t } = useI18n();
+  const [sharing, setSharing] = useState(false);
   return (
+    <>
+    <ShareDialog ch={ch} title={title} open={sharing} onOpenChange={setSharing} />
     <DropdownMenu>
       <DropdownMenuTrigger className="border border-line2 text-text-mute rounded p-1.5 hover:text-text hover:border-text-mute transition-colors" aria-label="menu"><MoreVertical className="size-4" /></DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         {onWizard && <DropdownMenuItem onSelect={onWizard}>{t('openWizard')}</DropdownMenuItem>}
+        <DropdownMenuItem onSelect={() => setSharing(true)}>{t('share')}…</DropdownMenuItem>
         <DropdownMenuItem onSelect={() => downloadCharacter(ch, title)}>{t('exportFile')}</DropdownMenuItem>
         <DropdownMenuItem onSelect={() => window.print()}>{t('print')}</DropdownMenuItem>
         <DropdownMenuItem variant="destructive" onSelect={() => { if (confirm(`${t('delete')}: ${title || t('unnamed')}?`)) { deleteCharacter(ch.id); goLibrary(); } }}>{t('delete')}</DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
+    </>
   );
 }
