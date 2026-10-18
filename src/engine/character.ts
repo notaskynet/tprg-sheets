@@ -21,7 +21,7 @@ export function defaultOfField(f: FieldDef): unknown {
     case 'select':
       return f.default;
     case 'pool':
-      return f.full ? undefined : f.default;
+      return f.full || f.initial ? undefined : f.default;
     case 'number':
     case 'percent':
     case 'checkbox':

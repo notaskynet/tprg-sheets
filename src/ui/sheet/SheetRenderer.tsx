@@ -179,7 +179,7 @@ function Block({ cfg, ...p }: { cfg: BlockCfg } & SheetProps) {
       if (def?.type !== 'pool') return null;
       const max = Math.max(Number(scope.run(def.max) ?? 0), 1);
       const raw = getIn(p.values, path.split('.'));
-      const value = raw === undefined && def.full ? max : Number(raw ?? 0);
+      const value = raw === undefined ? (def.initial ? Number(scope.run(def.initial) ?? 0) : def.full ? max : 0) : Number(raw);
       const noteKey = cfg.note as string | undefined;
       const hint = noteKey ? `${tr(`derived.${noteKey}`)}: ${scope.get([noteKey])}` : undefined;
       return (

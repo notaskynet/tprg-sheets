@@ -44,6 +44,7 @@ export const FieldDef = z.discriminatedUnion('type', [
     max: expr,
     default: z.number().default(0),
     full: z.boolean().default(false), // untouched value means "at max" (hit points start full)
+    initial: expr.optional(), // untouched value means this expression (sanity starts at POW)
   }),
   z.object({ type: z.literal('checkboxes'), count: z.number().int().positive(), default: z.number().default(0) }),
 ]);

@@ -1,0 +1,118 @@
+[labels]
+notes = "Notes"
+
+[characteristics]
+title = "Characteristics"
+str = "Strength (STR)"
+con = "Constitution (CON)"
+siz = "Size (SIZ)"
+dex = "Dexterity (DEX)"
+app = "Appearance (APP)"
+int = "Intelligence (INT)"
+pow = "Power (POW)"
+edu = "Education (EDU)"
+luck = "Luck"
+
+[skills]
+title = "Skills"
+cat.combat = "Combat"
+cat.physical = "Physical"
+cat.social = "Social"
+cat.mental = "Knowledge"
+cat.technical = "Technical & perception"
+dodge = "Dodge"
+fighting_brawl = "Fighting (Brawl)"
+firearms_handgun = "Firearms (Handgun)"
+firearms_rifle = "Firearms (Rifle/Shotgun)"
+throw = "Throw"
+climb = "Climb"
+jump = "Jump"
+swim = "Swim"
+stealth = "Stealth"
+ride = "Ride"
+drive_auto = "Drive Auto"
+pilot = "Pilot"
+op_hv_machine = "Operate Heavy Machinery"
+charm = "Charm"
+fast_talk = "Fast Talk"
+intimidate = "Intimidate"
+persuade = "Persuade"
+psychology = "Psychology"
+disguise = "Disguise"
+sleight_of_hand = "Sleight of Hand"
+accounting = "Accounting"
+anthropology = "Anthropology"
+appraise = "Appraise"
+archaeology = "Archaeology"
+history = "History"
+language_own = "Language (Own)"
+language_other = "Language (Other)"
+law = "Law"
+library_use = "Library Use"
+medicine = "Medicine"
+natural_world = "Natural World"
+navigate = "Navigate"
+occult = "Occult"
+science = "Science"
+psychoanalysis = "Psychoanalysis"
+cthulhu_mythos = "Cthulhu Mythos"
+art_craft = "Art/Craft"
+credit_rating = "Credit Rating"
+elec_repair = "Electrical Repair"
+mech_repair = "Mechanical Repair"
+locksmith = "Locksmith"
+first_aid = "First Aid"
+survival = "Survival"
+track = "Track"
+listen = "Listen"
+spot_hidden = "Spot Hidden"
+
+[fields]
+"profile.name" = "Name"
+"profile.player" = "Player"
+"profile.occupation" = "Occupation"
+"profile.age" = "Age"
+"profile.residence" = "Residence"
+"hp" = "Hit Points"
+"mp" = "Magic Points"
+"sanity" = "Sanity"
+"weapons" = "Weapons"
+"possessions" = "Possessions"
+"backstory" = "Backstory"
+"notes" = "Notes"
+"luck" = "Luck"
+
+[derived]
+hp_max = "Max HP"
+mp_max = "Max MP"
+san_max = "Max Sanity"
+luck = "Luck"
+db = "Damage Bonus"
+build = "Build"
+move = "Move Rate"
+
+[steps]
+concept = "Investigator"
+characteristics = "Characteristics"
+skills = "Skills"
+recap = "Summary"
+
+[hints]
+concept = "Who is your investigator? A name and an occupation."
+characteristics = "Roll the characteristics: 3d6×5, and (2d6+6)×5 for Size, Intelligence and Education."
+skills = "Spend skill points: EDU×4 plus INT×2."
+recap = "Check the summary."
+
+[guide]
+characteristics = """
+**Один бросок на характеристику.** Кнопка ↻ перебрасывает только одну.
+
+- STR, CON, DEX, APP, POW и Удача: **3d6 × 5**.
+- SIZ, INT, EDU: **(2d6 + 6) × 5**.
+- Здоровье, очки магии и Рассудок считаются автоматически."""
+skills = """
+**Очки навыков = EDU × 4 + INT × 2.** Добавляйте очки в навыки, которые подсказывают профессия и интересы.
+
+- Число показывает **добавленные** очки; итог (база + добавленное) рядом.
+- Держите навык не выше **75** при создании. Мифы Ктулху остаются 0.
+- База Уклонения и Родного языка берётся из DEX и EDU автоматически."""

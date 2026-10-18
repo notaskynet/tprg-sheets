@@ -1,0 +1,48 @@
+[roll]
+pools = [["skills", "characteristics"]]
+[roll.value]
+skills = "skill_{id}"
+
+[[sections]]
+id = "plate"
+blocks = [
+  { type = "plate", fields = ["profile.player", "profile.occupation", "profile.age", "profile.residence"] },
+]
+
+[[sections]]
+id = "characteristics"
+title = "characteristics.title"
+columns = 2
+blocks = [
+  { type = "group", group = "characteristics", derived = ["{id}_half", "{id}_fifth"] },
+  { type = "stack", blocks = [
+    { type = "pool", field = "hp" },
+    { type = "pool", field = "sanity" },
+    { type = "pool", field = "mp" },
+    { type = "stats", items = ["db", "build", "move"] },
+  ] },
+]
+
+[[sections]]
+id = "skills"
+title = "skills.title"
+columns = 3
+blocks = [{ type = "group-columns", group = "skills", derived = ["skill_{id}", "skill_{id}_half", "skill_{id}_fifth"] }]
+
+[[sections]]
+id = "gear"
+columns = 2
+blocks = [
+  { type = "list", field = "weapons" },
+  { type = "list", field = "possessions" },
+]
+
+[[sections]]
+id = "backstory"
+title = "fields.backstory"
+blocks = [{ type = "text", field = "backstory" }]
+
+[[sections]]
+id = "notes"
+title = "labels.notes"
+blocks = [{ type = "text", field = "notes" }]

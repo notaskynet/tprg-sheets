@@ -1,0 +1,248 @@
+# Call of Cthulhu 7e — percentile skills. A skill's stored value is the points you added;
+# the total is base + added (see [derived]).
+
+[groups.characteristics]
+field = { type = "number", min = 0, max = 99, default = 0 }
+items = [
+  { id = "str" },
+  { id = "con" },
+  { id = "siz" },
+  { id = "dex" },
+  { id = "app" },
+  { id = "int" },
+  { id = "pow" },
+  { id = "edu" },
+  { id = "luck" },
+]
+
+[groups.skills]
+categories = ["combat", "physical", "social", "mental", "technical"]
+field = { type = "number", min = 0, max = 99, default = 0 }
+items = [
+  { id = "dodge", cat = "combat" },
+  { id = "fighting_brawl", cat = "combat" },
+  { id = "firearms_handgun", cat = "combat" },
+  { id = "firearms_rifle", cat = "combat" },
+  { id = "throw", cat = "combat" },
+  { id = "climb", cat = "physical" },
+  { id = "jump", cat = "physical" },
+  { id = "swim", cat = "physical" },
+  { id = "stealth", cat = "physical" },
+  { id = "ride", cat = "physical" },
+  { id = "drive_auto", cat = "physical" },
+  { id = "pilot", cat = "physical" },
+  { id = "op_hv_machine", cat = "physical" },
+  { id = "charm", cat = "social" },
+  { id = "fast_talk", cat = "social" },
+  { id = "intimidate", cat = "social" },
+  { id = "persuade", cat = "social" },
+  { id = "psychology", cat = "social" },
+  { id = "disguise", cat = "social" },
+  { id = "sleight_of_hand", cat = "social" },
+  { id = "accounting", cat = "mental" },
+  { id = "anthropology", cat = "mental" },
+  { id = "appraise", cat = "mental" },
+  { id = "archaeology", cat = "mental" },
+  { id = "history", cat = "mental" },
+  { id = "language_own", cat = "mental" },
+  { id = "language_other", cat = "mental" },
+  { id = "law", cat = "mental" },
+  { id = "library_use", cat = "mental" },
+  { id = "medicine", cat = "mental" },
+  { id = "natural_world", cat = "mental" },
+  { id = "navigate", cat = "mental" },
+  { id = "occult", cat = "mental" },
+  { id = "science", cat = "mental" },
+  { id = "psychoanalysis", cat = "mental" },
+  { id = "cthulhu_mythos", cat = "mental" },
+  { id = "art_craft", cat = "technical" },
+  { id = "credit_rating", cat = "technical" },
+  { id = "elec_repair", cat = "technical" },
+  { id = "mech_repair", cat = "technical" },
+  { id = "locksmith", cat = "technical" },
+  { id = "first_aid", cat = "technical" },
+  { id = "survival", cat = "technical" },
+  { id = "track", cat = "technical" },
+  { id = "listen", cat = "technical" },
+  { id = "spot_hidden", cat = "technical" },
+]
+
+[fields]
+"profile.name" = { type = "text" }
+"profile.player" = { type = "text" }
+"profile.occupation" = { type = "text" }
+"profile.age" = { type = "number", min = 15, max = 90, default = 25 }
+"profile.residence" = { type = "text" }
+hp = { type = "pool", max = "hp_max", full = true }
+mp = { type = "pool", max = "mp_max", full = true }
+sanity = { type = "pool", max = "san_max", initial = "characteristics.pow" }
+weapons = { type = "list", item = "note" }
+possessions = { type = "list", item = "note" }
+backstory = { type = "longtext" }
+notes = { type = "longtext" }
+
+[derived]
+hp_max = "floor((characteristics.con + characteristics.siz) / 10)"
+mp_max = "floor(characteristics.pow / 5)"
+san_max = "99 - skills.cthulhu_mythos"
+sb = "characteristics.str + characteristics.siz"
+db = "if(sb < 65, '-2', if(sb < 85, '-1', if(sb < 125, '0', if(sb < 165, '+1D4', '+1D6'))))"
+build = "if(sb < 65, -2, if(sb < 85, -1, if(sb < 125, 0, if(sb < 165, 1, 2))))"
+move = "if(characteristics.dex < characteristics.siz and characteristics.str < characteristics.siz, 7, if(characteristics.dex > characteristics.siz and characteristics.str > characteristics.siz, 9, 8))"
+luck = "characteristics.luck"
+str_half = "floor(characteristics.str / 2)"
+str_fifth = "floor(characteristics.str / 5)"
+con_half = "floor(characteristics.con / 2)"
+con_fifth = "floor(characteristics.con / 5)"
+siz_half = "floor(characteristics.siz / 2)"
+siz_fifth = "floor(characteristics.siz / 5)"
+dex_half = "floor(characteristics.dex / 2)"
+dex_fifth = "floor(characteristics.dex / 5)"
+app_half = "floor(characteristics.app / 2)"
+app_fifth = "floor(characteristics.app / 5)"
+int_half = "floor(characteristics.int / 2)"
+int_fifth = "floor(characteristics.int / 5)"
+pow_half = "floor(characteristics.pow / 2)"
+pow_fifth = "floor(characteristics.pow / 5)"
+edu_half = "floor(characteristics.edu / 2)"
+edu_fifth = "floor(characteristics.edu / 5)"
+luck_half = "floor(characteristics.luck / 2)"
+luck_fifth = "floor(characteristics.luck / 5)"
+skill_dodge = "floor(characteristics.dex / 2) + skills.dodge"
+skill_dodge_half = "floor(skill_dodge / 2)"
+skill_dodge_fifth = "floor(skill_dodge / 5)"
+skill_fighting_brawl = "25 + skills.fighting_brawl"
+skill_fighting_brawl_half = "floor(skill_fighting_brawl / 2)"
+skill_fighting_brawl_fifth = "floor(skill_fighting_brawl / 5)"
+skill_firearms_handgun = "20 + skills.firearms_handgun"
+skill_firearms_handgun_half = "floor(skill_firearms_handgun / 2)"
+skill_firearms_handgun_fifth = "floor(skill_firearms_handgun / 5)"
+skill_firearms_rifle = "25 + skills.firearms_rifle"
+skill_firearms_rifle_half = "floor(skill_firearms_rifle / 2)"
+skill_firearms_rifle_fifth = "floor(skill_firearms_rifle / 5)"
+skill_throw = "20 + skills.throw"
+skill_throw_half = "floor(skill_throw / 2)"
+skill_throw_fifth = "floor(skill_throw / 5)"
+skill_climb = "20 + skills.climb"
+skill_climb_half = "floor(skill_climb / 2)"
+skill_climb_fifth = "floor(skill_climb / 5)"
+skill_jump = "20 + skills.jump"
+skill_jump_half = "floor(skill_jump / 2)"
+skill_jump_fifth = "floor(skill_jump / 5)"
+skill_swim = "20 + skills.swim"
+skill_swim_half = "floor(skill_swim / 2)"
+skill_swim_fifth = "floor(skill_swim / 5)"
+skill_stealth = "20 + skills.stealth"
+skill_stealth_half = "floor(skill_stealth / 2)"
+skill_stealth_fifth = "floor(skill_stealth / 5)"
+skill_ride = "5 + skills.ride"
+skill_ride_half = "floor(skill_ride / 2)"
+skill_ride_fifth = "floor(skill_ride / 5)"
+skill_drive_auto = "20 + skills.drive_auto"
+skill_drive_auto_half = "floor(skill_drive_auto / 2)"
+skill_drive_auto_fifth = "floor(skill_drive_auto / 5)"
+skill_pilot = "1 + skills.pilot"
+skill_pilot_half = "floor(skill_pilot / 2)"
+skill_pilot_fifth = "floor(skill_pilot / 5)"
+skill_op_hv_machine = "1 + skills.op_hv_machine"
+skill_op_hv_machine_half = "floor(skill_op_hv_machine / 2)"
+skill_op_hv_machine_fifth = "floor(skill_op_hv_machine / 5)"
+skill_charm = "15 + skills.charm"
+skill_charm_half = "floor(skill_charm / 2)"
+skill_charm_fifth = "floor(skill_charm / 5)"
+skill_fast_talk = "5 + skills.fast_talk"
+skill_fast_talk_half = "floor(skill_fast_talk / 2)"
+skill_fast_talk_fifth = "floor(skill_fast_talk / 5)"
+skill_intimidate = "15 + skills.intimidate"
+skill_intimidate_half = "floor(skill_intimidate / 2)"
+skill_intimidate_fifth = "floor(skill_intimidate / 5)"
+skill_persuade = "10 + skills.persuade"
+skill_persuade_half = "floor(skill_persuade / 2)"
+skill_persuade_fifth = "floor(skill_persuade / 5)"
+skill_psychology = "10 + skills.psychology"
+skill_psychology_half = "floor(skill_psychology / 2)"
+skill_psychology_fifth = "floor(skill_psychology / 5)"
+skill_disguise = "5 + skills.disguise"
+skill_disguise_half = "floor(skill_disguise / 2)"
+skill_disguise_fifth = "floor(skill_disguise / 5)"
+skill_sleight_of_hand = "10 + skills.sleight_of_hand"
+skill_sleight_of_hand_half = "floor(skill_sleight_of_hand / 2)"
+skill_sleight_of_hand_fifth = "floor(skill_sleight_of_hand / 5)"
+skill_accounting = "5 + skills.accounting"
+skill_accounting_half = "floor(skill_accounting / 2)"
+skill_accounting_fifth = "floor(skill_accounting / 5)"
+skill_anthropology = "1 + skills.anthropology"
+skill_anthropology_half = "floor(skill_anthropology / 2)"
+skill_anthropology_fifth = "floor(skill_anthropology / 5)"
+skill_appraise = "5 + skills.appraise"
+skill_appraise_half = "floor(skill_appraise / 2)"
+skill_appraise_fifth = "floor(skill_appraise / 5)"
+skill_archaeology = "1 + skills.archaeology"
+skill_archaeology_half = "floor(skill_archaeology / 2)"
+skill_archaeology_fifth = "floor(skill_archaeology / 5)"
+skill_history = "5 + skills.history"
+skill_history_half = "floor(skill_history / 2)"
+skill_history_fifth = "floor(skill_history / 5)"
+skill_language_own = "characteristics.edu + skills.language_own"
+skill_language_own_half = "floor(skill_language_own / 2)"
+skill_language_own_fifth = "floor(skill_language_own / 5)"
+skill_language_other = "1 + skills.language_other"
+skill_language_other_half = "floor(skill_language_other / 2)"
+skill_language_other_fifth = "floor(skill_language_other / 5)"
+skill_law = "5 + skills.law"
+skill_law_half = "floor(skill_law / 2)"
+skill_law_fifth = "floor(skill_law / 5)"
+skill_library_use = "20 + skills.library_use"
+skill_library_use_half = "floor(skill_library_use / 2)"
+skill_library_use_fifth = "floor(skill_library_use / 5)"
+skill_medicine = "1 + skills.medicine"
+skill_medicine_half = "floor(skill_medicine / 2)"
+skill_medicine_fifth = "floor(skill_medicine / 5)"
+skill_natural_world = "10 + skills.natural_world"
+skill_natural_world_half = "floor(skill_natural_world / 2)"
+skill_natural_world_fifth = "floor(skill_natural_world / 5)"
+skill_navigate = "10 + skills.navigate"
+skill_navigate_half = "floor(skill_navigate / 2)"
+skill_navigate_fifth = "floor(skill_navigate / 5)"
+skill_occult = "5 + skills.occult"
+skill_occult_half = "floor(skill_occult / 2)"
+skill_occult_fifth = "floor(skill_occult / 5)"
+skill_science = "1 + skills.science"
+skill_science_half = "floor(skill_science / 2)"
+skill_science_fifth = "floor(skill_science / 5)"
+skill_psychoanalysis = "1 + skills.psychoanalysis"
+skill_psychoanalysis_half = "floor(skill_psychoanalysis / 2)"
+skill_psychoanalysis_fifth = "floor(skill_psychoanalysis / 5)"
+skill_cthulhu_mythos = "0 + skills.cthulhu_mythos"
+skill_cthulhu_mythos_half = "floor(skill_cthulhu_mythos / 2)"
+skill_cthulhu_mythos_fifth = "floor(skill_cthulhu_mythos / 5)"
+skill_art_craft = "5 + skills.art_craft"
+skill_art_craft_half = "floor(skill_art_craft / 2)"
+skill_art_craft_fifth = "floor(skill_art_craft / 5)"
+skill_credit_rating = "0 + skills.credit_rating"
+skill_credit_rating_half = "floor(skill_credit_rating / 2)"
+skill_credit_rating_fifth = "floor(skill_credit_rating / 5)"
+skill_elec_repair = "10 + skills.elec_repair"
+skill_elec_repair_half = "floor(skill_elec_repair / 2)"
+skill_elec_repair_fifth = "floor(skill_elec_repair / 5)"
+skill_mech_repair = "10 + skills.mech_repair"
+skill_mech_repair_half = "floor(skill_mech_repair / 2)"
+skill_mech_repair_fifth = "floor(skill_mech_repair / 5)"
+skill_locksmith = "1 + skills.locksmith"
+skill_locksmith_half = "floor(skill_locksmith / 2)"
+skill_locksmith_fifth = "floor(skill_locksmith / 5)"
+skill_first_aid = "30 + skills.first_aid"
+skill_first_aid_half = "floor(skill_first_aid / 2)"
+skill_first_aid_fifth = "floor(skill_first_aid / 5)"
+skill_survival = "10 + skills.survival"
+skill_survival_half = "floor(skill_survival / 2)"
+skill_survival_fifth = "floor(skill_survival / 5)"
+skill_track = "10 + skills.track"
+skill_track_half = "floor(skill_track / 2)"
+skill_track_fifth = "floor(skill_track / 5)"
+skill_listen = "20 + skills.listen"
+skill_listen_half = "floor(skill_listen / 2)"
+skill_listen_fifth = "floor(skill_listen / 5)"
+skill_spot_hidden = "25 + skills.spot_hidden"
+skill_spot_hidden_half = "floor(skill_spot_hidden / 2)"
+skill_spot_hidden_fifth = "floor(skill_spot_hidden / 5)"

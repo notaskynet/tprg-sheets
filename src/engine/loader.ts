@@ -83,7 +83,10 @@ export function loadPackage(files: Files): SystemPackage {
   };
   for (const [k, src] of Object.entries(model.derived)) checkExpr(`model.toml: derived.${k}`, src);
   for (const [k, f] of Object.entries(model.fields)) {
-    if (f.type === 'pool') checkExpr(`model.toml: fields.${k}.max`, f.max);
+    if (f.type === 'pool') {
+      checkExpr(`model.toml: fields.${k}.max`, f.max);
+      if (f.initial) checkExpr(`model.toml: fields.${k}.initial`, f.initial);
+    }
     if (f.type === 'select' && f.from && !model.catalogs[f.from]) issues.push(`model.toml: fields.${k}.from — unknown catalog "${f.from}"`);
   }
   for (const s of creation.steps) {

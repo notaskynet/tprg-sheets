@@ -1,0 +1,16 @@
+id = "coc7"
+version = "1.0.0"
+languages = ["en", "ru"]
+name = { en = "Call of Cthulhu 7e", ru = "Зов Ктулху 7e" }
+accent = "#3f8f86"
+credits = "Fan-made sheet implementing the percentile mechanics of Call of Cthulhu 7th Edition. Not affiliated with or endorsed by Chaosium Inc."
+
+[summary]
+title = "profile.name"
+subtitle = ["profile.occupation"]
+stats = ["hp_max", "san_max", "luck"]
+
+# Roll d100 at or under the skill: regular, hard (1/2) and extreme (1/5) successes;
+# bonus and penalty dice.
+[dice]
+mechanic = "d100-under"

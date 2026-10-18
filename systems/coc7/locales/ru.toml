@@ -1,0 +1,118 @@
+[labels]
+notes = "Заметки"
+
+[characteristics]
+title = "Характеристики"
+str = "Сила (STR)"
+con = "Телосложение (CON)"
+siz = "Размер (SIZ)"
+dex = "Ловкость (DEX)"
+app = "Внешность (APP)"
+int = "Интеллект (INT)"
+pow = "Мощь (POW)"
+edu = "Образование (EDU)"
+luck = "Удача"
+
+[skills]
+title = "Навыки"
+cat.combat = "Бой"
+cat.physical = "Физические"
+cat.social = "Социальные"
+cat.mental = "Знания"
+cat.technical = "Технические и восприятие"
+dodge = "Уклонение"
+fighting_brawl = "Драка"
+firearms_handgun = "Огнестрельное (пистолет)"
+firearms_rifle = "Огнестрельное (винтовка/дробовик)"
+throw = "Метание"
+climb = "Лазание"
+jump = "Прыжки"
+swim = "Плавание"
+stealth = "Скрытность"
+ride = "Верховая езда"
+drive_auto = "Вождение автомобиля"
+pilot = "Пилотирование"
+op_hv_machine = "Управление тяжёлой техникой"
+charm = "Очарование"
+fast_talk = "Красноречие"
+intimidate = "Запугивание"
+persuade = "Убеждение"
+psychology = "Психология"
+disguise = "Маскировка"
+sleight_of_hand = "Ловкость рук"
+accounting = "Бухгалтерия"
+anthropology = "Антропология"
+appraise = "Оценка"
+archaeology = "Археология"
+history = "История"
+language_own = "Родной язык"
+language_other = "Иностранный язык"
+law = "Юриспруденция"
+library_use = "Работа в библиотеке"
+medicine = "Медицина"
+natural_world = "Естествознание"
+navigate = "Ориентирование"
+occult = "Оккультизм"
+science = "Наука"
+psychoanalysis = "Психоанализ"
+cthulhu_mythos = "Мифы Ктулху"
+art_craft = "Искусство/ремесло"
+credit_rating = "Кредитоспособность"
+elec_repair = "Электрика"
+mech_repair = "Механика"
+locksmith = "Слесарное дело"
+first_aid = "Первая помощь"
+survival = "Выживание"
+track = "Выслеживание"
+listen = "Слух"
+spot_hidden = "Внимательность"
+
+[fields]
+"profile.name" = "Имя"
+"profile.player" = "Игрок"
+"profile.occupation" = "Профессия"
+"profile.age" = "Возраст"
+"profile.residence" = "Место жительства"
+"hp" = "Здоровье"
+"mp" = "Очки магии"
+"sanity" = "Рассудок"
+"weapons" = "Оружие"
+"possessions" = "Имущество"
+"backstory" = "Предыстория"
+"notes" = "Заметки"
+"luck" = "Удача"
+
+[derived]
+hp_max = "Максимум здоровья"
+mp_max = "Максимум очков магии"
+san_max = "Максимум рассудка"
+luck = "Удача"
+db = "Бонус урона"
+build = "Телосложение"
+move = "Скорость"
+
+[steps]
+concept = "Сыщик"
+characteristics = "Характеристики"
+skills = "Навыки"
+recap = "Итоги"
+
+[hints]
+concept = "Кто ваш сыщик? Имя и профессия."
+characteristics = "Бросьте характеристики: 3d6×5, а Размер, Интеллект и Образование (2d6+6)×5."
+skills = "Распределите очки навыков: Образование×4 плюс Интеллект×2."
+recap = "Проверьте итоги."
+
+[guide]
+characteristics = """
+**Roll once per characteristic.** The ↻ button rerolls a single one.
+
+- STR, CON, DEX, APP, POW and Luck: **3d6 × 5**.
+- SIZ, INT, EDU: **(2d6 + 6) × 5**.
+- Hit points, magic points and Sanity are worked out for you."""
+skills = """
+**Skill points = EDU × 4 + INT × 2.** Add points to the skills your occupation and interests suggest.
+
+- The number shows **added** points; the total (base + added) appears next to it.
+- Keep a skill at **75 or less** during creation. Cthulhu Mythos stays at 0.
+- Dodge and Language (Own) get their base from DEX and EDU automatically."""
