@@ -71,15 +71,16 @@ export function Library({ join }: { join?: string }) {
         <div className="flex items-center gap-3 shrink-0">
           <button onClick={() => setSession(true)} title={t('game')} className="inline-flex items-center gap-1.5 border border-line2 text-text-mute rounded px-3 py-1.5 text-xs hover:text-text hover:border-text-mute transition-colors"><Users className="size-3.5" /><span className="hidden sm:inline">{t('game')}</span></button>
           <button onClick={() => setSystems(true)} title={t('systems')} className="inline-flex items-center gap-1.5 border border-line2 text-text-mute rounded px-3 py-1.5 text-xs hover:text-text hover:border-text-mute transition-colors"><Package className="size-3.5" /><span className="hidden sm:inline">{t('systems')}</span></button>
-          <AccentPicker />
-          <AccountButton />
           <button onClick={() => fileRef.current?.click()} className="border border-line2 text-text-mute rounded px-3 py-1.5 text-xs hover:text-text hover:border-text-mute transition-colors">{t('importFile')}</button>
           <input ref={fileRef} type="file" accept=".json,application/json" hidden onChange={(e) => { onFile(e.target.files?.[0]); e.target.value = ''; }} />
+          <span className="h-5 w-px bg-line2" aria-hidden />
+          <AccentPicker />
           <div className="inline-flex p-0.5 border border-line2 rounded font-mono text-[11px]">
             {AVAILABLE_LANGS.map((l) => (
               <button key={l.code} onClick={() => setLang(l.code)} className={`px-2 py-1 rounded-[3px] transition-colors ${l.code === lang ? 'bg-text text-bg' : 'text-text-mute hover:text-text'}`}>{l.code.toUpperCase()}</button>
             ))}
           </div>
+          <AccountButton />
         </div>
       </header>
 

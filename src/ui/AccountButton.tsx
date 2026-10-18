@@ -7,6 +7,7 @@ import { signOutAndClear, useSyncState } from '@/cloud/sync';
 import { goLibrary } from '@/routing';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/ui/components/dropdown-menu';
 
+const Divider = () => <span className="h-5 w-px bg-line2" aria-hidden />;
 const btn = 'inline-flex items-center gap-1.5 border border-line2 text-text-mute rounded px-3 py-1.5 text-xs hover:text-text hover:border-text-mute transition-colors';
 
 export function AccountButton() {
@@ -25,7 +26,7 @@ export function AccountButton() {
       console.error('sign-in failed', e);
       toast.error(`${t('signInFailed')}${e?.code ? ` (${e.code})` : ''}`);
     });
-    return <button onClick={go} title={t('signIn')} className={btn}><LogIn className="size-3.5" /><span className="hidden sm:inline">{t('signIn')}</span></button>;
+    return <><Divider /><button onClick={go} title={t('signIn')} className={btn}><LogIn className="size-3.5" /><span className="hidden sm:inline">{t('signIn')}</span></button></>;
   }
 
   const status = sync === 'error'
@@ -35,6 +36,8 @@ export function AccountButton() {
       : { icon: <Check className="size-3.5 text-good" />, text: t('syncSynced') };
 
   return (
+    <>
+    <Divider />
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <button title={user.name ?? user.email ?? ''} className="relative inline-flex size-8 items-center justify-center overflow-hidden rounded-full border border-line2 bg-surf text-xs text-text-mute hover:border-text-mute">
@@ -51,5 +54,6 @@ export function AccountButton() {
         <DropdownMenuItem onSelect={() => void leave()}><LogOut className="size-3.5" />{t('signOut')}</DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
+    </>
   );
 }
