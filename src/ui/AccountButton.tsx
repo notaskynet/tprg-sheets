@@ -21,7 +21,9 @@ export function AccountButton() {
   if (!user) {
     const go = () => signIn().catch((e: { code?: string }) => {
       // Closing the popup is not an error worth a toast.
-      if (e?.code !== 'auth/popup-closed-by-user' && e?.code !== 'auth/cancelled-popup-request') toast.error(t('signInFailed'));
+      if (e?.code === 'auth/popup-closed-by-user' || e?.code === 'auth/cancelled-popup-request') return;
+      console.error('sign-in failed', e);
+      toast.error(`${t('signInFailed')}${e?.code ? ` (${e.code})` : ''}`);
     });
     return <button onClick={go} title={t('signIn')} className={btn}><LogIn className="size-3.5" /><span className="hidden sm:inline">{t('signIn')}</span></button>;
   }
