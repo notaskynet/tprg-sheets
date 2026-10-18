@@ -41,6 +41,7 @@ id = "subclass"
 kind = "pick"
 field = "profile.subclass"
 from = "subclasses"
+fields = ["profile.subclassName"]
 when = "profile.class != '' and level >= lookup('classes', profile.class, 'subclassLevel')"
 
 [[steps]]

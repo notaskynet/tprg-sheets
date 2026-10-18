@@ -142,6 +142,12 @@ describe('D&D 5e package: class, race and background data', () => {
     // a stale sub-race of another race is ignored
     expect(d(set(hill, { 'profile.race': 'human' }), 'wis_score')).toBe(11); // human +1, no hill bonus
   });
+  it('every class accepts a custom subclass with its own name', () => {
+    for (const c of pkg.model.catalogs.classes.items) {
+      const ch = set(blank(), { 'profile.class': c.id, 'profile.subclass': 'other', 'profile.subclassName': 'Homebrew', level: 20 });
+      expect(ids(ch), c.id).toContain('custom_subclass');
+    }
+  });
   it('subclass features unlock by level', () => {
     const cleric = (level: number) => set(blank(), { 'profile.class': 'cleric', 'profile.subclass': 'life', level });
     expect(ids(cleric(1))).toContain('disciple_of_life');
