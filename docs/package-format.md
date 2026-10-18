@@ -33,6 +33,7 @@ id = "my-system"            # lowercase letters, digits, "-"; unique; built-in i
 version = "1.0.0"
 languages = ["en", "ru"]    # each needs locales/<lang>.toml
 name = { en = "My System", ru = "Моя система" }
+description = { en = "One sentence about the game.", ru = "Одно предложение об игре." }   # shown in the Systems list
 accent = "#a01e2e"          # optional default brand colour (the user can override it)
 credits = "Licence / attribution line shown in the Systems list"
 

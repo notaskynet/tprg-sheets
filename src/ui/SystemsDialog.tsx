@@ -49,7 +49,8 @@ export function SystemsDialog({ open, onOpenChange }: { open: boolean; onOpenCha
               <div className="min-w-0 flex-1">
                 <div className="font-display text-lg font-semibold truncate">{localize(p.manifest.name, lang)}</div>
                 <div className="font-mono text-[10px] text-text-dim">{p.manifest.id} · v{p.manifest.version} · {isBuiltin(p.manifest.id) ? t('builtIn') : t('customSystem')}</div>
-                {p.manifest.credits && <p className="text-[11px] text-text-mute mt-1 leading-snug">{p.manifest.credits}</p>}
+                {p.manifest.description && <p className="text-[13px] text-text-mute mt-1.5 leading-snug">{localize(p.manifest.description, lang)}</p>}
+                {p.manifest.credits && <p className="text-[10.5px] text-text-dim mt-1.5 leading-snug">{p.manifest.credits}</p>}
               </div>
               <button onClick={() => exportZip(p.manifest.id)} title={t('exportSystem')} aria-label={t('exportSystem')} className="size-9 shrink-0 border border-line2 rounded-md inline-flex items-center justify-center text-text-mute hover:text-text hover:border-text-mute"><Download className="size-4" /></button>
               {!isBuiltin(p.manifest.id) && (

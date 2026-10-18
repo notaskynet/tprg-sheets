@@ -25,6 +25,15 @@
         "type": "string"
       }
     },
+    "description": {
+      "type": "object",
+      "propertyNames": {
+        "type": "string"
+      },
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
     "credits": {
       "type": "string"
     },

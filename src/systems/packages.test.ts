@@ -58,6 +58,13 @@ describe.each(BUILTIN_PACKAGES.map((p) => [p.manifest.id, p] as const))('package
     }
   });
 
+  it('describes itself in every declared language', () => {
+    for (const lang of pkg.manifest.languages) {
+      expect(pkg.manifest.name[lang], `name.${lang}`).toBeTruthy();
+      expect(pkg.manifest.description?.[lang], `description.${lang}`).toBeTruthy();
+    }
+  });
+
   it('evaluates every derived value on a blank character without errors', () => {
     const ch = newCharacter(pkg.model, { id: pkg.manifest.id, version: pkg.manifest.version }, 'x');
     const scope = createScope(pkg.model, ch.values);

@@ -125,7 +125,8 @@ export function Library({ join, receive }: { join?: string; receive?: string }) 
             {packages.map((p) => (
               <button key={p.manifest.id} onClick={() => create(p.manifest.id)} className="text-left border border-line2 rounded-md px-4 py-3 hover:border-text-mute transition-colors">
                 <div className="font-display text-xl">{localize(p.manifest.name, lang)}</div>
-                <div className="font-mono text-[10px] text-text-dim">{p.manifest.id} · v{p.manifest.version}</div>
+                {p.manifest.description && <div className="text-[13px] text-text-mute mt-1 leading-snug">{localize(p.manifest.description, lang)}</div>}
+                <div className="font-mono text-[10px] text-text-dim mt-1">{p.manifest.id} · v{p.manifest.version}</div>
               </button>
             ))}
           </div>

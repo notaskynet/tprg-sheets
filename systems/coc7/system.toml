@@ -3,6 +3,7 @@ id = "coc7"
 version = "1.0.0"
 languages = ["en", "ru"]
 name = { en = "Call of Cthulhu 7e", ru = "Зов Ктулху 7e" }
+description = { en = "Cosmic-horror investigation. Percentile skills, Sanity and Luck; roll d100 at or under your skill.", ru = "Расследования космического хоррора. Процентные навыки, Рассудок и Удача; бросок d100 не выше навыка." }
 accent = "#3f8f86"
 credits = "Fan-made sheet implementing the percentile mechanics of Call of Cthulhu 7th Edition. Not affiliated with or endorsed by Chaosium Inc."
 
