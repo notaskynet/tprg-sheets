@@ -3,6 +3,9 @@ import type { Lang } from './lang';
 
 export const UI: Partial<Record<Lang, Record<string, string>>> = {
   ru: {
+    needFields: 'заполните',
+    openWizard: 'Мастер создания',
+    buyExtra: 'Докупить',
     appTitle: 'Лист персонажа',
     liveLink: 'Живая ссылка', liveLinkHint: 'Смотрящий видит лист в реальном времени, но не может его менять. Ссылку можно отключить в любой момент.', liveLinkOn: 'Включить живую ссылку', liveLinkOff: 'Отключить ссылку', linkDisabled: 'Владелец отключил эту ссылку.', liveViewError: 'Не удалось открыть ссылку. Проверьте соединение.', readOnlyLive: 'Живой просмотр, только чтение', signOutUnsynced: 'Не отправлено в облако: {n}. После выхода эти изменения будут потеряны. Выйти?',
     notAllowedNow: 'Недоступно для текущего выбора',
@@ -58,6 +61,9 @@ export const UI: Partial<Record<Lang, Record<string, string>>> = {
     addItem: 'Добавить', custom: '+ своё', 
   },
   en: {
+    needFields: 'fill in',
+    openWizard: 'Creation wizard',
+    buyExtra: 'Buy extra',
     appTitle: 'Character Sheet',
     liveLink: 'Live link', liveLinkHint: 'Viewers see the sheet update in real time but cannot edit it. You can switch the link off at any time.', liveLinkOn: 'Turn on live link', liveLinkOff: 'Turn link off', linkDisabled: 'The owner has turned this link off.', liveViewError: 'Could not open the link. Check your connection.', readOnlyLive: 'Live view, read-only', signOutUnsynced: 'Not sent to the cloud: {n}. These changes will be lost when you sign out. Sign out?',
     notAllowedNow: 'Not available for the current choice',
