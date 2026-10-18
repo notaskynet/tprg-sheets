@@ -225,7 +225,7 @@ aggravated = "Отягощённый"
 "flaws" = "Недостатки"
 "humanityBonus" = "Человечность"
 "willpowerBonus" = "Воля"
-"willpowerCurrent" = "Воля"
+"willpowerCurrent" = "Воля (текущая)"
 "blood" = "Запас крови"
 "health" = "Здоровье"
 "experience.total" = "Всего"
@@ -255,5 +255,6 @@ freebies = "15 свободных очков на тонкую настройк�
 recap = "Проверьте итоги. Можно вернуться и подправить."
 
 [derived]
+bloodPerTurn = "за ход"
 humanity = "Человечность"
 willpower = "Воля"

@@ -11,7 +11,7 @@ const expr = z.string().min(1); // expression source, see engine/expr
 const dotsLike = { min: z.number().default(0), max: z.number().default(5), default: z.number().optional() };
 
 export const FieldDef = z.discriminatedUnion('type', [
-  z.object({ type: z.literal('text'), default: z.string().default('') }),
+  z.object({ type: z.literal('text'), default: z.string().default(''), suggest: id.optional() }), // suggest = catalog id offered as autocomplete
   z.object({ type: z.literal('longtext'), default: z.string().default('') }),
   z.object({
     type: z.literal('number'),
@@ -182,6 +182,14 @@ export const Manifest = z.object({
   name: z.record(z.string(), z.string()),
   languages: z.array(z.string()).min(1),
   dice: DiceConfig,
+  /** Library card: title path + subtitle paths (select fields show the catalog label). */
+  summary: z
+    .object({
+      title: z.string(),
+      subtitle: z.array(z.string()).default([]),
+      stats: z.array(z.string()).default([]), // derived names or field paths shown on the card
+    })
+    .optional(),
 });
 export type Manifest = z.infer<typeof Manifest>;
 

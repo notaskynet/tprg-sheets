@@ -29,21 +29,28 @@ id = "advantages"
 title = "labels.advantages"
 columns = 3
 blocks = [
-  { type = "list", field = "disciplines" },
+  { type = "list", field = "disciplines", scope = "lookup('clans', profile.clan, 'disciplines')" },
   { type = "list", field = "backgrounds" },
   { type = "group", group = "virtues" },
 ]
 
+# Three stacked columns: health | humanity + willpower | blood + experience.
 [[sections]]
 id = "state"
 columns = 3
 blocks = [
-  { type = "track", field = "health", penalty = "healthPenalty" },
-  { type = "stepper", field = "humanityBonus", derived = "humanity", max = 10 },
-  { type = "stepper", field = "willpowerBonus", derived = "willpower", max = 10 },
-  { type = "pool", field = "willpowerCurrent", display = "boxes" },
-  { type = "pool", field = "blood", display = "boxes", note = "bloodPerTurn" },
-  { type = "fields", fields = ["experience.total", "experience.spent", "weakness"] },
+  { type = "stack", blocks = [
+    { type = "track", field = "health", penalty = "healthPenalty" },
+  ] },
+  { type = "stack", blocks = [
+    { type = "stepper", field = "humanityBonus", derived = "humanity", max = 10 },
+    { type = "stepper", field = "willpowerBonus", derived = "willpower", max = 10 },
+    { type = "pool", field = "willpowerCurrent" },
+  ] },
+  { type = "stack", blocks = [
+    { type = "pool", field = "blood", note = "bloodPerTurn" },
+    { type = "fields", fields = ["experience.total", "experience.spent", "weakness"] },
+  ] },
 ]
 
 [[sections]]

@@ -225,7 +225,7 @@ aggravated = "Aggravated"
 "flaws" = "Flaws"
 "humanityBonus" = "Humanity"
 "willpowerBonus" = "Willpower"
-"willpowerCurrent" = "Willpower"
+"willpowerCurrent" = "Willpower (current)"
 "blood" = "Blood Pool"
 "health" = "Health"
 "experience.total" = "Total"
@@ -255,5 +255,6 @@ freebies = "15 freebies to fine-tune. Rates: attribute 5, ability 2, discipline 
 recap = "Check the summary. You can go back to adjust."
 
 [derived]
+bloodPerTurn = "per turn"
 humanity = "Humanity"
 willpower = "Willpower"

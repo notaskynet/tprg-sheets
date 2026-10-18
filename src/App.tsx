@@ -1,9 +1,57 @@
-import { I18nProvider } from '@/i18n/I18nContext';
+import { useEffect, useState } from 'react';
+import { toast } from 'sonner';
+import { I18nProvider, useI18n } from '@/i18n/I18nContext';
+import { Toaster } from '@/ui/components/sonner';
+import { Library } from '@/ui/screens/Library';
+import { SheetScreen } from '@/ui/screens/SheetScreen';
+import { initStorage, putCharacter } from '@/storage/db';
+import { initPackages, getPackage } from '@/systems/registry';
+import { readLegacyCharacters } from '@/storage/legacy';
+import { useRoute } from '@/routing';
+
+const LEGACY_FLAG = 'trpg.legacyImported';
+
+async function boot(): Promise<number> {
+  await Promise.all([initStorage(), initPackages()]);
+  try {
+    if (localStorage.getItem(LEGACY_FLAG)) return 0;
+    const pkg = getPackage('vtm-v20');
+    const old = pkg ? readLegacyCharacters(pkg) : [];
+    old.forEach(putCharacter);
+    localStorage.setItem(LEGACY_FLAG, '1');
+    return old.length;
+  } catch {
+    return 0;
+  }
+}
+
+function Router() {
+  const route = useRoute();
+  return route.name === 'sheet' ? <SheetScreen key={route.charId} charId={route.charId} /> : <Library />;
+}
+
+function Shell() {
+  const { t } = useI18n();
+  const [ready, setReady] = useState(false);
+  useEffect(() => {
+    boot().then((n) => {
+      setReady(true);
+      if (n > 0) toast.success(t('legacyImported') + n);
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  return (
+    <>
+      {ready ? <Router /> : <div className="flex min-h-full items-center justify-center text-text-mute">{t('loading')}</div>}
+      <Toaster />
+    </>
+  );
+}
 
 export default function App() {
   return (
     <I18nProvider>
-      <main className="p-8 text-text">trpg-sheets</main>
+      <Shell />
     </I18nProvider>
   );
 }
