@@ -165,7 +165,7 @@ function Actions({ ch, title, onWizard }: { ch: Character; title: string; onWiza
     <>
     <ShareDialog ch={ch} title={title} open={sharing} onOpenChange={setSharing} />
     <DropdownMenu>
-      <DropdownMenuTrigger className="border border-line2 text-text-mute rounded p-1.5 hover:text-text hover:border-text-mute transition-colors" aria-label="menu"><MoreVertical className="size-4" /></DropdownMenuTrigger>
+      <DropdownMenuTrigger className="border border-line2 text-text-mute rounded p-1.5 hover:text-text hover:border-text-mute transition-colors" aria-label={t('menu')}><MoreVertical className="size-4" /></DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         {onWizard && <DropdownMenuItem onSelect={onWizard}>{t('openWizard')}</DropdownMenuItem>}
         <DropdownMenuItem onSelect={() => setSharing(true)}>{t('share')}…</DropdownMenuItem>

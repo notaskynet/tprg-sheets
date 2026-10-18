@@ -25,7 +25,19 @@ function requiredKeys(pkg: SystemPackage): string[] {
   const derived = new Set<string>();
   const sm = pkg.manifest.summary;
   sm?.stats.forEach((s) => { if (m.derived[s]) derived.add(s); });
-  for (const s of pkg.creation.steps) { keys.push(`steps.${s.id}`); s.show.forEach((d) => derived.add(d)); }
+  for (const s of pkg.creation.steps) {
+    keys.push(`steps.${s.id}`, `guide.${s.id}`); // every step explains itself
+    s.show.forEach((d) => derived.add(d));
+    // every form field in the wizard says what it is for
+    if (s.kind === 'fields') keys.push(...s.fields.map((f) => `help.${f}`));
+    if (s.kind === 'pick') keys.push(`help.${s.field}`, ...s.fields.map((f) => `help.${f}`));
+  }
+  // every option the user picks from carries a one-line description
+  const pickable = new Set<string>();
+  for (const f of Object.values(m.fields)) {
+    if ((f.type === 'select' && f.from) || (f.type === 'text' && f.suggest) || (f.type === 'list' && f.suggest)) pickable.add((f as { from?: string; suggest?: string }).from ?? (f as { suggest?: string }).suggest!);
+  }
+  for (const cid of pickable) keys.push(...m.catalogs[cid].items.map((i) => `desc.${cid}.${i.id}`));
   for (const sec of pkg.sheet.sections) {
     if (sec.title) keys.push(sec.title);
     for (const b of flat(sec.blocks as Block[])) {

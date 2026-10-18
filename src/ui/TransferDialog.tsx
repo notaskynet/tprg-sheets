@@ -62,7 +62,7 @@ function Send({ active }: { active: boolean }) {
       runSender(transport, { chars: list, pkgs }, { sent: () => setSentCount((n) => n + 1) });
       setCode(c);
       setQr(await QRCode.toString(`${location.origin}${location.pathname}?receive=${c}`, { type: 'svg', margin: 1, color: { dark: '#14121a', light: '#ffffff' } }));
-    } catch (e) { toast.error((e as Error).message); }
+    } catch { toast.error(t('connError')); }
   }
 
   if (code) {
@@ -118,7 +118,7 @@ function Receive({ active, initialCode, onDone }: { active: boolean; initialCode
           setStatus('review');
         },
       });
-    } catch (e) { toast.error((e as Error).message); setStatus('idle'); }
+    } catch { toast.error(t('connError')); setStatus('idle'); }
   }
 
   useEffect(() => {
@@ -128,7 +128,7 @@ function Receive({ active, initialCode, onDone }: { active: boolean; initialCode
 
   async function doImport() {
     const chosen = plan.filter((i) => picked.has(i.char.id));
-    for (const [id, files] of Object.entries(payload?.pkgs ?? {})) if (!getPackage(id)) await addPackage(files).catch((e) => toast.error((e as Error).message));
+    for (const [id, files] of Object.entries(payload?.pkgs ?? {})) if (!getPackage(id)) await addPackage(files).catch(() => toast.error(t('importFailed')));
     for (const i of chosen) if (getPackage(i.char.system.id)) putCharacter(i.char);
     toast.success(`${t('importedN')}${chosen.length}`);
     void room.current?.leave();

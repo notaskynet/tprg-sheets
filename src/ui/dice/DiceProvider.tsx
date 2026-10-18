@@ -119,7 +119,7 @@ export function DiceProvider({ values, onRoll, children }: {
                     {pickedRows.map((r) => (
                       <span key={r.slot} className="inline-flex items-center gap-1.5 border border-line2 rounded px-2 py-1 text-xs">
                         {r.label} <b className="font-mono">{r.value}</b>
-                        <button aria-label="remove" onClick={() => setPicks(({ [Number(r.slot)]: _, ...rest }) => rest)} className="text-text-dim hover:text-brand-bright"><X className="size-3" /></button>
+                        <button aria-label={t('remove')} onClick={() => setPicks(({ [Number(r.slot)]: _, ...rest }) => rest)} className="text-text-dim hover:text-brand-bright"><X className="size-3" /></button>
                       </span>
                     ))}
                   </div>

@@ -55,11 +55,11 @@ export function Library({ join, receive }: { join?: string; receive?: string }) 
     if (!file) return;
     try {
       const ch = await readCharacterFile(file);
-      if (!getPackage(ch.system.id)) throw new Error(`Unknown system "${ch.system.id}"`);
+      if (!getPackage(ch.system.id)) return void toast.error(`${t('unknownSystem')}: ${ch.system.id}`);
       putCharacter(ch);
-      toast.success(ch.id);
-    } catch (e) {
-      toast.error((e as Error).message);
+      toast.success(t('imported'));
+    } catch {
+      toast.error(t('badFile'));
     }
   }
 
@@ -163,7 +163,7 @@ function CharacterCard({ ch }: { ch: Character }) {
           </div>
           <div className="pointer-events-auto">
             <DropdownMenu>
-              <DropdownMenuTrigger className="text-text-mute hover:text-text p-1 -mr-1" aria-label="menu"><MoreVertical className="size-4" /></DropdownMenuTrigger>
+              <DropdownMenuTrigger className="text-text-mute hover:text-text p-1 -mr-1" aria-label={t('menu')}><MoreVertical className="size-4" /></DropdownMenuTrigger>
               <DropdownMenuContent align="end">
                 <DropdownMenuItem onSelect={duplicate}>{t('duplicate')}</DropdownMenuItem>
                 <DropdownMenuItem variant="destructive" onSelect={() => { if (confirm(`${t('delete')}: ${title || t('unnamed')}?`)) deleteCharacter(ch.id); }}>{t('delete')}</DropdownMenuItem>

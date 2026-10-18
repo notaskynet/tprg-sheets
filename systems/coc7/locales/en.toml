@@ -116,3 +116,16 @@ skills = """
 - Число показывает **добавленные** очки; итог (база + добавленное) рядом.
 - Держите навык не выше **75** при создании. Мифы Ктулху остаются 0.
 - База Уклонения и Родного языка берётся из DEX и EDU автоматически."""
+
+concept = """
+**Who is your investigator?** Pick a believable occupation. It guides where your skill points go.
+
+Older investigators are wiser but frailer; remember to apply age modifiers by hand."""
+recap = """
+**Check the summary.** Tap anything marked with a cross to jump to its step."""
+
+[help]
+"profile.name" = "Your investigator's name."
+"profile.player" = "Your own name, so the table knows who plays whom."
+"profile.occupation" = "What they do for a living: librarian, journalist, doctor… It suggests which skills to raise."
+"profile.age" = "15–90. Age modifiers to characteristics are not applied automatically."

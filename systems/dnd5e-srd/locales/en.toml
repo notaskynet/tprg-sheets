@@ -98,18 +98,18 @@ half_orc = "Strong and relentless."
 tiefling = "Marked by an infernal bloodline."
 
 [desc.classes]
-barbarian = "Rage-fuelled front-line brute."
-bard = "Inspiring performer and spellcaster."
-cleric = "Divine caster who heals and smites."
-druid = "Nature caster who shapeshifts."
-fighter = "Master of weapons and armour."
-monk = "Disciplined martial artist."
-paladin = "Holy warrior bound by an oath."
-ranger = "Wilderness hunter and scout."
-rogue = "Sneaky expert with precise strikes."
-sorcerer = "Born caster with innate magic."
-warlock = "Caster empowered by a pact."
-wizard = "Studious caster with a spellbook."
+barbarian = "Rage-fuelled front-line brute. Saves: STR, CON."
+bard = "Inspiring performer and spellcaster. Saves: DEX, CHA."
+cleric = "Divine caster who heals and smites. Saves: WIS, CHA."
+druid = "Nature caster who shapeshifts. Saves: INT, WIS."
+fighter = "Master of weapons and armour. Saves: STR, CON."
+monk = "Disciplined martial artist. Saves: STR, DEX."
+paladin = "Holy warrior bound by an oath. Saves: WIS, CHA."
+ranger = "Wilderness hunter and scout. Saves: STR, DEX."
+rogue = "Sneaky expert with precise strikes. Saves: DEX, INT."
+sorcerer = "Born caster with innate magic. Saves: CON, CHA."
+warlock = "Caster empowered by a pact. Saves: WIS, CHA."
+wizard = "Studious caster with a spellbook. Saves: INT, WIS."
 
 [desc.backgrounds]
 acolyte = "Raised in service to a temple."
@@ -181,3 +181,40 @@ abilities = """
 Расовые бонусы прибавляются автоматически на листе."""
 skills = """
 Выберите столько навыков, сколько разрешает класс (это бюджет). **Бонус мастерства** прибавляется ко всем отмеченным навыкам."""
+
+concept = """
+**Start with who they are.** A name, a background (what they did before adventuring) and an alignment (how they see right and wrong).
+
+A one-line idea is enough: *“disgraced soldier seeking redemption”*."""
+race = """
+**Race gives bonuses and speed.** Racial ability bonuses are added to your scores automatically on the sheet.
+
+Half-Elves also choose two extra +1 bonuses: add those to your base scores yourself."""
+class = """
+**Class is what your hero does.** It sets the hit die (hit points per level) and how many skills you choose.
+
+Level 1 is the default; raise it if your DM starts higher."""
+saves = """
+**Tick the two saving throws your class grants** (they are listed in the class description). Your proficiency bonus is added to each."""
+recap = """
+**Check the summary.** Anything marked with a cross can be fixed: tap it to jump to its step."""
+
+[desc.alignments]
+lg = "Acts by a code of honour and does good."
+ng = "Does the best they can for others."
+cg = "Follows their conscience, free of rules."
+ln = "Order and tradition above all."
+n = "Balanced, avoids taking sides."
+cn = "Free spirit, unpredictable."
+le = "Methodical, ruthless domination."
+ne = "Self-serving, no loyalties."
+ce = "Destruction and cruelty on a whim."
+
+[help]
+"profile.name" = "Your hero's name."
+"profile.player" = "Your own name, so the table knows who plays whom."
+"profile.background" = "What your hero did before adventuring. Pick the SRD one or write your own."
+"profile.alignment" = "A shorthand for how your hero sees ethics and order. Optional flavour."
+"profile.race" = "Gives ability score bonuses and your speed."
+"profile.class" = "What your hero does best. Sets hit die and skill choices."
+"level" = "Current level, 1–20. New heroes start at 1 unless your DM says otherwise."

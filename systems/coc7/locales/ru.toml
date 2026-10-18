@@ -116,3 +116,16 @@ skills = """
 - The number shows **added** points; the total (base + added) appears next to it.
 - Keep a skill at **75 or less** during creation. Cthulhu Mythos stays at 0.
 - Dodge and Language (Own) get their base from DEX and EDU automatically."""
+
+concept = """
+**Кто ваш сыщик?** Выберите правдоподобную профессию: она подскажет, куда вкладывать очки навыков.
+
+Пожилые сыщики мудрее, но слабее; не забудьте применить возрастные поправки вручную."""
+recap = """
+**Проверьте итоги.** Нажмите на пункт с крестиком, чтобы перейти к его шагу."""
+
+[help]
+"profile.name" = "Имя вашего сыщика."
+"profile.player" = "Ваше собственное имя, чтобы за столом было ясно, кто кого играет."
+"profile.occupation" = "Чем сыщик зарабатывает: библиотекарь, журналист, врач… Подсказывает, какие навыки развивать."
+"profile.age" = "15–90. Возрастные поправки к характеристикам не применяются автоматически."
