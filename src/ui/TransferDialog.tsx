@@ -3,12 +3,13 @@ import { useEffect, useRef, useState } from 'react';
 import QRCode from 'qrcode';
 import { toast } from 'sonner';
 import { useI18n } from '@/i18n/I18nContext';
-import { formatCode, newRoomCode, normalizeCode } from '@/share/protocol';
+import { codeFromInput, formatCode, newRoomCode } from '@/share/protocol';
 import { openRoom, type Transport } from '@/share/transport';
 import { planImport, runReceiver, runSender, type ImportItem, type TransferPayload } from '@/share/transfer';
 import { getCharacter, getPackageFiles, putCharacter, useCharacters } from '@/storage/db';
 import { addPackage, getPackage } from '@/systems/registry';
 import { cardData } from '@/ui/cardData';
+import { Copy, Link2 } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/ui/components/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/ui/components/tabs';
 import { cn } from '@/ui/lib/utils';
@@ -44,6 +45,10 @@ function Send({ active }: { active: boolean }) {
   const [code, setCode] = useState('');
   const [qr, setQr] = useState('');
   const [sentCount, setSentCount] = useState(0);
+  const link = code ? `${location.origin}${location.pathname}?receive=${code}` : '';
+  const copy = async (text: string) => {
+    try { await navigator.clipboard.writeText(text); toast.success(t('linkCopied')); } catch { window.prompt(t('shareLink'), text); }
+  };
   const room = useRoomCleanup(active);
 
   useEffect(() => { setPicked(new Set(chars.map((c) => c.id))); }, [chars.length]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -70,6 +75,10 @@ function Send({ active }: { active: boolean }) {
       <div className="flex flex-col items-center gap-4 text-center">
         <div className="font-mono text-4xl tracking-[0.2em]">{formatCode(code)}</div>
         {qr && <div className="w-44 rounded-md overflow-hidden bg-white p-2 [&>svg]:w-full [&>svg]:h-auto" dangerouslySetInnerHTML={{ __html: qr }} />}
+        <div className="flex w-full gap-2">
+          <button onClick={() => copy(link)} className="flex-1 h-10 rounded-md border border-line2 text-sm inline-flex items-center justify-center gap-2 text-text-mute hover:text-text hover:border-text-mute transition-colors"><Link2 className="size-4" /> {t('copyLink')}</button>
+          <button onClick={() => copy(code)} className="flex-1 h-10 rounded-md border border-line2 text-sm inline-flex items-center justify-center gap-2 text-text-mute hover:text-text hover:border-text-mute transition-colors"><Copy className="size-4" /> {t('copyCode')}</button>
+        </div>
         <p className="text-text-mute text-sm">{sentCount ? `${t('sentTo')}${sentCount > 1 ? ` ×${sentCount}` : ''}` : t('waitingReceiver')}</p>
         <p className="text-text-dim text-xs">{t('transferHint')}</p>
       </div>
@@ -101,7 +110,7 @@ function Receive({ active, initialCode, onDone }: { active: boolean; initialCode
   const [plan, setPlan] = useState<ImportItem[]>([]);
   const [picked, setPicked] = useState<Set<string>>(new Set());
   const room = useRoomCleanup(active);
-  const code = normalizeCode(input);
+  const code = codeFromInput(input);
   const started = useRef(false);
 
   async function connect(c: string) {
@@ -122,7 +131,7 @@ function Receive({ active, initialCode, onDone }: { active: boolean; initialCode
   }
 
   useEffect(() => {
-    const c = initialCode && normalizeCode(initialCode);
+    const c = initialCode && codeFromInput(initialCode);
     if (c && !started.current) { started.current = true; void connect(c); }
   }, [initialCode]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -161,7 +170,6 @@ function Receive({ active, initialCode, onDone }: { active: boolean; initialCode
         value={input}
         onChange={(e) => setInput(e.target.value)}
         placeholder="ABCD-EFGH"
-        maxLength={9}
         autoCapitalize="characters"
         spellCheck={false}
         className="h-12 bg-ink border border-line2 rounded-md px-3 font-mono text-2xl tracking-[0.2em] text-center uppercase outline-none focus:border-brand"

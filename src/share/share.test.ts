@@ -121,3 +121,14 @@ describe('session', () => {
     expect(gm.getState().players[0].chars).toHaveLength(1);
   });
 });
+
+import { codeFromInput } from './protocol';
+describe('codeFromInput', () => {
+  it('accepts a typed code or a pasted invite link', () => {
+    expect(codeFromInput('abcd-2345')).toBe('ABCD2345');
+    expect(codeFromInput('https://x.github.io/tprg-sheets/?receive=ABCD2345')).toBe('ABCD2345');
+    expect(codeFromInput('https://x.dev/?join=abcd-2345')).toBe('ABCD2345');
+    expect(codeFromInput('https://x.dev/?c=1')).toBeNull();
+    expect(codeFromInput('')).toBeNull();
+  });
+});

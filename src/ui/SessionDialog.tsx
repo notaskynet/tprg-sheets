@@ -1,7 +1,7 @@
 // Start or join a live game session.
 import { useEffect, useState } from 'react';
 import { useI18n } from '@/i18n/I18nContext';
-import { normalizeCode } from '@/share/protocol';
+import { codeFromInput } from '@/share/protocol';
 import { startSession } from '@/share/active';
 import { useCharacters } from '@/storage/db';
 import { getPackage } from '@/systems/registry';
@@ -24,7 +24,7 @@ export function SessionDialog({ open, onOpenChange, initialJoin }: { open: boole
   const [name, setName] = useState(loadName() || t('playerDefault'));
   const [codeInput, setCodeInput] = useState(initialJoin ?? '');
   const [picked, setPicked] = useState<Set<string>>(new Set());
-  const code = normalizeCode(codeInput);
+  const code = codeFromInput(codeInput);
 
   // Nothing is shared unless the player chooses it; the last choice is remembered.
   useEffect(() => { const ids = new Set(chars.map((c) => c.id)); setPicked(new Set(loadShared().filter((id) => ids.has(id)))); }, [chars.length]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -55,7 +55,7 @@ export function SessionDialog({ open, onOpenChange, initialJoin }: { open: boole
           </TabsContent>
           <TabsContent value="join" className="pt-4 flex flex-col gap-3">
             <label className="flex flex-col gap-1.5"><span className="eyebrow">{t('roomCode')}</span>
-              <input value={codeInput} onChange={(e) => setCodeInput(e.target.value)} placeholder="ABCD-EFGH" maxLength={9} autoCapitalize="characters" spellCheck={false} className={`${input} h-12 font-mono text-2xl tracking-[0.2em] text-center uppercase`} />
+              <input value={codeInput} onChange={(e) => setCodeInput(e.target.value)} placeholder="ABCD-EFGH" autoCapitalize="characters" spellCheck={false} className={`${input} h-12 font-mono text-2xl tracking-[0.2em] text-center uppercase`} />
             </label>
             <label className="flex flex-col gap-1.5"><span className="eyebrow">{t('yourName')}</span><input value={name} onChange={(e) => setName(e.target.value)} className={input} /></label>
             <div className="flex flex-col gap-2">

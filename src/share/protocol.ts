@@ -25,6 +25,12 @@ export function normalizeCode(input: string): string | null {
   return c.length === CODE_LENGTH && [...c].every((ch) => ALPHABET.includes(ch)) ? c : null;
 }
 
+/** A code typed by hand, or pasted as an invite link (`?join=` / `?receive=`). */
+export function codeFromInput(input: string): string | null {
+  const m = /[?&](?:join|receive)=([A-Za-z0-9-]+)/.exec(input);
+  return normalizeCode(m ? m[1] : input);
+}
+
 export const formatCode = (code: string) => `${code.slice(0, 4)}-${code.slice(4)}`;
 
 export function isMsg(x: unknown): x is Msg {
