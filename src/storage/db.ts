@@ -1,6 +1,6 @@
 // Local-first persistence: IndexedDB (idb-keyval) behind an in-memory cache that
 // UI reads synchronously via useSyncExternalStore. Writes are write-through.
-import { createStore, set, del, entries } from 'idb-keyval';
+import { createStore, get, set, del, entries } from 'idb-keyval';
 import { useSyncExternalStore } from 'react';
 import type { Character } from '@/engine/character';
 import type { Files } from '@/engine/loader';
@@ -58,3 +58,5 @@ export async function loadPackageFiles(): Promise<Files[]> {
     return [];
   }
 }
+
+export const getPackageFiles = (id: string) => get<Files>(id, pkgStore).catch(() => undefined);

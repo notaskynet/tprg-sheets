@@ -3,12 +3,15 @@ import { toast } from 'sonner';
 import { I18nProvider, useI18n } from '@/i18n/I18nContext';
 import { Toaster } from '@/ui/components/sonner';
 import { Library } from '@/ui/screens/Library';
+import { SessionScreen } from '@/ui/screens/SessionScreen';
+import { SessionChip } from '@/ui/SessionChip';
 import { SharedView } from '@/ui/screens/SharedView';
 import { SheetScreen } from '@/ui/screens/SheetScreen';
 import { initStorage, putCharacter } from '@/storage/db';
 import { initPackages, getPackage } from '@/systems/registry';
 import { readLegacyCharacters } from '@/storage/legacy';
 import { useRoute } from '@/routing';
+import { resumeSession } from '@/share/active';
 
 const LEGACY_FLAG = 'trpg.legacyImported';
 
@@ -29,8 +32,9 @@ async function boot(): Promise<number> {
 function Router() {
   const route = useRoute();
   if (route.name === 'sheet') return <SheetScreen key={route.charId} charId={route.charId} />;
+  if (route.name === 'session') return <SessionScreen />;
   if (route.name === 'shared') return <SharedView data={route.data} />;
-  return <Library />;
+  return <Library join={route.join} receive={route.receive} />;
 }
 
 function Shell() {
@@ -39,6 +43,7 @@ function Shell() {
   useEffect(() => {
     boot().then((n) => {
       setReady(true);
+      resumeSession();
       if (n > 0) toast.success(t('legacyImported') + n);
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -46,6 +51,7 @@ function Shell() {
   return (
     <>
       {ready ? <Router /> : <div className="flex min-h-full items-center justify-center text-text-mute">{t('loading')}</div>}
+      <SessionChip />
       <Toaster />
     </>
   );

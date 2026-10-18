@@ -15,6 +15,7 @@ import { getIn } from '@/engine/expr/eval';
 import { deleteCharacter } from '@/storage/db';
 import { downloadCharacter } from '@/share/file';
 import { goLibrary } from '@/routing';
+import { getActiveSession } from '@/share/active';
 import { Popover, PopoverContent, PopoverTrigger } from '@/ui/components/popover';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/ui/components/dropdown-menu';
 import { cn } from '@/ui/lib/utils';
@@ -49,7 +50,7 @@ export function SheetScreen({ charId }: { charId: string }) {
           onExit={goLibrary}
         />
       ) : (
-        <DiceProvider values={editor.ch.values}>
+        <DiceProvider values={editor.ch.values} onRoll={(e) => getActiveSession()?.roll({ label: e.label, summary: e.summary })}>
           <SheetBody ch={editor.ch} set={editor.set} saveState={editor.saveState} onWizard={() => editor.replace({ ...editor.ch!, creation: { step: 0, done: false } })} />
         </DiceProvider>
       )}

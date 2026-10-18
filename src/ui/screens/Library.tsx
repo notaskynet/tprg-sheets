@@ -1,34 +1,38 @@
 // Character library: cards for every saved character, sort, create, import.
 import { useMemo, useRef, useState } from 'react';
 import { toast } from 'sonner';
-import { MoreVertical, Plus } from 'lucide-react';
+import { MoreVertical, Plus, Smartphone, Users } from 'lucide-react';
 import { useI18n } from '@/i18n/I18nContext';
 import { AVAILABLE_LANGS, localize } from '@/i18n/lang';
 import { useCharacters, deleteCharacter, putCharacter, saveCharacter } from '@/storage/db';
 import { getPackage, usePackages } from '@/systems/registry';
 import { newCharacter, type Character } from '@/engine/character';
-import { evaluateCreation } from '@/engine/creation';
-import { createScope } from '@/engine/expr/eval';
-import { displayValue, makeTranslate } from '@/engine/labels';
-import { langDef } from '@/i18n/lang';
+import { cardData } from '@/ui/cardData';
 import { goSheet } from '@/routing';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/ui/components/dialog';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/ui/components/dropdown-menu';
 import { readCharacterFile } from '@/share/file';
 import { AccentPicker } from '@/ui/AccentPicker';
+import { TransferDialog } from '@/ui/TransferDialog';
+import { SessionDialog } from '@/ui/SessionDialog';
 
 type SortBy = 'recent' | 'name';
+
+// Drop ?join= / ?receive= once their dialog is closed so a reload doesn't reopen it.
+const clearParams = () => { if (location.search) window.history.replaceState({}, '', location.pathname); };
 
 function loadSort(): SortBy {
   try { return localStorage.getItem('trpg.sort') === 'name' ? 'name' : 'recent'; } catch { return 'recent'; }
 }
 
-export function Library() {
+export function Library({ join, receive }: { join?: string; receive?: string }) {
   const { t, lang, setLang } = useI18n();
   const characters = useCharacters();
   const packages = usePackages();
   const [sortBy, setSortBy] = useState<SortBy>(loadSort);
   const [picking, setPicking] = useState(false);
+  const [transfer, setTransfer] = useState(!!receive);
+  const [session, setSession] = useState(!!join);
   const fileRef = useRef<HTMLInputElement>(null);
 
   const sorted = useMemo(() => {
@@ -62,6 +66,8 @@ export function Library() {
       <header className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2 px-4 sm:px-9 py-3 sm:py-4 border-b border-line">
         <span className="eyebrow truncate min-w-0"><span className="hidden sm:inline">{t('appTitle')} · </span>{t('myCharacters')}</span>
         <div className="flex items-center gap-3 shrink-0">
+          <button onClick={() => setTransfer(true)} title={t('devices')} className="inline-flex items-center gap-1.5 border border-line2 text-text-mute rounded px-3 py-1.5 text-xs hover:text-text hover:border-text-mute transition-colors"><Smartphone className="size-3.5" /><span className="hidden sm:inline">{t('devices')}</span></button>
+          <button onClick={() => setSession(true)} title={t('game')} className="inline-flex items-center gap-1.5 border border-line2 text-text-mute rounded px-3 py-1.5 text-xs hover:text-text hover:border-text-mute transition-colors"><Users className="size-3.5" /><span className="hidden sm:inline">{t('game')}</span></button>
           <AccentPicker />
           <button onClick={() => fileRef.current?.click()} className="border border-line2 text-text-mute rounded px-3 py-1.5 text-xs hover:text-text hover:border-text-mute transition-colors">{t('importFile')}</button>
           <input ref={fileRef} type="file" accept=".json,application/json" hidden onChange={(e) => { onFile(e.target.files?.[0]); e.target.value = ''; }} />
@@ -101,6 +107,9 @@ export function Library() {
         )}
       </div>
 
+      <TransferDialog open={transfer} onOpenChange={(o) => { setTransfer(o); if (!o) clearParams(); }} initialReceive={receive} />
+      <SessionDialog open={session} onOpenChange={(o) => { setSession(o); if (!o) clearParams(); }} initialJoin={join} />
+
       <Dialog open={picking} onOpenChange={setPicking}>
         <DialogContent>
           <DialogHeader><DialogTitle>{t('chooseSystem')}</DialogTitle></DialogHeader>
@@ -129,17 +138,7 @@ function CharacterCard({ ch }: { ch: Character }) {
       </div>
     );
   }
-  const tr = makeTranslate(pkg, [lang, ...langDef(lang).fallback]);
-  const summary = pkg.manifest.summary;
-  const scope = createScope(pkg.model, ch.values);
-  const title = summary ? displayValue(pkg, tr, summary.title, ch.values) : '';
-  const subtitle = (summary?.subtitle ?? []).map((p) => displayValue(pkg, tr, p, ch.values)).filter(Boolean);
-  const valid = evaluateCreation(pkg, ch, scope).checklist.every((c) => c.ok);
-  const stats = (summary?.stats ?? []).map((k) => {
-    const label = pkg.locales[lang]?.[`derived.${k}`] ?? tr(`fields.${k}`);
-    const v = scope.get([k]);
-    return { label: label === k ? tr(`derived.${k}`) : label, value: typeof v === 'number' ? v : '—', blood: k === 'blood' };
-  });
+  const { title, subtitle, stats, valid } = cardData(pkg, ch, lang);
 
   function duplicate() {
     const copy: Character = { ...ch, id: crypto.randomUUID(), values: structuredClone(ch.values) };
@@ -174,7 +173,7 @@ function CharacterCard({ ch }: { ch: Character }) {
             {stats.map((s) => (
               <div key={s.label}>
                 <div className="font-body font-medium text-[11px] tracking-[0.1em] uppercase text-text-dim">{s.label}</div>
-                <div className={`font-display text-[22px] leading-none ${s.blood ? 'text-brand-bright' : ''}`}>{s.value}</div>
+                <div className={`font-display text-[22px] leading-none ${s.brand ? 'text-brand-bright' : ''}`}>{s.value}</div>
               </div>
             ))}
           </div>
