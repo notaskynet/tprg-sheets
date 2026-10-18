@@ -68,3 +68,34 @@ export function saveAccent(hex: string | null): void {
   try { hex ? localStorage.setItem(KEY, hex) : localStorage.removeItem(KEY); } catch { /* ignore */ }
   applyAccent(hex);
 }
+
+// ---- HSV helpers for the custom picker ----
+export type Hsv = [number, number, number]; // h 0-360, s 0-1, v 0-1
+
+export function hexToHsv(hex: string): Hsv {
+  const [r, g, b] = hexToRgb(hex).map((x) => x / 255);
+  const max = Math.max(r, g, b), min = Math.min(r, g, b), d = max - min;
+  let h = 0;
+  if (d) h = (max === r ? ((g - b) / d + (g < b ? 6 : 0)) : max === g ? (b - r) / d + 2 : (r - g) / d + 4) * 60;
+  return [h, max ? d / max : 0, max];
+}
+
+export function hsvToHex([h, s, v]: Hsv): string {
+  const f = (n: number) => {
+    const k = (n + h / 60) % 6;
+    return Math.round(255 * (v - v * s * Math.max(0, Math.min(k, 4 - k, 1)))).toString(16).padStart(2, '0');
+  };
+  return `#${f(5)}${f(3)}${f(1)}`;
+}
+
+// ---- user-saved colours (presets of their own) ----
+const SAVED_KEY = 'trpg.accent.saved';
+export function getSavedColors(): string[] {
+  try {
+    const v = JSON.parse(localStorage.getItem(SAVED_KEY) ?? '[]');
+    return Array.isArray(v) ? v.filter((x) => typeof x === 'string' && /^#[0-9a-f]{6}$/i.test(x)) : [];
+  } catch { return []; }
+}
+export function setSavedColors(list: string[]): void {
+  try { localStorage.setItem(SAVED_KEY, JSON.stringify(list.slice(0, 12))); } catch { /* ignore */ }
+}

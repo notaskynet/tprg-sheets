@@ -12,3 +12,10 @@ describe('deriveAccent', () => {
     expect(deriveAccent('#f2d16b').onBrand).toBe('#14121a');
   });
 });
+
+import { hexToHsv, hsvToHex } from './theme';
+describe('hsv', () => {
+  it('round-trips', () => {
+    for (const hex of ['#a01e2e', '#4a5bd0', '#ffffff', '#000000', '#8a4fc4']) expect(hsvToHex(hexToHsv(hex))).toBe(hex);
+  });
+});
