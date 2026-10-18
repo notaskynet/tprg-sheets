@@ -1,0 +1,202 @@
+#:schema ../../schema/model.schema.json
+# Vampire: The Masquerade — 20th Anniversary Edition
+# Labels live in locales/*.toml: <group|catalog>.<id>, <group>.title, <group>.cat.<cat>, fields.<path>.
+
+[groups.attributes]
+categories = ["physical", "social", "mental"]
+field = { type = "dots", min = 1, max = 5 }
+items = [
+  { id = "strength", cat = "physical" },
+  { id = "dexterity", cat = "physical" },
+  { id = "stamina", cat = "physical" },
+  { id = "charisma", cat = "social" },
+  { id = "manipulation", cat = "social" },
+  { id = "appearance", cat = "social" },
+  { id = "perception", cat = "mental" },
+  { id = "intelligence", cat = "mental" },
+  { id = "wits", cat = "mental" },
+]
+
+[groups.abilities]
+categories = ["talents", "skills", "knowledges"]
+field = { type = "dots", min = 0, max = 5 }
+items = [
+  { id = "alertness", cat = "talents" },
+  { id = "athletics", cat = "talents" },
+  { id = "awareness", cat = "talents" },
+  { id = "brawl", cat = "talents" },
+  { id = "empathy", cat = "talents" },
+  { id = "expression", cat = "talents" },
+  { id = "intimidation", cat = "talents" },
+  { id = "leadership", cat = "talents" },
+  { id = "streetwise", cat = "talents" },
+  { id = "subterfuge", cat = "talents" },
+  { id = "animal_ken", cat = "skills" },
+  { id = "crafts", cat = "skills" },
+  { id = "drive", cat = "skills" },
+  { id = "etiquette", cat = "skills" },
+  { id = "firearms", cat = "skills" },
+  { id = "larceny", cat = "skills" },
+  { id = "melee", cat = "skills" },
+  { id = "performance", cat = "skills" },
+  { id = "stealth", cat = "skills" },
+  { id = "survival", cat = "skills" },
+  { id = "academics", cat = "knowledges" },
+  { id = "computer", cat = "knowledges" },
+  { id = "finance", cat = "knowledges" },
+  { id = "investigation", cat = "knowledges" },
+  { id = "law", cat = "knowledges" },
+  { id = "medicine", cat = "knowledges" },
+  { id = "occult", cat = "knowledges" },
+  { id = "politics", cat = "knowledges" },
+  { id = "science", cat = "knowledges" },
+  { id = "technology", cat = "knowledges" },
+]
+
+[groups.virtues]
+field = { type = "dots", min = 1, max = 5 }
+items = [
+  { id = "conscience" },
+  { id = "selfControl" },
+  { id = "courage" },
+]
+
+[groups.specialties]
+field = { type = "text" }
+itemsFrom = "abilities"
+
+[catalogs.clans]
+items = [
+  { id = "brujah", disciplines = ["celerity", "potence", "presence"] },
+  { id = "gangrel", disciplines = ["animalism", "fortitude", "protean"] },
+  { id = "malkavian", disciplines = ["auspex", "dementation", "obfuscate"] },
+  { id = "nosferatu", disciplines = ["animalism", "obfuscate", "potence"] },
+  { id = "toreador", disciplines = ["auspex", "celerity", "presence"] },
+  { id = "tremere", disciplines = ["auspex", "dominate", "thaumaturgy"] },
+  { id = "ventrue", disciplines = ["dominate", "fortitude", "presence"] },
+  { id = "assamite", disciplines = ["celerity", "obfuscate", "quietus"] },
+  { id = "followers_of_set", disciplines = ["obfuscate", "presence", "serpentis"] },
+  { id = "giovanni", disciplines = ["dominate", "necromancy", "potence"] },
+  { id = "lasombra", disciplines = ["dominate", "obtenebration", "potence"] },
+  { id = "ravnos", disciplines = ["animalism", "chimerstry", "fortitude"] },
+  { id = "tzimisce", disciplines = ["animalism", "auspex", "vicissitude"] },
+  { id = "caitiff", disciplines = [] },
+]
+
+[catalogs.disciplines]
+items = [
+  { id = "animalism" },
+  { id = "auspex" },
+  { id = "celerity" },
+  { id = "chimerstry" },
+  { id = "dementation" },
+  { id = "dominate" },
+  { id = "fortitude" },
+  { id = "necromancy" },
+  { id = "obfuscate" },
+  { id = "obtenebration" },
+  { id = "potence" },
+  { id = "presence" },
+  { id = "protean" },
+  { id = "quietus" },
+  { id = "serpentis" },
+  { id = "thaumaturgy" },
+  { id = "vicissitude" },
+]
+
+[catalogs.backgrounds]
+items = [
+  { id = "allies" },
+  { id = "contacts" },
+  { id = "fame" },
+  { id = "herd" },
+  { id = "influence" },
+  { id = "mentor" },
+  { id = "resources" },
+  { id = "retainers" },
+  { id = "status" },
+  { id = "domain" },
+]
+
+[catalogs.archetypes]
+items = [
+  { id = "architect" },
+  { id = "rebel" },
+  { id = "caregiver" },
+  { id = "bon_vivant" },
+  { id = "bravo" },
+  { id = "savage" },
+  { id = "defender" },
+  { id = "gallant" },
+  { id = "conformist" },
+  { id = "critic" },
+  { id = "curious" },
+  { id = "thinker" },
+  { id = "loner" },
+  { id = "perfectionist" },
+  { id = "competitor" },
+  { id = "servant" },
+  { id = "judge" },
+  { id = "trickster" },
+  { id = "fanatic" },
+  { id = "schemer" },
+]
+
+[fields]
+"profile.name" = { type = "text" }
+"profile.player" = { type = "text" }
+"profile.chronicle" = { type = "text" }
+"profile.concept" = { type = "text" }
+"profile.nature" = { type = "text", suggest = "archetypes" }
+"profile.demeanor" = { type = "text", suggest = "archetypes" }
+"profile.clan" = { type = "select", from = "clans" }
+"profile.generation" = { type = "number", min = 4, max = 15, default = 13 }
+"profile.sire" = { type = "text" }
+weakness = { type = "text" }
+disciplines = { type = "list", item = "dots", suggest = "disciplines", max = 5 }
+backgrounds = { type = "list", item = "dots", suggest = "backgrounds", max = 5 }
+merits = { type = "list", item = "note" }
+flaws = { type = "list", item = "note" }
+humanityBonus = { type = "number", min = -10, max = 10, default = 0 }
+willpowerBonus = { type = "number", min = -10, max = 10, default = 0 }
+willpowerCurrent = { type = "pool", max = "willpower", default = 1 }
+blood = { type = "pool", max = "bloodMax", default = 0 }
+health = { type = "damage-track", levels = ["bruised", "hurt", "injured", "wounded", "mauled", "crippled", "incapacitated"] }
+"experience.total" = { type = "number", min = 0, default = 0 }
+"experience.spent" = { type = "number", min = 0, default = 0 }
+notes = { type = "longtext" }
+
+[derived]
+humanityBase = "virtues.conscience + virtues.selfControl"
+willpowerBase = "virtues.courage"
+humanity = "humanityBase + humanityBonus"
+willpower = "willpowerBase + willpowerBonus"
+bloodMax = "table('bloodPool', profile.generation)[0]"
+bloodPerTurn = "table('bloodPool', profile.generation)[1]"
+damage = "sum(health)"
+healthPenalty = "table('healthPenalty', damage)"
+incapacitated = "damage >= 7"
+
+# Dice-pool penalty by total damage. Incapacitation (damage >= 7) is the `incapacitated` derived value.
+[tables.healthPenalty]
+0 = 0
+1 = 0
+2 = -1
+3 = -1
+4 = -2
+5 = -2
+6 = -5
+7 = -5
+
+# generation -> [max blood pool, blood per turn]
+[tables.bloodPool]
+4 = [50, 10]
+5 = [40, 8]
+6 = [30, 6]
+7 = [20, 4]
+8 = [15, 3]
+9 = [14, 2]
+10 = [13, 1]
+11 = [12, 1]
+12 = [11, 1]
+13 = [10, 1]

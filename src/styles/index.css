@@ -1,18 +1,69 @@
 @import 'tailwindcss';
+@import 'tw-animate-css';
+
+/* shadcn/ui token names mapped onto the sheet's palette (one dark theme; print
+   overrides below cascade through these too). */
+:root {
+  --background: var(--color-bg);
+  --foreground: var(--color-text);
+  --card: var(--color-surf);
+  --card-foreground: var(--color-text);
+  --popover: var(--color-surf);
+  --popover-foreground: var(--color-text);
+  --primary: var(--color-text);
+  --primary-foreground: var(--color-bg);
+  --secondary: var(--color-surf2);
+  --secondary-foreground: var(--color-text);
+  --muted: var(--color-surf);
+  --muted-foreground: var(--color-text-mute);
+  --accent: var(--color-surf2);
+  --accent-foreground: var(--color-text);
+  --destructive: var(--color-brand-bright);
+  --border: var(--color-line);
+  --input: var(--color-line2);
+  --ring: var(--color-text-mute);
+  --radius: 0.375rem;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --radius-sm: calc(var(--radius) - 2px);
+  --radius-md: var(--radius);
+  --radius-lg: calc(var(--radius) + 2px);
+}
 
 /* Design tokens exposed to Tailwind as theme values — these generate utilities
-   like bg-bg, text-blood, border-line, font-display. The visual design is final. */
+   like bg-bg, text-brand, border-line, font-display. The visual design is final. */
 @theme {
   --color-ink: #0c0b10;
   --color-bg: #14121a;
   --color-surf: #1d1a24;
+  --color-surf2: #26222d;
   --color-line: #2a2630;
   --color-line2: #3a343f;
   --color-text: #eae6e0;
-  --color-text-mute: #8a8589;
-  --color-text-dim: #5e5a5f;
-  --color-blood: #a01e2e;
-  --color-blood2: #c9304a;
+  --color-text-mute: #a8a3a8;
+  --color-text-dim: #8a858c;
+  --color-brand: #a01e2e;
+  --color-brand-bright: #c9304a;
+  --color-on-brand: #ffffff;
   --color-gold: #c9a14a;
   --color-good: #4a8a5c;
 
@@ -39,11 +90,34 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+/* Rendered markdown (notes). */
+.md { font-size: 14px; line-height: 1.6; color: var(--color-text); overflow-wrap: anywhere; }
+.md > :first-child { margin-top: 0; }
+.md > :last-child { margin-bottom: 0; }
+.md h1, .md h2, .md h3, .md h4 { font-family: var(--font-display); font-weight: 600; line-height: 1.2; margin: 1.1em 0 0.4em; }
+.md h1 { font-size: 1.7em; } .md h2 { font-size: 1.4em; } .md h3 { font-size: 1.15em; } .md h4 { font-size: 1em; }
+.md p, .md ul, .md ol, .md blockquote, .md pre, .md table { margin: 0.6em 0; }
+.md ul { list-style: disc; padding-left: 1.4em; } .md ol { list-style: decimal; padding-left: 1.5em; }
+.md li > ul, .md li > ol { margin: 0.2em 0; }
+.md li.task-list-item { list-style: none; margin-left: -1.2em; }
+.md li.task-list-item input { margin-right: 0.5em; transform: translateY(1px); cursor: pointer; }
+.md a { color: var(--color-brand-bright); text-decoration: underline; text-underline-offset: 2px; }
+.md blockquote { border-left: 3px solid var(--color-line2); padding-left: 0.9em; color: var(--color-text-mute); font-style: italic; }
+.md code { font-family: var(--font-mono); font-size: 0.88em; background: var(--color-surf); border: 1px solid var(--color-line); border-radius: 3px; padding: 0.1em 0.35em; }
+.md pre { background: var(--color-surf); border: 1px solid var(--color-line); border-radius: 6px; padding: 0.7em 0.9em; overflow-x: auto; }
+.md pre code { background: none; border: 0; padding: 0; }
+.md hr { border: 0; border-top: 1px solid var(--color-line2); margin: 1em 0; }
+.md table { border-collapse: collapse; } .md th, .md td { border: 1px solid var(--color-line2); padding: 0.3em 0.7em; text-align: left; }
+.md th { background: var(--color-surf); font-weight: 600; }
+.md img { max-width: 100%; }
+.md del { color: var(--color-text-mute); }
+
 /* Eyebrow: small mono uppercase label used for section headers. */
 .eyebrow {
-  font-family: var(--font-mono);
-  font-size: 10px;
-  letter-spacing: 0.2em;
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 11px;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--color-text-mute);
 }
@@ -52,13 +126,13 @@ body {
 .health-box::before {
   content: '';
 }
-.health-box[data-state='bashing']::before {
+.health-box[data-k='1']::before {
   content: '/';
 }
-.health-box[data-state='lethal']::before {
+.health-box[data-k='2']::before {
   content: 'X';
 }
-.health-box[data-state='aggravated']::before {
+.health-box[data-k='3']::before {
   content: '✱';
 }
 
@@ -101,8 +175,8 @@ body {
     --color-text: #111014;
     --color-text-mute: #4a464b;
     --color-text-dim: #7a767b;
-    --color-blood: #a01e2e;
-    --color-blood2: #a01e2e;
+    --color-brand: #a01e2e;
+    --color-brand-bright: #a01e2e;
     --color-gold: #7c6420;
     --color-good: #2f6b3f;
   }
@@ -113,12 +187,19 @@ body {
     print-color-adjust: exact;
   }
 
-  body {
-    background: #fff;
+  /* The page margin area is painted with the root/canvas background. */
+  html,
+  body,
+  #root {
+    background: #fff !important;
+    color-scheme: light;
+    height: auto !important;
+    margin: 0;
   }
 
   /* Belt-and-braces alongside Tailwind's print:hidden variant. */
-  .print-hidden {
+  .print-hidden,
+  [data-sonner-toaster] {
     display: none !important;
   }
 
@@ -129,7 +210,19 @@ body {
   /* Compact the sheet for A4. The multi-column layout is forced on via
      print:grid-cols-* in the markup (the md: breakpoint doesn't trigger at
      page width); here we just trim wasted vertical space. */
+  /* Grid/flex cells may shrink to the page width, but dots and boxes must keep their size
+     (shrinking them clips the circles at the right edge). */
+  .print-sheet section > div > *,
+  .print-sheet section > div > * > * {
+    min-width: 0;
+  }
+  .print-sheet button,
+  .print-sheet input[type='checkbox'] {
+    flex-shrink: 0;
+  }
   .print-sheet {
+    width: 100%;
+    box-sizing: border-box;
     max-width: 100% !important;
     padding: 0 !important;
     gap: 9px !important;
@@ -143,10 +236,15 @@ body {
   .print-sheet textarea {
     min-height: 32px !important;
   }
-  /* Don't split a section across the page break. */
-  .print-sheet > section,
+  /* Don't split a section across the page break (sections sit inside a wrapper,
+     so no child selector), and never leave a heading alone at the bottom of a page. */
+  .print-sheet section,
   .print-sheet > header {
     break-inside: avoid;
+  }
+  .print-sheet h2,
+  .print-sheet .eyebrow {
+    break-after: avoid;
   }
 
   @page {

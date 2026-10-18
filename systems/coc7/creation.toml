@@ -1,0 +1,29 @@
+#:schema ../../schema/creation.schema.json
+[[steps]]
+id = "concept"
+kind = "fields"
+fields = ["profile.name", "profile.player", "profile.occupation", "profile.age"]
+required = ["profile.name", "profile.occupation"]
+
+[[steps]]
+id = "characteristics"
+kind = "scores"
+group = "characteristics"
+methods = ["roll"]
+show = ["hp_max", "mp_max", "san_max"]
+
+[steps.roll]
+formula = "3d6*5"
+items = { siz = "(2d6+6)*5", int = "(2d6+6)*5", edu = "(2d6+6)*5" }
+
+[[steps]]
+id = "skills"
+kind = "spend"
+group = "skills"
+budget = "characteristics.edu * 4 + characteristics.int * 2"
+maxPerItem = 75
+
+[[steps]]
+id = "recap"
+kind = "recap"
+show = ["hp_max", "san_max", "mp_max"]

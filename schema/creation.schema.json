@@ -1,0 +1,435 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "steps": {
+      "default": [],
+      "type": "array",
+      "items": {
+        "oneOf": [
+          {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9_]+$"
+              },
+              "title": {
+                "type": "string"
+              },
+              "show": {
+                "default": [],
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z0-9_]+$"
+                }
+              },
+              "kind": {
+                "type": "string",
+                "const": "fields"
+              },
+              "fields": {
+                "minItems": 1,
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "required": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            "required": [
+              "id",
+              "kind",
+              "fields"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9_]+$"
+              },
+              "title": {
+                "type": "string"
+              },
+              "show": {
+                "default": [],
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z0-9_]+$"
+                }
+              },
+              "kind": {
+                "type": "string",
+                "const": "pick"
+              },
+              "field": {
+                "type": "string"
+              },
+              "from": {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9_]+$"
+              },
+              "fields": {
+                "default": [],
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            "required": [
+              "id",
+              "kind",
+              "field",
+              "from"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9_]+$"
+              },
+              "title": {
+                "type": "string"
+              },
+              "show": {
+                "default": [],
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z0-9_]+$"
+                }
+              },
+              "kind": {
+                "type": "string",
+                "const": "priority"
+              },
+              "group": {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9_]+$"
+              },
+              "budgets": {
+                "minItems": 1,
+                "type": "array",
+                "items": {
+                  "type": "number"
+                }
+              },
+              "base": {
+                "default": 0,
+                "type": "number"
+              },
+              "maxPerItem": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "id",
+              "kind",
+              "group",
+              "budgets"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9_]+$"
+              },
+              "title": {
+                "type": "string"
+              },
+              "show": {
+                "default": [],
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z0-9_]+$"
+                }
+              },
+              "kind": {
+                "type": "string",
+                "const": "scores"
+              },
+              "group": {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9_]+$"
+              },
+              "methods": {
+                "minItems": 1,
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "enum": [
+                    "pointbuy",
+                    "array",
+                    "roll"
+                  ]
+                }
+              },
+              "pointbuy": {
+                "type": "object",
+                "properties": {
+                  "budget": {
+                    "type": "number"
+                  },
+                  "min": {
+                    "type": "number"
+                  },
+                  "max": {
+                    "type": "number"
+                  },
+                  "costs": {
+                    "type": "object",
+                    "propertyNames": {
+                      "type": "string"
+                    },
+                    "additionalProperties": {
+                      "type": "number"
+                    }
+                  }
+                },
+                "required": [
+                  "budget",
+                  "min",
+                  "max",
+                  "costs"
+                ]
+              },
+              "array": {
+                "minItems": 1,
+                "type": "array",
+                "items": {
+                  "type": "number"
+                }
+              },
+              "roll": {
+                "type": "object",
+                "properties": {
+                  "formula": {
+                    "type": "string"
+                  },
+                  "items": {
+                    "default": {},
+                    "type": "object",
+                    "propertyNames": {
+                      "type": "string",
+                      "pattern": "^[A-Za-z0-9_]+$"
+                    },
+                    "additionalProperties": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "required": [
+                  "formula"
+                ]
+              }
+            },
+            "required": [
+              "id",
+              "kind",
+              "group",
+              "methods"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9_]+$"
+              },
+              "title": {
+                "type": "string"
+              },
+              "show": {
+                "default": [],
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z0-9_]+$"
+                }
+              },
+              "kind": {
+                "type": "string",
+                "const": "spend"
+              },
+              "group": {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9_]+$"
+              },
+              "budget": {
+                "type": [
+                  "number",
+                  "string"
+                ]
+              },
+              "maxPerItem": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "id",
+              "kind",
+              "group",
+              "budget"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9_]+$"
+              },
+              "title": {
+                "type": "string"
+              },
+              "show": {
+                "default": [],
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z0-9_]+$"
+                }
+              },
+              "kind": {
+                "type": "string",
+                "const": "list"
+              },
+              "field": {
+                "type": "string"
+              },
+              "budget": {
+                "type": "number"
+              },
+              "scope": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "id",
+              "kind",
+              "field",
+              "budget"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9_]+$"
+              },
+              "title": {
+                "type": "string"
+              },
+              "show": {
+                "default": [],
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z0-9_]+$"
+                }
+              },
+              "kind": {
+                "type": "string",
+                "const": "freebies"
+              },
+              "budget": {
+                "type": "number"
+              },
+              "costs": {
+                "type": "array",
+                "items": {
+                  "anyOf": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "step": {
+                          "type": "string",
+                          "pattern": "^[A-Za-z0-9_]+$"
+                        },
+                        "per": {
+                          "type": "number"
+                        }
+                      },
+                      "required": [
+                        "step",
+                        "per"
+                      ]
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "field": {
+                          "type": "string"
+                        },
+                        "per": {
+                          "type": "number"
+                        }
+                      },
+                      "required": [
+                        "field",
+                        "per"
+                      ]
+                    }
+                  ]
+                }
+              }
+            },
+            "required": [
+              "id",
+              "kind",
+              "budget",
+              "costs"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9_]+$"
+              },
+              "title": {
+                "type": "string"
+              },
+              "show": {
+                "default": [],
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z0-9_]+$"
+                }
+              },
+              "kind": {
+                "type": "string",
+                "const": "recap"
+              }
+            },
+            "required": [
+              "id",
+              "kind"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "title": "trpg-sheets creation.toml"
+}

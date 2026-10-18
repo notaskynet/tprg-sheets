@@ -1,10 +1,10 @@
 // Language state + helpers, available app-wide. System and per-character system
 // selection are layered on top via useSystem() (see domain/SystemContext).
-import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from 'react';
+import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
 import { DEFAULT_LANG, isKnownLang, localize, tr, type Lang, type LocalizedText } from './lang';
 import { UI } from './ui';
 
-const LANG_KEY = 'v20.lang';
+const LANG_KEY = 'trpg.lang';
 
 interface I18nValue {
   lang: Lang;
@@ -38,6 +38,12 @@ export function I18nProvider({ children }: { children: ReactNode }) {
       /* ignore */
     }
   }, []);
+
+  // Keep the document's language and title in step with the interface language.
+  useEffect(() => {
+    document.documentElement.lang = lang;
+    document.title = tr(UI, lang, 'appTitle');
+  }, [lang]);
 
   const value = useMemo<I18nValue>(
     () => ({

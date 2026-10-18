@@ -1,63 +1,60 @@
-// Minimal query-string routing without react-router. Routes:
-//   /                       -> dashboard
-//   /?c=<charId>            -> sheet for that character
-//   /?view=<uid>           -> storyteller read-only (legacy single-char, Phase 4)
-//   /?view=<uid>/<charId>  -> storyteller read-only for one character (Phase 4)
+// Minimal query-string routing without react-router (GitHub-Pages friendly). Routes:
+//   /            -> library
+//   /?c=<id>     -> character sheet
+//   /?session    -> live session (GM table / player view)
+//   /?join=CODE  -> library with the join dialog prefilled; /?receive=CODE likewise for transfer
+//   /#s=<data>   -> shared read-only snapshot (see share/snapshot.ts)
 import { useSyncExternalStore } from 'react';
+import { snapshotFromHash } from '@/share/snapshot';
 
 export type Route =
-  | { name: 'dashboard' }
+  | { name: 'library'; join?: string; receive?: string }
   | { name: 'sheet'; charId: string }
-  | { name: 'view'; uid: string; charId?: string };
+  | { name: 'session' }
+  | { name: 'shared'; data: string };
 
 function parse(): Route {
-  const params = new URLSearchParams(window.location.search);
-  const view = params.get('view');
-  if (view) {
-    const [uid, charId] = view.split('/');
-    return { name: 'view', uid, charId };
-  }
-  const c = params.get('c');
+  const snap = snapshotFromHash(window.location.hash);
+  if (snap) return { name: 'shared', data: snap };
+  const q = new URLSearchParams(window.location.search);
+  const c = q.get('c');
   if (c) return { name: 'sheet', charId: c };
-  return { name: 'dashboard' };
+  if (q.has('session')) return { name: 'session' };
+  return { name: 'library', join: q.get('join') ?? undefined, receive: q.get('receive') ?? undefined };
 }
 
 function subscribe(cb: () => void): () => void {
   window.addEventListener('popstate', cb);
-  window.addEventListener('vtm:navigate', cb);
+  window.addEventListener('hashchange', cb);
+  window.addEventListener('trpg:navigate', cb);
   return () => {
     window.removeEventListener('popstate', cb);
-    window.removeEventListener('vtm:navigate', cb);
+    window.removeEventListener('trpg:navigate', cb);
   };
 }
 
-let cached = window.location.search;
+let cached = window.location.search + window.location.hash;
 let cachedRoute = parse();
 function getSnapshot(): Route {
-  if (window.location.search !== cached) {
-    cached = window.location.search;
+  if (window.location.search + window.location.hash !== cached) {
+    cached = window.location.search + window.location.hash;
     cachedRoute = parse();
   }
   return cachedRoute;
 }
 
-export function useRoute(): Route {
-  return useSyncExternalStore(subscribe, getSnapshot);
-}
+export const useRoute = (): Route => useSyncExternalStore(subscribe, getSnapshot);
 
 export function navigate(to: Route): void {
   const url = new URL(window.location.href);
   url.search = '';
+  url.hash = '';
   if (to.name === 'sheet') url.searchParams.set('c', to.charId);
-  else if (to.name === 'view') url.searchParams.set('view', to.charId ? `${to.uid}/${to.charId}` : to.uid);
+  if (to.name === 'session') url.searchParams.set('session', '1');
   window.history.pushState({}, '', url);
-  window.dispatchEvent(new Event('vtm:navigate'));
+  window.dispatchEvent(new Event('trpg:navigate'));
 }
 
-export const goDashboard = () => navigate({ name: 'dashboard' });
+export const goLibrary = () => navigate({ name: 'library' });
 export const goSheet = (charId: string) => navigate({ name: 'sheet', charId });
-
-/** Public storyteller share link for a character (keeps the deploy base path). */
-export function shareLink(uid: string, charId: string): string {
-  return `${window.location.origin}${window.location.pathname}?view=${uid}/${charId}`;
-}
+export const goSession = () => navigate({ name: 'session' });

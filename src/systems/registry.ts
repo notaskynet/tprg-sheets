@@ -1,30 +1,47 @@
-// System registry. Adding a new VtM system is: implement GameSystem, then
-// `register(mySystem)` in systems/index.ts. Nothing else in the app changes.
+// Runtime registry of system packages: bundled ones plus user-imported (IndexedDB).
+import { useSyncExternalStore } from 'react';
+import { loadPackage, type Files } from '@/engine/loader';
+import type { SystemPackage } from '@/engine/schema';
+import { BUILTIN_FILES, BUILTIN_PACKAGES } from './builtin';
+import { deletePackageFiles, getPackageFiles, loadPackageFiles, savePackageFiles } from '@/storage/db';
 
-import type { GameSystem } from './types';
+let packages = new Map<string, SystemPackage>(BUILTIN_PACKAGES.map((p) => [p.manifest.id, p]));
+let list = [...packages.values()];
+const listeners = new Set<() => void>();
+const emit = () => { list = [...packages.values()]; listeners.forEach((l) => l()); };
 
-const systems = new Map<string, GameSystem>();
+export const getPackage = (id: string) => packages.get(id);
+export const isBuiltin = (id: string) => BUILTIN_PACKAGES.some((b) => b.manifest.id === id);
 
-export function register(system: GameSystem): void {
-  if (systems.has(system.id)) {
-    throw new Error(`System "${system.id}" is already registered`);
+/** Source files of an installed system (bundled or imported). */
+export async function getSourceFiles(id: string): Promise<Files | undefined> {
+  return BUILTIN_FILES[id] ?? (await getPackageFiles(id));
+}
+
+export async function removePackage(id: string): Promise<void> {
+  if (isBuiltin(id)) return;
+  packages.delete(id);
+  await deletePackageFiles(id);
+  emit();
+}
+export const usePackages = () => useSyncExternalStore((cb) => (listeners.add(cb), () => void listeners.delete(cb)), () => list);
+
+/** Validates and registers an imported package (throws PackageError). Persists it. */
+export async function addPackage(files: Files): Promise<SystemPackage> {
+  const pkg = loadPackage(files);
+  if (isBuiltin(pkg.manifest.id)) throw new Error(`"${pkg.manifest.id}" is a built-in system id; change \`id\` in system.toml`);
+  packages.set(pkg.manifest.id, pkg);
+  await savePackageFiles(pkg.manifest.id, files);
+  emit();
+  return pkg;
+}
+
+export async function initPackages(): Promise<void> {
+  for (const files of await loadPackageFiles()) {
+    try {
+      const pkg = loadPackage(files);
+      if (!BUILTIN_PACKAGES.some((b) => b.manifest.id === pkg.manifest.id)) packages.set(pkg.manifest.id, pkg);
+    } catch { /* broken stored package: ignore */ }
   }
-  systems.set(system.id, system);
+  emit();
 }
-
-export function getSystem(id: string): GameSystem {
-  const sys = systems.get(id);
-  if (!sys) throw new Error(`Unknown system "${id}"`);
-  return sys;
-}
-
-export function hasSystem(id: string): boolean {
-  return systems.has(id);
-}
-
-export function listSystems(): GameSystem[] {
-  return [...systems.values()];
-}
-
-/** The system new characters default to when none is specified. */
-export const DEFAULT_SYSTEM_ID = 'vtm-v20';

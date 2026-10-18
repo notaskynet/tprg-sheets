@@ -1,0 +1,166 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]*$"
+    },
+    "version": {
+      "type": "string"
+    },
+    "name": {
+      "type": "object",
+      "propertyNames": {
+        "type": "string"
+      },
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "languages": {
+      "minItems": 1,
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "description": {
+      "type": "object",
+      "propertyNames": {
+        "type": "string"
+      },
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "credits": {
+      "type": "string"
+    },
+    "accent": {
+      "type": "string",
+      "pattern": "^#[0-9a-fA-F]{6}$"
+    },
+    "dice": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "mechanic": {
+              "type": "string",
+              "const": "pool-successes"
+            },
+            "die": {
+              "default": 10,
+              "type": "integer",
+              "minimum": -9007199254740991,
+              "maximum": 9007199254740991
+            },
+            "defaultDifficulty": {
+              "default": 6,
+              "type": "integer",
+              "minimum": -9007199254740991,
+              "maximum": 9007199254740991
+            },
+            "onesCancel": {
+              "default": true,
+              "type": "boolean"
+            },
+            "specialty": {
+              "default": "extra-die",
+              "type": "string",
+              "enum": [
+                "extra-die",
+                "none"
+              ]
+            }
+          },
+          "required": [
+            "mechanic"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "mechanic": {
+              "type": "string",
+              "const": "d20-modifier"
+            },
+            "critSuccess": {
+              "default": 20,
+              "type": "integer",
+              "minimum": -9007199254740991,
+              "maximum": 9007199254740991
+            },
+            "critFail": {
+              "default": 1,
+              "type": "integer",
+              "minimum": -9007199254740991,
+              "maximum": 9007199254740991
+            }
+          },
+          "required": [
+            "mechanic"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "mechanic": {
+              "type": "string",
+              "const": "d100-under"
+            }
+          },
+          "required": [
+            "mechanic"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "mechanic": {
+              "type": "string",
+              "const": "notation"
+            }
+          },
+          "required": [
+            "mechanic"
+          ]
+        }
+      ]
+    },
+    "summary": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "subtitle": {
+          "default": [],
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "stats": {
+          "default": [],
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "title"
+      ]
+    }
+  },
+  "required": [
+    "id",
+    "version",
+    "name",
+    "languages",
+    "dice"
+  ],
+  "title": "trpg-sheets system.toml"
+}

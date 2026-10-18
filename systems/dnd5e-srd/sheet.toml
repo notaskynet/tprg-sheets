@@ -1,0 +1,62 @@
+#:schema ../../schema/sheet.schema.json
+# d20: one pick (a skill, a save or an ability check), rolled with its modifier.
+[roll]
+pools = [["skills", "saves", "abilities"]]
+[roll.value]
+abilities = "{id}_mod"
+saves = "save_{id}"
+skills = "skill_{id}"
+
+[[sections]]
+id = "plate"
+blocks = [
+  { type = "plate", fields = ["profile.player", "profile.race", "profile.class", "profile.background", "profile.alignment", "level", "xp"] },
+]
+
+[[sections]]
+id = "combat"
+title = "labels.combat"
+columns = 2
+blocks = [
+  { type = "stats", items = ["ac", "proficiency", "speed", "initiative", "passive_perception"], signed = false },
+  { type = "stack", blocks = [
+    { type = "pool", field = "hp" },
+    { type = "fields", fields = ["hpBonus", "inspiration"] },
+    { type = "checkboxes", field = "deathSuccesses" },
+    { type = "checkboxes", field = "deathFailures" },
+  ] },
+]
+
+[[sections]]
+id = "abilities"
+title = "abilities.title"
+columns = 2
+blocks = [
+  { type = "group", group = "abilities", derived = ["{id}_score", "+{id}_mod"] },
+  { type = "group", group = "saves", derived = ["+save_{id}"] },
+]
+
+[[sections]]
+id = "skills"
+title = "skills.title"
+columns = 3
+blocks = [{ type = "group-columns", group = "skills", derived = ["+skill_{id}"] }]
+
+[[sections]]
+id = "gear"
+columns = 3
+blocks = [
+  { type = "list", field = "attacks" },
+  { type = "list", field = "spells" },
+  { type = "list", field = "equipment" },
+]
+
+[[sections]]
+id = "features"
+title = "fields.features"
+blocks = [{ type = "text", field = "features" }]
+
+[[sections]]
+id = "notes"
+title = "labels.notes"
+blocks = [{ type = "text", field = "notes" }]

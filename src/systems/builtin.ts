@@ -1,0 +1,21 @@
+// Built-in system packages, bundled from /systems/<id>/**/*.toml at build time.
+import { loadPackage, type Files } from '@/engine/loader';
+import type { SystemPackage } from '@/engine/schema';
+
+const raw = import.meta.glob('/systems/**/*.toml', { query: '?raw', import: 'default', eager: true }) as Record<string, string>;
+
+function byPackage(): Record<string, Files> {
+  const out: Record<string, Files> = {};
+  for (const [path, src] of Object.entries(raw)) {
+    const m = /^\/systems\/([^/]+)\/(.+)$/.exec(path);
+    if (m) (out[m[1]] ??= {})[m[2]] = src;
+  }
+  return out;
+}
+
+const FILES = byPackage();
+export const BUILTIN_PACKAGES: SystemPackage[] = Object.values(FILES).map(loadPackage);
+
+/** Source files of every bundled system (used for "export as zip" — a starting point for your own). */
+export const BUILTIN_FILES: Record<string, Files> = Object.fromEntries(Object.values(FILES).map((f) => [loadPackage(f).manifest.id, f]));
+export const DEFAULT_SYSTEM_ID = 'vtm-v20';
