@@ -4,7 +4,7 @@ import { createContext, useCallback, useContext, useMemo, useState, type ReactNo
 import { DEFAULT_LANG, isKnownLang, localize, tr, type Lang, type LocalizedText } from './lang';
 import { UI } from './ui';
 
-const LANG_KEY = 'v20.lang';
+const LANG_KEY = 'trpg.lang';
 
 interface I18nValue {
   lang: Lang;
