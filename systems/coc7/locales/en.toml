@@ -100,29 +100,17 @@ recap = "Summary"
 [hints]
 concept = "Who is your investigator? A name and an occupation."
 characteristics = "Roll the characteristics: 3d6×5, and (2d6+6)×5 for Size, Intelligence and Education."
-skills = "Spend skill points: EDU×4 plus INT×2."
+skills = "Skill points: EDU×4 plus INT×2."
 recap = "Check the summary."
 
 [guide]
-characteristics = """
-**Один бросок на характеристику.** Кнопка ↻ перебрасывает только одну.
-
-- STR, CON, DEX, APP, POW и Удача: **3d6 × 5**.
-- SIZ, INT, EDU: **(2d6 + 6) × 5**.
-- Здоровье, очки магии и Рассудок считаются автоматически."""
+concept = "Pick a believable occupation: it suggests where to put your skill points. Older investigators are wiser but frailer, so you have to apply the age modifiers by hand."
+characteristics = "Each characteristic is one roll, and the ↻ button rerolls just that one. STR, CON, DEX, APP, POW and Luck use 3d6×5. SIZ, INT and EDU use (2d6+6)×5. Hit points, magic points and Sanity are worked out for you."
 skills = """
-**Очки навыков = EDU × 4 + INT × 2.** Добавляйте очки в навыки, которые подсказывают профессия и интересы.
+You get EDU×4 plus INT×2 skill points. Put them into the skills your occupation and interests suggest.
 
-- Число показывает **добавленные** очки; итог (база + добавленное) рядом.
-- Держите навык не выше **75** при создании. Мифы Ктулху остаются 0.
-- База Уклонения и Родного языка берётся из DEX и EDU автоматически."""
-
-concept = """
-**Who is your investigator?** Pick a believable occupation. It guides where your skill points go.
-
-Older investigators are wiser but frailer; remember to apply age modifiers by hand."""
-recap = """
-**Check the summary.** Tap anything marked with a cross to jump to its step."""
+The number next to a skill is the points you added, and the total (base plus added) sits beside it. Keep a skill at 75 or less during creation; Cthulhu Mythos stays at 0. Dodge and Language (Own) get their base from DEX and EDU automatically."""
+recap = "Anything marked with a cross can be fixed: tap it to jump to its step."
 
 [help]
 "profile.name" = "Your investigator's name."

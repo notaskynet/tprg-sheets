@@ -244,15 +244,15 @@ freebies = "Experience"
 recap = "Character creation"
 
 [hints]
-concept = "Who is this vampire? Nature is their inner drive. Demeanor is what they show the world."
-clan = "Clan sets your starting disciplines and weakness. Generation determines blood pool."
-attributes = "Distribute 7 / 5 / 3 dots across Physical, Social, Mental. Each attribute starts at 1."
-abilities = "Distribute 13 / 9 / 5 dots across Talents, Skills, Knowledges. Max 3 dots in any one ability."
-disciplines = "3 dots in your clan disciplines. Quick-pick shows your clan’s disciplines (Caitiff — any)."
-backgrounds = "5 dots. Allies, resources, influence — what you have in the world."
-virtues = "7 dots above base 1. They drive Humanity and Willpower."
-freebies = "15 freebies to fine-tune. Rates: attribute 5, ability 2, discipline 7, background 1, virtue 2, willpower 1, humanity 2."
-recap = "Check the summary. You can go back to adjust."
+concept = "Who is this vampire? Nature is what drives them inside. Demeanor is what they show people."
+clan = "Your clan gives three disciplines and a weakness. Generation sets your blood pool."
+attributes = "7, 5 and 3 points across the three groups: Physical, Social, Mental. Every attribute starts at 1."
+abilities = "13, 9 and 5 points across Talents, Skills and Knowledges. No more than 3 in one ability."
+disciplines = "3 points, usually in clan disciplines. Caitiff may pick any."
+backgrounds = "5 points: contacts, resources, influence."
+virtues = "7 points on top of the starting 1. They set Humanity and Willpower."
+freebies = "15 freebie points. Cost per dot: attribute 5, ability 2, discipline 7, background 1, virtue 2, Willpower 1, Humanity 2."
+recap = "Check the summary and go back to fix anything."
 
 [derived]
 bloodMax = "Blood Pool"
@@ -343,55 +343,36 @@ schemer = "Plots and manipulates from the shadows."
 
 [guide]
 concept = """
-**Start with the idea, not the numbers.** Ask: who was this person before the Embrace, and what do they want now?
+A name and one line about who this is will do to start, for example "Marta Kowalska, night-shift nurse". Think about who they were before the Embrace and what they want now.
 
-- **Name & Concept** are enough to begin. Example: *“Marta Kowalska, night-shift nurse”*.
-- **Nature** is who they really are; **Demeanor** is the face they show. A gentle Demeanor over a ruthless Nature makes a great character.
-- You can change any of this later."""
+Nature is who they really are, Demeanor is who they pretend to be. A gentle Demeanor over a cruel Nature often makes an interesting character. You can change all of this later."""
 clan = """
-**Your clan is your vampire family.** It decides which three disciplines come easily to you and what curse you carry.
+Your clan sets three clan disciplines and a weakness every member shares. Read the descriptions and pick the one that fits your concept.
 
-- Read the one-line description under each clan and pick the one that fits your concept.
-- **Generation** is 13 for new characters unless your storyteller says otherwise. It sets your blood pool.
-- **Caitiff** have no clan and may choose any disciplines."""
+New characters are usually Generation 13 unless the Storyteller says otherwise. The lower the number, the bigger the blood pool. Caitiff have no clan and may take any discipline."""
 attributes = """
-**Attributes are what you are naturally capable of.** Every attribute starts at 1.
+Attributes are what you were born with, and each starts at 1. Pick your main group and it gets 7 points, the second gets 5, the third gets 3.
 
-- Choose which group matters most: that gets **7** dots, the next **5**, the last **3**.
-- Physical = Strength, Dexterity, Stamina. Social = Charisma, Manipulation, Appearance. Mental = Perception, Intelligence, Wits.
-- 1 is poor, 2 average, 3 good, 4 excellent, 5 peak of human ability."""
+Physical: Strength, Dexterity, Stamina. Social: Charisma, Manipulation, Appearance. Mental: Perception, Intelligence, Wits. A 1 is poor, 3 is good, 5 is the peak of human ability."""
 abilities = """
-**Abilities are what you have learned.** They start at 0.
+Abilities are what the character has learned, and they start at 0. Set priorities again: 13 points for the main group, 9 for the next, 5 for the last (Talents, Skills, Knowledges).
 
-- Again pick a primary, secondary and tertiary group: **13 / 9 / 5** dots between Talents, Skills and Knowledges.
-- No more than **3** dots in one ability at this stage (dots beyond that cost freebies).
-- Think of your concept: a nurse leans on Empathy and Medicine."""
+On this step no ability goes above 3; going higher costs freebie points. Follow the concept: a nurse will want Empathy and Medicine."""
 disciplines = """
-**Disciplines are your supernatural powers.**
+Disciplines are supernatural powers. You have 3 points, usually spent on clan disciplines (quick pick lists them first).
 
-- Spend **3** dots, usually on your clan's disciplines (the quick-pick shows them first).
-- One dot in three different disciplines, or three dots in one, are both common.
-- Powers unlock by level: 1 is a taste, 5 is mastery."""
+You can take one point in three disciplines or all three in one. The first dot is a taste of the power, the fifth is mastery."""
 backgrounds = """
-**Backgrounds are what you have in the world beyond your own skills.**
+Backgrounds are what the character has in the world besides skills: allies, money, contacts, a mentor, a haven. You get 5 points.
 
-- Spend **5** dots on allies, money, contacts, a mentor, a place to sleep…
-- Ask what helps your concept: a fixer wants Contacts, a noble wants Resources and Status.
-- Be ready to explain each one in a sentence."""
+Take what supports the concept: a fixer needs Contacts, an aristocrat needs Resources and Status."""
 virtues = """
-**Virtues are your moral compass.**
+Virtues are the moral compass. Add 7 points to the starting 1 in each.
 
-- You get **7** dots over the starting 1 in each.
-- Conscience + Self-Control give your **Humanity**; Courage gives your **Willpower**.
-- Higher Humanity keeps the Beast at bay; higher Willpower lets you push through."""
+Conscience and Self-Control together give Humanity, Courage gives Willpower. High Humanity helps hold the Beast back, high Willpower helps you keep going when things get hard."""
 freebies = """
-**Freebie points are for fine-tuning.** You have **15**.
+You have 15 freebie points for fine tuning. Cost per dot: attribute 5, ability 2, discipline 7, background 1, virtue 2, Willpower 1, Humanity 2.
 
-- Cost per extra dot: attribute 5, ability 2, discipline 7, background 1, virtue 2, Willpower 1, Humanity 2.
-- Anything you put above the earlier budgets is charged here automatically.
-- You do not have to spend them all."""
-recap = """
-**Last look.** Everything marked with a cross still needs attention.
+Anything you put over the budgets of earlier steps is charged here automatically. You don't have to spend them all."""
+recap = "Anything marked with a cross still needs attention: tap it to jump to that step. You can finish with open items and fix them later on the sheet."
 
-- Tap an unresolved item to jump to its step.
-- You can finish with open items and fix them later from the sheet."""

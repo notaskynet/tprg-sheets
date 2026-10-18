@@ -418,44 +418,36 @@ subclass = "Subclass"
 background = "Background"
 
 [hints]
-concept = "Who is your hero? Name, background and alignment."
-race = "Race grants ability bonuses and speed."
-class = "Class sets your hit die, saving throws, skill list and spellcasting."
-abilities = "Set the six ability scores: point buy, standard array or rolls."
-skills = "Tick the skills you are proficient in; those your class and background already give are locked."
-recap = "Check the summary."
-subrace = "Your race's variant: one more ability bonus and extra traits."
-ancestry = "Choose the dragon you descend from."
-subclass = "Your specialisation within the class."
+concept = "Who is your hero? A name and an alignment."
+race = "Race gives ability bonuses and speed."
+subrace = "A race variant: one more bonus and extra traits."
+ancestry = "The dragon you descend from."
+class = "Class sets hit die, saving throws, skills and spellcasting."
+subclass = "A specialisation within the class."
 background = "What your hero did before adventuring."
+abilities = "Six ability scores: point buy, standard array or rolls."
+skills = "Tick the skills your hero is proficient in. Skills from class and background are already ticked."
+recap = "Check the summary."
 
 [guide]
-abilities = """
-**Three ways to set your scores.**
-
-- **Point buy:** 27 points, each score 8–15. Predictable and balanced.
-- **Standard array:** assign 15, 14, 13, 12, 10, 8 once each.
-- **Roll:** 4d6 drop the lowest, six times. Swingy, ask your DM first.
-
-Racial bonuses are added automatically on the sheet."""
-skills = "Pick as many skills as your class allows (shown as the budget) from its list. Skills from your race and background, and the saving throws of your class, are filled in for you. Your **proficiency bonus** is added to every ticked skill."
-concept = """
-**Start with who they are.** A name, a background (what they did before adventuring) and an alignment (how they see right and wrong).
-
-A one-line idea is enough: *“disgraced soldier seeking redemption”*."""
-race = """
-**Race gives bonuses and speed.** Racial ability bonuses are added to your scores automatically on the sheet.
-
-Half-Elves also choose two extra +1 bonuses: add those to your base scores yourself."""
+concept = "A name and a few words about the hero are enough to start, for example \"disgraced soldier seeking redemption\". Alignment is how the hero sees right and wrong, and it's optional."
+race = "Race gives ability bonuses and speed, and the bonuses are added on the sheet for you. Half-elves also pick two extra +1 bonuses, which you add to the base scores yourself."
+subrace = "Some races have a variant that adds one more ability bonus and some traits. They show up on the sheet under Features & traits."
+ancestry = "Your dragon ancestor sets the damage type and shape of your breath weapon, and your damage resistance."
 class = """
-**Class is what your hero does.** It sets the hit die (hit points per level), your two saving-throw proficiencies, which skills you may pick and whether you cast spells. Every feature up to your level appears on the sheet.
+Class is what the hero can do. It sets the hit die, two saving throws, the skill list and spellcasting. Features up to your level appear on the sheet by themselves.
 
 Level 1 is the default; raise it if your DM starts higher."""
-recap = "**Check the summary.** Anything marked with a cross can be fixed: tap it to jump to its step."
-subrace = "**A variant of your race.** It adds one more ability bonus and extra traits, shown under Features & traits on the sheet."
-ancestry = "**Pick your dragon ancestor.** It decides the damage type and shape of your breath weapon and your damage resistance."
-subclass = "**Your specialisation.** Some classes choose at 1st level (cleric, sorcerer, warlock), wizards and druids at 2nd, the rest at 3rd. Its features appear on the sheet from the level they unlock."
-background = "**What your hero did before adventuring.** The SRD gives the Acolyte (Insight and Religion). *Custom* lets you pick any two extra skills on the Skills step."
+subclass = "Clerics, sorcerers and warlocks choose a subclass at 1st level, druids and wizards at 2nd, everyone else at 3rd. Its features appear on the sheet from the level they unlock. If your subclass isn't in the list, pick Other and type its name."
+background = "A background gives skills and a feature. The SRD has only the Acolyte (Insight and Religion). Custom lets you choose any two skills on the Skills step."
+abilities = """
+There are three ways to set your scores.
+
+Point buy: 27 points, each score from 8 to 15. Standard array: 15, 14, 13, 12, 10 and 8, once each. Roll: 4d6 drop the lowest, six times; ask your DM first.
+
+Racial bonuses are added on the sheet for you."""
+skills = "Pick skills from your class list, as many as it allows (that is the budget). Skills from your race and background, and your class saving throws, are already ticked. Your proficiency bonus is added to every ticked skill."
+recap = "Anything marked with a cross can be fixed: tap it to jump to the right step."
 
 [help]
 "profile.subclassName" = "Name of your subclass when you pick “Other”."
