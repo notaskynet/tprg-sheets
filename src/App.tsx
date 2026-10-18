@@ -12,6 +12,8 @@ import { initStorage } from '@/storage/db';
 import { initPackages } from '@/systems/registry';
 import { useRoute } from '@/routing';
 import { resumeSession } from '@/share/active';
+import { AuthProvider, useAuth } from '@/cloud/AuthContext';
+import { startSync } from '@/cloud/sync';
 
 async function boot(): Promise<void> {
   await Promise.all([initStorage(), initPackages()]);
@@ -22,12 +24,18 @@ function Router() {
   if (route.name === 'sheet') return <SheetScreen key={route.charId} charId={route.charId} />;
   if (route.name === 'session') return <Lazy><SessionScreen /></Lazy>;
   if (route.name === 'shared') return <Lazy><SharedView data={route.data} /></Lazy>;
-  return <Library join={route.join} receive={route.receive} />;
+  return <Library join={route.join} />;
 }
 
 function Shell() {
   const { t } = useI18n();
   const [ready, setReady] = useState(false);
+  const { user } = useAuth();
+  const uid = user?.uid;
+  useEffect(() => {
+    if (!ready || !uid) return;
+    return startSync(uid);
+  }, [ready, uid]);
   useEffect(() => {
     boot().then(() => {
       setReady(true);
@@ -46,7 +54,9 @@ function Shell() {
 export default function App() {
   return (
     <I18nProvider>
-      <Shell />
+      <AuthProvider>
+        <Shell />
+      </AuthProvider>
     </I18nProvider>
   );
 }

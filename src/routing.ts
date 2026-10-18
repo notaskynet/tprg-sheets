@@ -2,13 +2,13 @@
 //   /            -> library
 //   /?c=<id>     -> character sheet
 //   /?session    -> live session (GM table / player view)
-//   /?join=CODE  -> library with the join dialog prefilled; /?receive=CODE likewise for transfer
+//   /?join=CODE  -> library with the join dialog prefilled
 //   /#s=<data>   -> shared read-only snapshot (see share/snapshot.ts)
 import { useSyncExternalStore } from 'react';
 import { snapshotFromHash } from '@/share/snapshot';
 
 export type Route =
-  | { name: 'library'; join?: string; receive?: string }
+  | { name: 'library'; join?: string }
   | { name: 'sheet'; charId: string }
   | { name: 'session' }
   | { name: 'shared'; data: string };
@@ -20,7 +20,7 @@ function parse(): Route {
   const c = q.get('c');
   if (c) return { name: 'sheet', charId: c };
   if (q.has('session')) return { name: 'session' };
-  return { name: 'library', join: q.get('join') ?? undefined, receive: q.get('receive') ?? undefined };
+  return { name: 'library', join: q.get('join') ?? undefined };
 }
 
 function subscribe(cb: () => void): () => void {

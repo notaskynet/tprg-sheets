@@ -28,24 +28,33 @@ export function initStorage(): Promise<void> {
   return ready;
 }
 
+/** `remote` marks writes that came from the cloud, so sync does not push them back. */
+export type Origin = 'local' | 'remote';
+type CharChange = (id: string, ch: Character | null, origin: Origin) => void;
+const changeListeners = new Set<CharChange>();
+export const onCharacterChange = (cb: CharChange) => (changeListeners.add(cb), () => void changeListeners.delete(cb));
+export const allCharacters = (): Character[] => [...chars.values()];
+
 export const subscribe = (cb: () => void) => (listeners.add(cb), () => void listeners.delete(cb));
 export const useCharacters = () => useSyncExternalStore(subscribe, () => snapshot);
 export const getCharacter = (id: string) => chars.get(id);
 
 /** Store as-is (keeps updatedAt). */
-export function putCharacter(ch: Character): void {
+export function putCharacter(ch: Character, origin: Origin = 'local'): void {
   chars.set(ch.id, ch);
   emit();
   set(ch.id, ch, charStore).catch(() => {});
+  changeListeners.forEach((l) => l(ch.id, ch, origin));
 }
 
 /** Local edit: stamp updatedAt. */
 export const saveCharacter = (ch: Character) => putCharacter({ ...ch, updatedAt: Date.now() });
 
-export function deleteCharacter(id: string): void {
+export function deleteCharacter(id: string, origin: Origin = 'local'): void {
   chars.delete(id);
   emit();
   del(id, charStore).catch(() => {});
+  changeListeners.forEach((l) => l(id, null, origin));
 }
 
 // ---- imported system packages (raw files, re-parsed at startup) ----
