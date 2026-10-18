@@ -56,6 +56,7 @@ function Block({ cfg, ...p }: { cfg: BlockCfg } & SheetProps) {
   const scope = useScope(p.values);
   const dice = useDice();
   const str = (k: string) => cfg[k] as string;
+  if (cfg.when && !scope.run(cfg.when as string)) return null; // block is shown only while `when` holds
 
   switch (cfg.type) {
     case 'plate':

@@ -10,7 +10,7 @@ skills = "skill_{id}"
 [[sections]]
 id = "plate"
 blocks = [
-  { type = "plate", fields = ["profile.player", "profile.race", "profile.class", "profile.background", "profile.alignment", "level", "xp"] },
+  { type = "plate", fields = ["profile.player", "profile.race", "profile.subrace", "profile.class", "profile.subclass", "profile.background", "profile.alignment", "level", "xp"] },
 ]
 
 [[sections]]
@@ -37,6 +37,22 @@ blocks = [
 ]
 
 [[sections]]
+id = "ancestry"
+columns = 4
+when = "profile.race == 'dragonborn'"
+blocks = [{ type = "fields", fields = ["profile.ancestry"] }]
+
+[[sections]]
+id = "spellcasting"
+title = "labels.spellcasting"
+when = "spell_dc > 0"
+blocks = [
+  { type = "stats", items = ["spell_mod", "spell_dc", "spell_attack"], signed = false },
+  { type = "stats", items = ["slot_1", "slot_2", "slot_3", "slot_4", "slot_5", "slot_6", "slot_7", "slot_8", "slot_9"], signed = false, when = "caster == 'full' or caster == 'half'" },
+  { type = "stats", items = ["pact_slots", "pact_level"], signed = false, when = "caster == 'pact'" },
+]
+
+[[sections]]
 id = "skills"
 title = "skills.title"
 columns = 3
@@ -54,7 +70,10 @@ blocks = [
 [[sections]]
 id = "features"
 title = "fields.features"
-blocks = [{ type = "text", field = "features" }]
+blocks = [
+  { type = "refs", catalog = "features", ids = "featureIds" },
+  { type = "text", field = "features" },
+]
 
 [[sections]]
 id = "notes"

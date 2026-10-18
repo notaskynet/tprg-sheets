@@ -2,7 +2,7 @@
 [[steps]]
 id = "concept"
 kind = "fields"
-fields = ["profile.name", "profile.player", "profile.background", "profile.alignment"]
+fields = ["profile.name", "profile.player", "profile.alignment"]
 required = ["profile.name"]
 
 [[steps]]
@@ -12,6 +12,21 @@ field = "profile.race"
 from = "races"
 show = ["speed"]
 
+# Only for races that have sub-races (hill dwarf, high elf…).
+[[steps]]
+id = "subrace"
+kind = "pick"
+field = "profile.subrace"
+from = "subraces"
+when = "profile.race != '' and count(lookup('races', profile.race, 'subraces')) > 0"
+
+[[steps]]
+id = "ancestry"
+kind = "pick"
+field = "profile.ancestry"
+from = "ancestries"
+when = "profile.race == 'dragonborn'"
+
 [[steps]]
 id = "class"
 kind = "pick"
@@ -19,6 +34,20 @@ field = "profile.class"
 from = "classes"
 fields = ["level"]
 show = ["hitDie", "hpMax"]
+
+# Offered once the level reaches the class's subclass level (1st for clerics, 3rd for fighters…).
+[[steps]]
+id = "subclass"
+kind = "pick"
+field = "profile.subclass"
+from = "subclasses"
+when = "profile.class != '' and level >= lookup('classes', profile.class, 'subclassLevel')"
+
+[[steps]]
+id = "background"
+kind = "pick"
+field = "profile.background"
+from = "backgrounds"
 
 [[steps]]
 id = "abilities"
@@ -30,18 +59,15 @@ pointbuy = { budget = 27, min = 8, max = 15, costs = { "8" = 0, "9" = 1, "10" = 
 roll = { formula = "4d6dl1" }
 show = ["str_mod", "dex_mod", "con_mod"]
 
+# Skills the class lets you pick (plus any two for a custom background); saves and the
+# skills of your race and background are already ticked and do not count.
 [[steps]]
 id = "skills"
 kind = "spend"
 group = "skills"
-budget = "lookup('classes', profile.class, 'skillChoices')"
+budget = "lookup('classes', profile.class, 'skillChoices') + lookup('backgrounds', profile.background, 'extraSkills')"
+scope = "concat(lookup('classes', profile.class, 'skills'), lookup('backgrounds', profile.background, 'anySkills'))"
 maxPerItem = 1
-
-[[steps]]
-id = "saves"
-kind = "spend"
-group = "saves"
-budget = 2
 
 [[steps]]
 id = "recap"

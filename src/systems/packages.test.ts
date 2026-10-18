@@ -41,6 +41,7 @@ function requiredKeys(pkg: SystemPackage): string[] {
   for (const sec of pkg.sheet.sections) {
     if (sec.title) keys.push(sec.title);
     for (const b of flat(sec.blocks as Block[])) {
+      if (b.type === 'refs') keys.push(...m.catalogs[b.catalog as string].items.map((i) => `desc.${b.catalog}.${i.id}`)); // refs show name + text
       if (b.type === 'stepper') derived.add(b.derived as string);
       if (b.type === 'pool' && b.note) derived.add(b.note as string);
       if (b.type === 'stats') (b.items as string[]).forEach((i) => { if (!m.fields[i]) derived.add(i); });

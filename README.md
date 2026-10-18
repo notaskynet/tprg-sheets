@@ -78,8 +78,10 @@ zip) — nothing else changes.
   (supported by the transport, no UI yet).
 - The room code is both the room name (hashed) and the encryption password.
 - Printing uses the browser: **Print / PDF → Save as PDF** gives a vector A4 sheet.
-- D&D and CoC packages cover the core sheet and creation, not every rule (no spell tables,
-  no age modifiers).
+- D&D 5e (SRD): all 12 classes with saves, skill lists, spellcasting and features by level, one
+  subclass each, the 9 races with the 4 SRD sub-races and the dragonborn ancestry, and the
+  Acolyte / Custom backgrounds. Spells, equipment and feats are not modelled (free-text lists).
+  CoC covers the core sheet and creation, without age modifiers.
 
 ## Licence
 

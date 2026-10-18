@@ -180,6 +180,8 @@ separate slots add up (WoD: attribute + ability).
 | `stack` | `blocks = [...]` blocks stacked in one column |
 | `refs` | `catalog`, `ids = "<expression>"`: entries of a catalog (e.g. class features up to the level), each with its `desc.<catalog>.<id>` text |
 
+Any block accepts `when = "<expression>"` and is then shown only while it is truthy.
+
 `group` blocks accept `derived = ["{id}_score", "+{id}_mod"]`: derived columns per item
 (`{id}` is the item id; a leading `+` always shows a sign).
 The control per item follows the group's field type (dots, checkbox, number).
