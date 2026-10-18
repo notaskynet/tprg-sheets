@@ -18,7 +18,7 @@
   --muted-foreground: var(--color-text-mute);
   --accent: var(--color-surf2);
   --accent-foreground: var(--color-text);
-  --destructive: var(--color-blood2);
+  --destructive: var(--color-brand-bright);
   --border: var(--color-line);
   --input: var(--color-line2);
   --ring: var(--color-text-mute);
@@ -50,7 +50,7 @@
 }
 
 /* Design tokens exposed to Tailwind as theme values — these generate utilities
-   like bg-bg, text-blood, border-line, font-display. The visual design is final. */
+   like bg-bg, text-brand, border-line, font-display. The visual design is final. */
 @theme {
   --color-ink: #0c0b10;
   --color-bg: #14121a;
@@ -59,10 +59,11 @@
   --color-line: #2a2630;
   --color-line2: #3a343f;
   --color-text: #eae6e0;
-  --color-text-mute: #8a8589;
-  --color-text-dim: #5e5a5f;
-  --color-blood: #a01e2e;
-  --color-blood2: #c9304a;
+  --color-text-mute: #a8a3a8;
+  --color-text-dim: #8a858c;
+  --color-brand: #a01e2e;
+  --color-brand-bright: #c9304a;
+  --color-on-brand: #ffffff;
   --color-gold: #c9a14a;
   --color-good: #4a8a5c;
 
@@ -91,9 +92,10 @@ body {
 
 /* Eyebrow: small mono uppercase label used for section headers. */
 .eyebrow {
-  font-family: var(--font-mono);
-  font-size: 10px;
-  letter-spacing: 0.2em;
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 11px;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--color-text-mute);
 }
@@ -151,8 +153,8 @@ body {
     --color-text: #111014;
     --color-text-mute: #4a464b;
     --color-text-dim: #7a767b;
-    --color-blood: #a01e2e;
-    --color-blood2: #a01e2e;
+    --color-brand: #a01e2e;
+    --color-brand-bright: #a01e2e;
     --color-gold: #7c6420;
     --color-good: #2f6b3f;
   }

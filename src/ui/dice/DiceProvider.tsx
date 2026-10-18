@@ -94,7 +94,7 @@ export function DiceProvider({ values, onRoll, children }: {
         onClick={() => setOpen(true)}
         title={t('roll')}
         aria-label={t('roll')}
-        className="print-hidden fixed right-[18px] bottom-[18px] z-50 w-14 h-14 rounded-full bg-blood border border-blood2 text-white flex items-center justify-center shadow-[0_6px_24px_rgba(160,30,46,.4)] hover:bg-blood2 hover:-translate-y-0.5 transition-all"
+        className="print-hidden fixed right-[18px] bottom-[18px] z-50 w-14 h-14 rounded-full bg-brand border border-brand-bright text-on-brand flex items-center justify-center shadow-[0_6px_24px_color-mix(in_srgb,var(--color-brand)_40%,transparent)] hover:bg-brand-bright hover:-translate-y-0.5 transition-all"
       >
         <Dices className="size-6" />
       </button>
@@ -112,7 +112,7 @@ export function DiceProvider({ values, onRoll, children }: {
                     {pickedRows.map((r) => (
                       <span key={r.g} className="inline-flex items-center gap-1.5 border border-line2 rounded px-2 py-1 text-xs">
                         {r.label} <b className="font-mono">{r.value}</b>
-                        <button aria-label="remove" onClick={() => setPicks(({ [r.g]: _, ...rest }) => rest)} className="text-text-dim hover:text-blood2"><X className="size-3" /></button>
+                        <button aria-label="remove" onClick={() => setPicks(({ [r.g]: _, ...rest }) => rest)} className="text-text-dim hover:text-brand-bright"><X className="size-3" /></button>
                       </span>
                     ))}
                   </div>
@@ -122,10 +122,10 @@ export function DiceProvider({ values, onRoll, children }: {
 
             {cfg.mechanic === 'notation' ? (
               <label className="flex flex-col gap-1.5"><span className="eyebrow">{t('notation')}</span>
-                <input value={formula} onChange={(e) => setFormula(e.target.value)} className="bg-ink border border-line2 rounded px-3 py-2 font-mono text-lg outline-none focus:border-blood" />
+                <input value={formula} onChange={(e) => setFormula(e.target.value)} className="bg-ink border border-line2 rounded px-3 py-2 font-mono text-lg outline-none focus:border-brand" />
               </label>
             ) : (
-              <div className="grid grid-cols-2 gap-3.5">
+              <div className="grid grid-cols-1 min-[420px]:grid-cols-2 gap-4">
                 <Stepper label={inputLabel} value={extra} display={total} onChange={(v) => setExtra(v - (total - extra))} min={0} max={99} />
                 {cfg.mechanic === 'pool-successes' && <Stepper label={t('difficulty')} value={difficulty} onChange={setDifficulty} min={2} max={10} />}
                 {cfg.mechanic === 'd20-modifier' && <Stepper label={t('dc')} value={difficulty} onChange={setDifficulty} min={1} max={40} />}
@@ -135,7 +135,7 @@ export function DiceProvider({ values, onRoll, children }: {
 
             {cfg.mechanic === 'pool-successes' && cfg.specialty === 'extra-die' && (
               <label className="flex items-center gap-2 text-text-mute text-xs cursor-pointer select-none">
-                <input type="checkbox" checked={specialty} onChange={(e) => setSpecialty(e.target.checked)} className="w-3.5 h-3.5 accent-blood" />
+                <input type="checkbox" checked={specialty} onChange={(e) => setSpecialty(e.target.checked)} className="w-3.5 h-3.5 accent-brand" />
                 {t('specialty')}{specialtyName ? ` (${specialtyName})` : ''} — +1
               </label>
             )}
@@ -150,12 +150,12 @@ export function DiceProvider({ values, onRoll, children }: {
             )}
             {rollCfg.penalty && cfg.mechanic !== 'notation' && Number(scope.get([rollCfg.penalty]) ?? 0) !== 0 && (
               <label className="flex items-center gap-2 text-text-mute text-xs cursor-pointer select-none">
-                <input type="checkbox" checked={applyPenalty} onChange={(e) => setApplyPenalty(e.target.checked)} className="w-3.5 h-3.5 accent-blood" />
+                <input type="checkbox" checked={applyPenalty} onChange={(e) => setApplyPenalty(e.target.checked)} className="w-3.5 h-3.5 accent-brand" />
                 {t('woundPenalty')}: {Number(scope.get([rollCfg.penalty]))}
               </label>
             )}
 
-            <button onClick={submit} className="bg-blood text-white border border-blood2 py-3.5 text-sm tracking-[0.08em] uppercase rounded font-semibold hover:bg-blood2 transition-colors">{t('rollIt')}</button>
+            <button onClick={submit} className="bg-brand text-on-brand border border-brand-bright h-12 text-base tracking-[0.06em] uppercase rounded font-semibold hover:bg-brand-bright transition-colors">{t('rollIt')}</button>
 
             {result && <ResultView result={result} difficulty={difficulty} />}
           </div>
@@ -196,15 +196,15 @@ function ResultView({ result, difficulty }: { result: RollResult; difficulty: nu
   const headline = pool ? (result.kind === 'success' ? String(result.result) : result.kind === 'botch' ? t('botch') : t('failure')) : String(result.result);
   const kindLabel = result.degree ? t(result.degree === 'fail' ? 'failure' : result.degree) : pool ? (good ? t('successes') : result.kind === 'botch' ? t('botch') : t('failure')) : t(result.kind);
   return (
-    <div className={cn('bg-ink rounded p-[18px] flex flex-col gap-3 border', good ? 'border-blood' : 'border-line')}>
+    <div className={cn('bg-ink rounded p-[18px] flex flex-col gap-3 border', good ? 'border-brand' : 'border-line')}>
       <span className="eyebrow">{kindLabel}</span>
-      <div className={cn('font-display text-[56px] leading-none font-medium', good ? 'text-blood2' : result.kind === 'botch' || result.kind === 'critfail' ? 'text-blood italic' : 'text-text-mute')}>{headline}</div>
+      <div className={cn('font-display text-[56px] leading-none font-medium', good ? 'text-brand-bright' : result.kind === 'botch' || result.kind === 'critfail' ? 'text-brand italic' : 'text-text-mute')}>{headline}</div>
       <div className="flex flex-wrap gap-1.5">
         {result.dice.map((d, i) => {
           const hit = pool && d >= difficulty;
-          const cls = pool && d === 1 ? 'text-blood2 border-blood bg-blood/10'
+          const cls = pool && d === 1 ? 'text-brand-bright border-brand bg-brand/10'
             : pool && d === 10 ? (hit ? 'bg-gold text-ink border-gold' : 'text-gold border-gold bg-gold/10')
-            : hit ? 'text-white bg-blood border-blood' : 'text-text-mute border-line2 bg-ink';
+            : hit ? 'text-on-brand bg-brand border-brand' : 'text-text-mute border-line2 bg-ink';
           return <span key={i} className={cn('min-w-8 h-8 px-1 border rounded flex items-center justify-center font-mono text-sm font-medium', cls)}>{d}</span>;
         })}
       </div>
@@ -216,14 +216,14 @@ function Stepper({ label, value, display, min, max, onChange }: {
   label: string; value: number; display?: number; min: number; max: number; onChange: (v: number) => void;
 }) {
   const shown = display ?? value;
-  const btn = 'bg-ink border border-line2 text-text-mute w-8 h-10 rounded text-lg font-mono hover:text-text hover:border-text-mute transition-colors';
+  const btn = 'bg-ink border border-line2 text-text-mute w-12 h-12 shrink-0 rounded-md text-2xl font-mono hover:text-text hover:border-text-mute active:bg-surf transition-colors';
   return (
     <div>
       <div className="eyebrow mb-1.5">{label}</div>
       <div className="flex items-center gap-1.5">
         <button onClick={() => onChange(Math.max(min, shown - 1))} className={btn}>−</button>
         <input type="number" value={shown} onChange={(e) => onChange(Math.max(min, Math.min(max, Number(e.target.value) || min)))}
-          className="bg-ink border border-line2 rounded px-2 py-2.5 font-mono text-[22px] font-medium text-center w-full min-w-0 outline-none focus:border-blood" />
+          className="bg-ink border border-line2 rounded-md h-12 px-2 font-mono text-2xl font-medium text-center w-full min-w-0 outline-none focus:border-brand" />
         <button onClick={() => onChange(Math.min(max, shown + 1))} className={btn}>+</button>
       </div>
     </div>

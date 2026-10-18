@@ -6,7 +6,7 @@ import { useSystem } from '@/ui/context';
 import { DotRow } from '@/ui/primitives';
 import { cn } from '@/ui/lib/utils';
 
-const base = 'bg-transparent border-0 border-b border-line2 text-text py-0.5 outline-none focus:border-blood min-w-0 w-full';
+const base = 'bg-transparent border-0 border-b border-line2 text-text py-0.5 outline-none focus:border-brand min-w-0 w-full';
 
 export function FieldEditor({ path, values, set, variant = 'plate', readOnly }: {
   path: string;
@@ -21,9 +21,9 @@ export function FieldEditor({ path, values, set, variant = 'plate', readOnly }: 
   if (!def) return null;
   const value = getIn(values, path.split('.'));
   const label = tr(`fields.${path}`);
-  const input = cn(base, variant === 'plate' ? 'font-display text-[17px] font-medium' : 'text-sm');
+  const input = cn(base, variant === 'plate' ? 'font-body text-[15px] font-medium' : 'text-sm');
   const wrap = 'flex flex-col gap-[3px] min-w-[100px]';
-  const cap = <span className={cn('font-mono tracking-[0.2em] uppercase text-text-mute', variant === 'plate' ? 'text-[9.5px]' : 'text-[10px]')}>{label}</span>;
+  const cap = <span className={cn('font-body font-medium tracking-[0.1em] uppercase text-text-mute', variant === 'plate' ? 'text-[11px]' : 'text-[11px]')}>{label}</span>;
 
   switch (def.type) {
     case 'select': {
@@ -46,7 +46,7 @@ export function FieldEditor({ path, values, set, variant = 'plate', readOnly }: 
     case 'longtext':
       return (
         <label className={wrap}>{cap}
-          <textarea readOnly={readOnly} className="w-full min-h-40 bg-bg border border-line rounded text-text p-3 text-[13px] leading-relaxed outline-none resize-y focus:border-blood" value={String(value ?? '')} onChange={(e) => set(path, e.target.value)} />
+          <textarea readOnly={readOnly} className="w-full min-h-40 bg-bg border border-line rounded text-text p-3 text-[13px] leading-relaxed outline-none resize-y focus:border-brand" value={String(value ?? '')} onChange={(e) => set(path, e.target.value)} />
         </label>
       );
     case 'dots':
@@ -54,7 +54,7 @@ export function FieldEditor({ path, values, set, variant = 'plate', readOnly }: 
     case 'checkbox':
       return (
         <label className="flex items-center gap-2 text-sm">
-          <input type="checkbox" disabled={readOnly} checked={!!value} onChange={(e) => set(path, e.target.checked)} className="accent-blood" /> {label}
+          <input type="checkbox" disabled={readOnly} checked={!!value} onChange={(e) => set(path, e.target.checked)} className="accent-brand" /> {label}
         </label>
       );
     case 'text': {

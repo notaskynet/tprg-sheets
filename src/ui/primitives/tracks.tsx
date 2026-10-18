@@ -4,8 +4,8 @@ import { cn } from '@/ui/lib/utils';
 const BOX_TONE = [
   'border-line2 text-transparent',
   'border-line2 text-text-mute bg-text/5',
-  'border-blood text-blood2 bg-blood/10',
-  'border-blood text-white bg-blood',
+  'border-brand text-brand-bright bg-brand/10',
+  'border-brand text-on-brand bg-brand',
 ];
 
 /** Boxes fill strongest kind first; clicking a box cycles its kind weakest → strongest → empty. */
@@ -79,7 +79,7 @@ export function PoolTrack({ value, max, onChange, tone = 'blood', groupBy = Infi
           onClick={() => onChange?.(i + 1 === value ? i : i + 1)}
           className={cn(
             'w-3.5 h-3.5 border rounded-[2px] p-0 cursor-pointer transition-colors',
-            i < value ? (tone === 'light' ? 'bg-text border-text' : 'bg-blood border-blood') : 'bg-transparent border-line2',
+            i < value ? (tone === 'light' ? 'bg-text border-text' : 'bg-brand border-brand') : 'bg-transparent border-line2',
             Number.isFinite(groupBy) && i > 0 && i % groupBy === 0 && 'ml-1.5',
           )}
         />
@@ -91,7 +91,7 @@ export function PoolTrack({ value, max, onChange, tone = 'blood', groupBy = Infi
 export function BigCounter({ value, max, onChange, tone = 'blood', hint }: {
   value: number; max: number; onChange: (v: number) => void; tone?: 'blood' | 'light'; hint?: string;
 }) {
-  const step = 'bg-bg border border-line2 text-text-mute w-7 h-9 rounded cursor-pointer font-mono text-base hover:text-text hover:border-text-mute transition-colors';
+  const step = 'bg-bg border border-line2 text-text-mute w-10 h-10 rounded-md cursor-pointer font-mono text-xl hover:text-text hover:border-text-mute transition-colors';
   return (
     <div className="flex flex-col gap-2 min-w-40">
       <div className="flex items-center gap-2.5">
@@ -103,7 +103,7 @@ export function BigCounter({ value, max, onChange, tone = 'blood', hint }: {
         <button type="button" className={step} onClick={() => onChange(Math.min(max, value + 1))}>+</button>
       </div>
       <div className="h-1 bg-line rounded-sm overflow-hidden">
-        <div className={cn('h-full transition-[width] duration-300', tone === 'light' ? 'bg-text' : 'bg-blood')} style={{ width: `${max > 0 ? (value / max) * 100 : 0}%` }} />
+        <div className={cn('h-full transition-[width] duration-300', tone === 'light' ? 'bg-text' : 'bg-brand')} style={{ width: `${max > 0 ? (value / max) * 100 : 0}%` }} />
       </div>
       {hint != null && <div className="font-mono text-[10px] text-text-dim tracking-wider text-center">{hint}</div>}
     </div>

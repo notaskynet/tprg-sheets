@@ -44,7 +44,7 @@ export function SheetRenderer(props: SheetProps) {
 function Heading({ title, small }: { title: string; small?: boolean }) {
   return (
     <div className="flex items-baseline gap-3 mb-0.5">
-      <h2 className={cn('font-display font-medium', small ? 'text-[15px]' : 'text-xl')}>{title}</h2>
+      <h2 className={cn('font-display font-semibold', small ? 'text-[15px]' : 'text-xl')}>{title}</h2>
       <div className="flex-1 h-px bg-line mx-1" />
     </div>
   );
@@ -94,7 +94,7 @@ function Block({ cfg, ...p }: { cfg: BlockCfg } & SheetProps) {
                   <div key={it.id} className="grid grid-cols-[1fr_auto] items-center gap-2.5 py-[5px] print:py-[2px] border-b border-dashed border-line last:border-0">
                     <span className="flex items-baseline gap-1.5 text-[13px] min-w-0">
                       {canRoll && !p.readOnly ? (
-                        <button type="button" onClick={() => dice.pick(gid, it.id)} className="text-left hover:text-blood2 transition-colors">{tr(`${gid}.${it.id}`)}</button>
+                        <button type="button" onClick={() => dice.pick(gid, it.id)} className="text-left hover:text-brand-bright transition-colors">{tr(`${gid}.${it.id}`)}</button>
                       ) : tr(`${gid}.${it.id}`)}
                       {sp && <span className="text-[10px] text-text-dim italic">({sp})</span>}
                     </span>
@@ -181,6 +181,6 @@ function Block({ cfg, ...p }: { cfg: BlockCfg } & SheetProps) {
     }
 
     default:
-      return <div className="text-xs text-blood2 font-mono">unknown block: {cfg.type as ReactNode as string}</div>;
+      return <div className="text-xs text-brand-bright font-mono">unknown block: {cfg.type as ReactNode as string}</div>;
   }
 }

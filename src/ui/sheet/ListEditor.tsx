@@ -46,13 +46,13 @@ export function ListEditor({ path, def, values, set, scopeExpr, readOnly }: {
               value={nameOf(r)}
               placeholder="—"
               onChange={(e) => update(i, { name: e.target.value, ref: undefined })}
-              className="bg-transparent border-0 p-0 flex-1 min-w-0 outline-none focus:text-blood2"
+              className="bg-transparent border-0 p-0 flex-1 min-w-0 outline-none focus:text-brand-bright"
             />
             {def.item === 'note' && (
               <input readOnly={readOnly} value={r.note ?? ''} placeholder="…" onChange={(e) => update(i, { note: e.target.value })} className="bg-transparent border-0 p-0 w-1/3 min-w-0 outline-none text-text-mute text-xs italic focus:text-text" />
             )}
             {!readOnly && (
-              <button type="button" onClick={() => set(path, rows.filter((_, idx) => idx !== i))} className="opacity-0 group-hover:opacity-100 text-text-dim hover:text-blood2 p-1 transition-opacity" aria-label="remove"><X className="size-3" /></button>
+              <button type="button" onClick={() => set(path, rows.filter((_, idx) => idx !== i))} className="opacity-0 group-hover:opacity-100 text-text-dim hover:text-brand-bright p-1 transition-opacity" aria-label="remove"><X className="size-3" /></button>
             )}
           </div>
           {def.item === 'dots' && <DotRow value={r.level} max={def.max} onChange={readOnly ? undefined : (n) => update(i, { level: n })} />}

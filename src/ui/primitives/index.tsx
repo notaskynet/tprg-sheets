@@ -63,10 +63,10 @@ export function Field({ label, value, onChange, type = 'text', placeholder, opti
 }) {
   const inputCls =
     'bg-transparent border-0 border-b border-line2 text-text text-sm py-1.5 outline-none ' +
-    'focus:border-blood placeholder:text-text-dim placeholder:italic min-w-0';
+    'focus:border-brand placeholder:text-text-dim placeholder:italic min-w-0';
   return (
     <label className="flex flex-col gap-1 min-w-0">
-      <span className="font-mono text-[10px] tracking-[0.18em] uppercase text-text-mute">{label}</span>
+      <span className="font-body font-medium text-[11px] tracking-[0.1em] uppercase text-text-mute">{label}</span>
       {options ? (
         <select
           className={inputCls + ' field-select cursor-pointer font-body'}
@@ -102,7 +102,7 @@ export function SavePill({ state, labels }: { state: SaveState; labels: Record<S
   const dot =
     state === 'saving' ? 'bg-gold animate-save-pulse' : state === 'offline' ? 'bg-text-dim' : 'bg-good';
   return (
-    <span className="inline-flex items-center gap-1.5 font-mono text-[10px] tracking-[0.12em] uppercase text-text-mute">
+    <span className="inline-flex items-center gap-1.5 font-body font-medium text-[11px] tracking-[0.12em] uppercase text-text-mute">
       <span className={`w-1.5 h-1.5 rounded-full ${dot}`} />
       {labels[state]}
     </span>

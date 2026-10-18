@@ -181,6 +181,7 @@ export const Manifest = z.object({
   version: z.string(),
   name: z.record(z.string(), z.string()),
   languages: z.array(z.string()).min(1),
+  accent: z.string().regex(/^#[0-9a-fA-F]{6}$/, 'use #rrggbb').optional(), // default brand colour for this system
   dice: DiceConfig,
   /** Library card: title path + subtitle paths (select fields show the catalog label). */
   summary: z

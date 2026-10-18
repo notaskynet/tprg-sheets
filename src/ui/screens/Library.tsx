@@ -15,6 +15,7 @@ import { goSheet } from '@/routing';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/ui/components/dialog';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/ui/components/dropdown-menu';
 import { readCharacterFile } from '@/share/file';
+import { AccentPicker } from '@/ui/AccentPicker';
 
 type SortBy = 'recent' | 'name';
 
@@ -61,6 +62,7 @@ export function Library() {
       <header className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2 px-4 sm:px-9 py-3 sm:py-4 border-b border-line">
         <span className="eyebrow truncate min-w-0"><span className="hidden sm:inline">{t('appTitle')} · </span>{t('myCharacters')}</span>
         <div className="flex items-center gap-3 shrink-0">
+          <AccentPicker />
           <button onClick={() => fileRef.current?.click()} className="border border-line2 text-text-mute rounded px-3 py-1.5 text-xs hover:text-text hover:border-text-mute transition-colors">{t('importFile')}</button>
           <input ref={fileRef} type="file" accept=".json,application/json" hidden onChange={(e) => { onFile(e.target.files?.[0]); e.target.value = ''; }} />
           <div className="inline-flex p-0.5 border border-line2 rounded font-mono text-[11px]">
@@ -75,12 +77,12 @@ export function Library() {
         {sorted.length === 0 ? (
           <div className="flex flex-col items-center justify-center text-center py-24 gap-5">
             <h2 className="font-display text-3xl font-medium">{t('noCharacters')}</h2>
-            <button onClick={startNew} className="bg-blood border border-blood2 text-white px-6 py-3 rounded text-sm tracking-wide uppercase hover:bg-blood2 transition-colors">{t('createCharacter')}</button>
+            <button onClick={startNew} className="bg-brand border border-brand-bright text-on-brand px-6 py-3 rounded text-sm tracking-wide uppercase hover:bg-brand-bright transition-colors">{t('createCharacter')}</button>
           </div>
         ) : (
           <>
             <div className="flex items-center justify-end gap-2 mb-5">
-              <span className="font-mono text-[10px] tracking-[0.18em] uppercase text-text-dim">{t('sortBy')}</span>
+              <span className="font-body font-medium text-[11px] tracking-[0.1em] uppercase text-text-dim">{t('sortBy')}</span>
               {(['recent', 'name'] as const).map((s) => (
                 <button key={s} onClick={() => { setSortBy(s); try { localStorage.setItem('trpg.sort', s); } catch { /* ignore */ } }}
                   className={`text-xs px-2 py-1 rounded border ${sortBy === s ? 'border-text-mute text-text' : 'border-line2 text-text-mute hover:text-text'}`}>
@@ -122,8 +124,8 @@ function CharacterCard({ ch }: { ch: Character }) {
   if (!pkg) {
     return (
       <div className="border border-line rounded-lg p-5 text-text-mute text-sm">
-        <div className="font-mono text-[10px] text-blood2">unknown system: {ch.system.id}</div>
-        <button className="mt-3 text-blood2 text-xs" onClick={() => deleteCharacter(ch.id)}>{t('delete')}</button>
+        <div className="font-mono text-[10px] text-brand-bright">unknown system: {ch.system.id}</div>
+        <button className="mt-3 text-brand-bright text-xs" onClick={() => deleteCharacter(ch.id)}>{t('delete')}</button>
       </div>
     );
   }
@@ -154,7 +156,7 @@ function CharacterCard({ ch }: { ch: Character }) {
           </div>
           <div className="min-w-0 flex-1">
             <div className="font-display text-[22px] font-medium leading-tight truncate">{title || t('unnamed')}</div>
-            <div className="font-mono text-[9.5px] tracking-[0.18em] uppercase text-text-mute mt-1 truncate">{subtitle[0] ?? localize(pkg.manifest.name, lang)}</div>
+            <div className="font-body font-medium text-[11px] tracking-[0.1em] uppercase text-text-mute mt-1 truncate">{subtitle[0] ?? localize(pkg.manifest.name, lang)}</div>
           </div>
           <div className="pointer-events-auto">
             <DropdownMenu>
@@ -171,15 +173,15 @@ function CharacterCard({ ch }: { ch: Character }) {
           <div className="grid grid-cols-3 gap-2.5 pt-3.5 border-t border-line">
             {stats.map((s) => (
               <div key={s.label}>
-                <div className="font-mono text-[9px] tracking-[0.18em] uppercase text-text-dim">{s.label}</div>
-                <div className={`font-display text-[22px] leading-none ${s.blood ? 'text-blood2' : ''}`}>{s.value}</div>
+                <div className="font-body font-medium text-[11px] tracking-[0.1em] uppercase text-text-dim">{s.label}</div>
+                <div className={`font-display text-[22px] leading-none ${s.blood ? 'text-brand-bright' : ''}`}>{s.value}</div>
               </div>
             ))}
           </div>
         )}
         <div className="flex items-center gap-2.5 text-[11.5px] text-text-mute">
           <span className="font-mono text-[10px] text-text-dim">{t('lastVisit')}: {timeAgo(ch.updatedAt, lang, t('justNow'))}</span>
-          <span className={`ml-auto font-mono text-[10px] px-1.5 py-0.5 rounded-sm ${valid ? 'bg-good/15 text-good' : 'bg-blood/15 text-blood2'}`}>{valid ? t('valid') : t('invalid')}</span>
+          <span className={`ml-auto font-mono text-[10px] px-1.5 py-0.5 rounded-sm ${valid ? 'bg-good/15 text-good' : 'bg-brand/15 text-brand-bright'}`}>{valid ? t('valid') : t('invalid')}</span>
         </div>
       </div>
     </div>

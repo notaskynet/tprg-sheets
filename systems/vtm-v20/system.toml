@@ -1,6 +1,7 @@
 id = "vtm-v20"
 version = "1.0.0"
 languages = ["ru", "en"]
+accent = "#a01e2e"
 name = { ru = "Маскарад V20", en = "Masquerade V20" }
 
 [summary]
