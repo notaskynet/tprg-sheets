@@ -8,7 +8,7 @@ import { useI18n } from '@/i18n/I18nContext';
 import { AVAILABLE_LANGS, localize } from '@/i18n/lang';
 import { useScope, useSystem } from '@/ui/context';
 import { StepBody } from './steps';
-import { Markdown } from '@/ui/Markdown';
+import { Markdown } from '@/ui/LazyMarkdown';
 import { cn } from '@/ui/lib/utils';
 
 type Tone = 'ok' | 'over' | 'under';

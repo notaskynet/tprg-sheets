@@ -3,9 +3,11 @@ import { toast } from 'sonner';
 import { I18nProvider, useI18n } from '@/i18n/I18nContext';
 import { Toaster } from '@/ui/components/sonner';
 import { Library } from '@/ui/screens/Library';
-import { SessionScreen } from '@/ui/screens/SessionScreen';
 import { SessionChip } from '@/ui/SessionChip';
-import { SharedView } from '@/ui/screens/SharedView';
+import { Lazy, lazyNamed } from '@/ui/lazy';
+
+const SessionScreen = lazyNamed(() => import('@/ui/screens/SessionScreen'), 'SessionScreen');
+const SharedView = lazyNamed(() => import('@/ui/screens/SharedView'), 'SharedView');
 import { SheetScreen } from '@/ui/screens/SheetScreen';
 import { initStorage, putCharacter } from '@/storage/db';
 import { initPackages, getPackage } from '@/systems/registry';
@@ -32,8 +34,8 @@ async function boot(): Promise<number> {
 function Router() {
   const route = useRoute();
   if (route.name === 'sheet') return <SheetScreen key={route.charId} charId={route.charId} />;
-  if (route.name === 'session') return <SessionScreen />;
-  if (route.name === 'shared') return <SharedView data={route.data} />;
+  if (route.name === 'session') return <Lazy><SessionScreen /></Lazy>;
+  if (route.name === 'shared') return <Lazy><SharedView data={route.data} /></Lazy>;
   return <Library join={route.join} receive={route.receive} />;
 }
 

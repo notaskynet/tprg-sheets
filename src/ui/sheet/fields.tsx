@@ -5,7 +5,7 @@ import { getIn } from '@/engine/expr/eval';
 import { useSystem } from '@/ui/context';
 import { DotRow } from '@/ui/primitives';
 import { cn } from '@/ui/lib/utils';
-import { Markdown } from '@/ui/Markdown';
+import { Markdown } from '@/ui/LazyMarkdown';
 import { Combobox, type Option } from '@/ui/Combobox';
 import { useI18n } from '@/i18n/I18nContext';
 

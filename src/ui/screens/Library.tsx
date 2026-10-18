@@ -13,9 +13,11 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/ui/component
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/ui/components/dropdown-menu';
 import { readCharacterFile } from '@/share/file';
 import { AccentPicker } from '@/ui/AccentPicker';
-import { TransferDialog } from '@/ui/TransferDialog';
-import { SessionDialog } from '@/ui/SessionDialog';
-import { SystemsDialog } from '@/ui/SystemsDialog';
+import { Lazy, lazyNamed } from '@/ui/lazy';
+
+const TransferDialog = lazyNamed(() => import('@/ui/TransferDialog'), 'TransferDialog');
+const SessionDialog = lazyNamed(() => import('@/ui/SessionDialog'), 'SessionDialog');
+const SystemsDialog = lazyNamed(() => import('@/ui/SystemsDialog'), 'SystemsDialog');
 
 type SortBy = 'recent' | 'name';
 
@@ -110,9 +112,11 @@ export function Library({ join, receive }: { join?: string; receive?: string }) 
         )}
       </div>
 
-      <SystemsDialog open={systems} onOpenChange={setSystems} />
-      <TransferDialog open={transfer} onOpenChange={(o) => { setTransfer(o); if (!o) clearParams(); }} initialReceive={receive} />
-      <SessionDialog open={session} onOpenChange={(o) => { setSession(o); if (!o) clearParams(); }} initialJoin={join} />
+      <Lazy>
+        {systems && <SystemsDialog open onOpenChange={setSystems} />}
+        {transfer && <TransferDialog open onOpenChange={(o) => { setTransfer(o); if (!o) clearParams(); }} initialReceive={receive} />}
+        {session && <SessionDialog open onOpenChange={(o) => { setSession(o); if (!o) clearParams(); }} initialJoin={join} />}
+      </Lazy>
 
       <Dialog open={picking} onOpenChange={setPicking}>
         <DialogContent>

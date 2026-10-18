@@ -6,7 +6,10 @@ import { AVAILABLE_LANGS } from '@/i18n/lang';
 import { getPackage } from '@/systems/registry';
 import { SystemProvider, useScope, useSystem } from '@/ui/context';
 import { useCharacterEditor } from '@/ui/useEditor';
-import { Wizard } from '@/ui/wizard/Wizard';
+import { Lazy, lazyNamed } from '@/ui/lazy';
+
+const Wizard = lazyNamed(() => import('@/ui/wizard/Wizard'), 'Wizard');
+const ShareDialog = lazyNamed(() => import('@/ui/ShareDialog'), 'ShareDialog');
 import { SheetRenderer } from '@/ui/sheet/SheetRenderer';
 import { DiceProvider } from '@/ui/dice/DiceProvider';
 import { SavePill } from '@/ui/primitives';
@@ -21,7 +24,6 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { cn } from '@/ui/lib/utils';
 import { reasonOf } from '@/ui/reason';
 import { AccentPicker } from '@/ui/AccentPicker';
-import { ShareDialog } from '@/ui/ShareDialog';
 import { applyAccent, getSavedAccent } from '@/ui/theme';
 import type { Character } from '@/engine/character';
 
@@ -43,14 +45,14 @@ export function SheetScreen({ charId }: { charId: string }) {
       {/* The wizard replaces the sheet instead of overlaying it: on iOS Safari
           `position: fixed` degrades when the keyboard opens and would reveal the sheet. */}
       {editor.ch.creation && !editor.ch.creation.done ? (
-        <Wizard
+        <Lazy><Wizard
           ch={editor.ch}
           set={editor.set}
           onStep={(step) => editor.replace({ ...editor.ch!, creation: { ...editor.ch!.creation, step, done: false } })}
           onMethod={(stepId, method) => editor.replace({ ...editor.ch!, creation: { step: 0, ...editor.ch!.creation, done: false, methods: { ...editor.ch!.creation?.methods, [stepId]: method } } })}
           onFinish={() => editor.replace({ ...editor.ch!, creation: { step: 0, done: true } })}
           onExit={goLibrary}
-        />
+        /></Lazy>
       ) : (
         <DiceProvider values={editor.ch.values} onRoll={(e) => getActiveSession()?.roll({ label: e.label, summary: e.summary })}>
           <SheetBody ch={editor.ch} set={editor.set} saveState={editor.saveState} onWizard={(stepId) => editor.replace({ ...editor.ch!, creation: { step: Math.max(0, pkg.creation.steps.findIndex((x) => x.id === stepId)), done: false } })} />
@@ -163,7 +165,7 @@ function Actions({ ch, title, onWizard }: { ch: Character; title: string; onWiza
   const [sharing, setSharing] = useState(false);
   return (
     <>
-    <ShareDialog ch={ch} title={title} open={sharing} onOpenChange={setSharing} />
+    <Lazy>{sharing && <ShareDialog ch={ch} title={title} open onOpenChange={setSharing} />}</Lazy>
     <DropdownMenu>
       <DropdownMenuTrigger className="border border-line2 text-text-mute rounded p-1.5 hover:text-text hover:border-text-mute transition-colors" aria-label={t('menu')}><MoreVertical className="size-4" /></DropdownMenuTrigger>
       <DropdownMenuContent align="end">
