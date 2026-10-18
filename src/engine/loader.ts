@@ -87,9 +87,14 @@ export function loadPackage(files: Files): SystemPackage {
       checkExpr(`model.toml: fields.${k}.max`, f.max);
       if (f.initial) checkExpr(`model.toml: fields.${k}.initial`, f.initial);
     }
+    if (f.type === 'select' && f.scope) checkExpr(`model.toml: fields.${k}.scope`, f.scope);
     if (f.type === 'select' && f.from && !model.catalogs[f.from]) issues.push(`model.toml: fields.${k}.from — unknown catalog "${f.from}"`);
   }
+  for (const [k, g] of Object.entries(model.groups)) if (g.granted) checkExpr(`model.toml: groups.${k}.granted`, g.granted);
+  for (const s of sheet.sections) if (s.when) checkExpr(`sheet.toml: section "${s.id}" when`, s.when);
   for (const s of creation.steps) {
+    if (s.when) checkExpr(`creation.toml: step "${s.id}" when`, s.when);
+    if (s.kind === 'spend' && s.scope) checkExpr(`creation.toml: step "${s.id}" scope`, s.scope);
     if ((s.kind === 'priority' || s.kind === 'scores' || s.kind === 'spend') && !model.groups[s.group])
       issues.push(`creation.toml: step "${s.id}" — unknown group "${s.group}"`);
     if (s.kind === 'scores') {

@@ -25,10 +25,17 @@ export function Wizard({ ch, set, onStep, onMethod, onFinish, onExit }: {
   const { pkg, tr } = useSystem();
   const { t, lang, setLang } = useI18n();
   const scope = useScope(ch.values);
-  const steps = pkg.creation.steps;
+  const all = pkg.creation.steps;
+  // Steps with a false `when` are not part of this character's creation. `creation.step` stays an
+  // index into the full list, so it survives steps appearing or disappearing.
+  const steps = useMemo(() => all.filter((s) => !s.when || scope.run(s.when)), [all, scope]);
+  const fullIndex = (s: (typeof all)[number]) => all.indexOf(s);
   const report = useMemo(() => evaluateCreation(pkg, ch, scope), [pkg, ch, scope]);
-  const index = Math.min(Math.max(ch.creation?.step ?? 0, 0), steps.length - 1);
+  const saved = Math.min(Math.max(ch.creation?.step ?? 0, 0), all.length - 1);
+  const found = steps.findIndex((s) => fullIndex(s) >= saved);
+  const index = found >= 0 ? found : steps.length - 1;
   const step = steps[index];
+  const goto = (pos: number) => onStep(fullIndex(steps[Math.min(Math.max(pos, 0), steps.length - 1)]));
   const status = report.steps.find((s) => s.id === step.id) ?? { id: step.id, kind: step.kind, ok: true };
   const isLast = index === steps.length - 1;
   const rootRef = useRef<HTMLDivElement>(null);
@@ -82,7 +89,7 @@ export function Wizard({ ch, set, onStep, onMethod, onFinish, onExit }: {
             return (
               <button
                 key={s.id}
-                onClick={() => onStep(i)}
+                onClick={() => goto(i)}
                 title={`${i + 1}. ${tr(s.title ?? `steps.${s.id}`)}`}
                 aria-current={i === index ? 'step' : undefined}
                 className={cn('size-7 sm:size-8 shrink-0 rounded-full border font-mono text-[11px] inline-flex items-center justify-center transition-colors',
@@ -114,16 +121,16 @@ export function Wizard({ ch, set, onStep, onMethod, onFinish, onExit }: {
             {hint && hint !== step.id && <p className="text-text-mute text-sm leading-relaxed max-w-[620px] mt-2.5">{hint}</p>}
           </div>
           <HintCard stepId={step.id} />
-          <StepBody key={step.id} step={step} status={status} report={report} values={ch.values} set={set} onGoto={(id) => onStep(Math.max(0, steps.findIndex((x) => x.id === id)))} onMethod={onMethod} />
+          <StepBody key={step.id} step={step} status={status} report={report} values={ch.values} set={set} onGoto={(id) => onStep(Math.max(0, all.findIndex((x) => x.id === id)))} onMethod={onMethod} />
         </div>
       </main>
 
       <footer className="px-4 sm:px-8 py-3 sm:py-4 border-t border-line flex items-center gap-2 sm:gap-3.5 bg-surf">
-        <button onClick={() => onStep(index - 1)} disabled={index === 0} className="whitespace-nowrap border border-line2 px-3 sm:px-[18px] h-10 rounded text-[13px] hover:border-text-mute transition-colors disabled:opacity-35 disabled:pointer-events-none">← {t('backBtn')}</button>
+        <button onClick={() => goto(index - 1)} disabled={index === 0} className="whitespace-nowrap border border-line2 px-3 sm:px-[18px] h-10 rounded text-[13px] hover:border-text-mute transition-colors disabled:opacity-35 disabled:pointer-events-none">← {t('backBtn')}</button>
         <button onClick={onFinish} className="hidden sm:inline-block whitespace-nowrap text-text-dim px-3 h-10 text-[13px] hover:text-text-mute transition-colors">{t('skipToSheet')}</button>
         <div className="flex-1 min-w-0" />
         {message && <div className={cn('font-mono text-[11px] truncate', tone === 'ok' ? 'text-good' : tone === 'over' ? 'text-brand-bright' : 'text-gold')}>{message}</div>}
-        <button onClick={() => (isLast ? onFinish() : onStep(index + 1))} className="whitespace-nowrap bg-brand border border-brand text-on-brand px-3 sm:px-[18px] h-10 rounded text-[13px] hover:bg-brand-bright hover:border-brand-bright transition-colors">
+        <button onClick={() => (isLast ? onFinish() : goto(index + 1))} className="whitespace-nowrap bg-brand border border-brand text-on-brand px-3 sm:px-[18px] h-10 rounded text-[13px] hover:bg-brand-bright hover:border-brand-bright transition-colors">
           {isLast ? `${t('doneBtn')} ✓` : `${t('nextBtn')} →`}
         </button>
       </footer>

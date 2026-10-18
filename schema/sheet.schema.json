@@ -26,6 +26,10 @@
             "minimum": 1,
             "maximum": 4
           },
+          "when": {
+            "type": "string",
+            "minLength": 1
+          },
           "blocks": {
             "default": [],
             "type": "array",

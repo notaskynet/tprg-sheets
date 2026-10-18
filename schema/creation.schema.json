@@ -25,6 +25,10 @@
                   "pattern": "^[A-Za-z0-9_]+$"
                 }
               },
+              "when": {
+                "type": "string",
+                "minLength": 1
+              },
               "kind": {
                 "type": "string",
                 "const": "fields"
@@ -66,6 +70,10 @@
                   "type": "string",
                   "pattern": "^[A-Za-z0-9_]+$"
                 }
+              },
+              "when": {
+                "type": "string",
+                "minLength": 1
               },
               "kind": {
                 "type": "string",
@@ -110,6 +118,10 @@
                   "type": "string",
                   "pattern": "^[A-Za-z0-9_]+$"
                 }
+              },
+              "when": {
+                "type": "string",
+                "minLength": 1
               },
               "kind": {
                 "type": "string",
@@ -158,6 +170,10 @@
                   "type": "string",
                   "pattern": "^[A-Za-z0-9_]+$"
                 }
+              },
+              "when": {
+                "type": "string",
+                "minLength": 1
               },
               "kind": {
                 "type": "string",
@@ -263,6 +279,10 @@
                   "pattern": "^[A-Za-z0-9_]+$"
                 }
               },
+              "when": {
+                "type": "string",
+                "minLength": 1
+              },
               "kind": {
                 "type": "string",
                 "const": "spend"
@@ -279,6 +299,10 @@
               },
               "maxPerItem": {
                 "type": "number"
+              },
+              "scope": {
+                "type": "string",
+                "minLength": 1
               }
             },
             "required": [
@@ -305,6 +329,10 @@
                   "type": "string",
                   "pattern": "^[A-Za-z0-9_]+$"
                 }
+              },
+              "when": {
+                "type": "string",
+                "minLength": 1
               },
               "kind": {
                 "type": "string",
@@ -345,6 +373,10 @@
                   "type": "string",
                   "pattern": "^[A-Za-z0-9_]+$"
                 }
+              },
+              "when": {
+                "type": "string",
+                "minLength": 1
               },
               "kind": {
                 "type": "string",
@@ -416,6 +448,10 @@
                   "type": "string",
                   "pattern": "^[A-Za-z0-9_]+$"
                 }
+              },
+              "when": {
+                "type": "string",
+                "minLength": 1
               },
               "kind": {
                 "type": "string",

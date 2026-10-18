@@ -24,9 +24,10 @@ const COLS: Record<number, string> = {
 
 export function SheetRenderer(props: SheetProps) {
   const { pkg, tr } = useSystem();
+  const scope = useScope(props.values);
   return (
     <>
-      {pkg.sheet.sections.map((s) => {
+      {pkg.sheet.sections.filter((s) => !s.when || scope.run(s.when)).map((s) => {
         const plate = s.blocks.length === 1 && s.blocks[0].type === 'plate';
         return (
           <section key={s.id} className="flex flex-col gap-3.5">
@@ -82,6 +83,7 @@ function Block({ cfg, ...p }: { cfg: BlockCfg } & SheetProps) {
       const spec = cfg.specialties as string | undefined;
       const canRoll = dice.enabled(gid);
       const field = g.field as { type: string; min?: number; max?: number };
+      const granted = scope.granted(gid);
       const derivedTpl = ([] as string[]).concat((cfg.derived as string | string[] | undefined) ?? []);
       // a leading "+" in a derived template shows that column with an explicit sign
       const DerivedCell = ({ name: raw, signed: all }: { name: string; signed: boolean }) => {
@@ -105,7 +107,7 @@ function Block({ cfg, ...p }: { cfg: BlockCfg } & SheetProps) {
                       {sp && <span className="text-[10px] text-text-dim italic">({sp})</span>}
                     </span>
                     <span className="inline-flex items-center gap-3">
-                      <ItemControl field={field} value={getIn(p.values, [gid, it.id])} readOnly={p.readOnly} onChange={(v) => p.set(`${gid}.${it.id}`, v)} />
+                      <ItemControl field={field} value={getIn(p.values, [gid, it.id])} locked={granted.has(it.id)} readOnly={p.readOnly} onChange={(v) => p.set(`${gid}.${it.id}`, v)} />
                       {derivedTpl.map((tpl) => <DerivedCell key={tpl} name={tpl.replace('{id}', it.id)} signed={!!cfg.signed} />)}
                     </span>
                   </div>
@@ -114,6 +116,26 @@ function Block({ cfg, ...p }: { cfg: BlockCfg } & SheetProps) {
             </div>
           ))}
         </>
+      );
+    }
+
+    // A list of catalog entries picked by an expression (class / race features by level…).
+    case 'refs': {
+      const cat = str('catalog');
+      const ids = scope.run(str('ids'));
+      const list = Array.isArray(ids) ? ids.map(String) : [];
+      return (
+        <div className="flex flex-col gap-2.5">
+          {list.map((id, i) => {
+            const desc = tr(`desc.${cat}.${id}`);
+            return (
+              <div key={`${id}-${i}`} className="break-inside-avoid">
+                <div className="text-[13px] font-medium">{tr(`${cat}.${id}`)}</div>
+                {desc !== id && <p className="text-xs text-text-mute leading-snug mt-0.5">{desc}</p>}
+              </div>
+            );
+          })}
+        </div>
       );
     }
 
@@ -229,9 +251,10 @@ function Block({ cfg, ...p }: { cfg: BlockCfg } & SheetProps) {
 }
 
 /** Control for one group item, chosen by the group's field type. */
-function ItemControl({ field, value, onChange, readOnly }: { field: { type: string; min?: number; max?: number }; value: unknown; onChange: (v: unknown) => void; readOnly?: boolean }) {
+function ItemControl({ field, value, onChange, readOnly, locked }: { field: { type: string; min?: number; max?: number }; value: unknown; onChange: (v: unknown) => void; readOnly?: boolean; locked?: boolean }) {
   switch (field.type) {
     case 'checkbox':
+      if (locked) return <Dot on size="lg" />; // granted by the character's choices (class, race…)
       return <Dot on={!!value} size="lg" onClick={readOnly ? undefined : () => onChange(!value)} />;
     case 'number':
     case 'percent':

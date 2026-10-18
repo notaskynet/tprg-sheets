@@ -2,7 +2,7 @@
 import { useEffect, useRef, useState } from 'react';
 import type { FieldDef } from '@/engine/schema';
 import { getIn } from '@/engine/expr/eval';
-import { useSystem } from '@/ui/context';
+import { useScope, useSystem } from '@/ui/context';
 import { DotRow } from '@/ui/primitives';
 import { cn } from '@/ui/lib/utils';
 import { Markdown } from '@/ui/LazyMarkdown';
@@ -20,6 +20,7 @@ export function FieldEditor({ path, values, set, variant = 'plate', readOnly, ba
   bare?: boolean; // no caption (the section heading already names the field)
 }) {
   const { pkg, tr } = useSystem();
+  const scope = useScope(values);
   const def = pkg.model.fields[path] as FieldDef | undefined;
   if (!def) return null;
   const value = getIn(values, path.split('.'));
@@ -38,8 +39,9 @@ export function FieldEditor({ path, values, set, variant = 'plate', readOnly, ba
 
   switch (def.type) {
     case 'select': {
+      const allowed = def.scope ? new Set(((scope.run(def.scope) as unknown[] | undefined) ?? []).map(String)) : null;
       const opts: Option[] = def.from
-        ? pkg.model.catalogs[def.from].items.map((i) => ({ value: i.id, label: tr(`${def.from}.${i.id}`), desc: desc(def.from!, i.id) }))
+        ? pkg.model.catalogs[def.from].items.filter((i) => !allowed || allowed.has(i.id)).map((i) => ({ value: i.id, label: tr(`${def.from}.${i.id}`), desc: desc(def.from!, i.id) }))
         : (def.options ?? []).map((o) => ({ value: o, label: o }));
       return (
         <div className={wrap}>{cap}
