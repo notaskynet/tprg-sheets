@@ -44,6 +44,7 @@ credits = "Licence / attribution line shown in the Systems list"
 title = "profile.name"      # a field path
 subtitle = ["profile.class", "profile.race"]   # field paths (selects show their label)
 stats = ["level", "hpMax"]  # derived names or field paths, shown as small numbers
+campaign = "profile.campaign"   # optional field path: the card shows it after the system name
 
 [dice]
 mechanic = "pool-successes" # see "Dice" below

@@ -5,6 +5,7 @@ import QRCode from 'qrcode';
 import { toast } from 'sonner';
 import { ArrowLeft, Copy } from 'lucide-react';
 import { useI18n } from '@/i18n/I18nContext';
+import { localize } from '@/i18n/lang';
 import { formatCode } from '@/share/protocol';
 import { leaveSession, setSharedIds, useActive, useSessionState } from '@/share/active';
 import type { RollEntry } from '@/share/protocol';
@@ -83,7 +84,8 @@ function SummaryCard({ ch, onClick }: { ch: Character; onClick: () => void }) {
   return (
     <button onClick={onClick} className="text-left bg-bg border border-line rounded-lg p-4 hover:border-text-mute transition-colors flex flex-col gap-2.5">
       <div className="font-display text-xl font-semibold truncate">{d.title || t('unnamed')}</div>
-      {d.subtitle[0] && <div className="eyebrow truncate">{d.subtitle[0]}</div>}
+      <div className="eyebrow truncate">{localize(pkg.manifest.name, lang)}{d.campaign ? ` · ${d.campaign}` : ''}</div>
+      {d.subtitle.length > 0 && <div className="text-text-mute text-[13px] italic truncate">{d.subtitle.join(' · ')}</div>}
       <div className="grid grid-cols-3 gap-2 pt-2.5 border-t border-line">
         {d.stats.map((s) => (
           <div key={s.label}><div className="eyebrow">{s.label}</div><div className={cn('font-display text-xl leading-none', s.brand && 'text-brand-bright')}>{s.value}</div></div>

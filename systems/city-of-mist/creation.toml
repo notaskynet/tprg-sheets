@@ -2,7 +2,7 @@
 [[steps]]
 id = "concept"
 kind = "fields"
-fields = ["profile.name", "profile.player", "profile.concept"]
+fields = ["profile.name", "profile.player", "profile.campaign", "profile.concept"]
 required = ["profile.name"]
 
 [[steps]]

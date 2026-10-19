@@ -7,7 +7,7 @@ skills = "skill_{id}"
 [[sections]]
 id = "plate"
 blocks = [
-  { type = "plate", fields = ["profile.player", "profile.occupation", "profile.age", "profile.residence"] },
+  { type = "plate", fields = ["profile.player", "profile.campaign", "profile.occupation", "profile.age", "profile.residence"] },
 ]
 
 [[sections]]

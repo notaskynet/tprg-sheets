@@ -70,6 +70,7 @@ items = [
 
 [fields]
 "profile.name" = { type = "text" }
+"profile.campaign" = { type = "text" }
 "profile.player" = { type = "text" }
 "profile.occupation" = { type = "text" }
 "profile.age" = { type = "number", min = 15, max = 90, default = 25 }

@@ -69,6 +69,7 @@ spot_hidden = "Spot Hidden"
 
 [fields]
 "profile.name" = "Name"
+"profile.campaign" = "Campaign"
 "profile.player" = "Player"
 "profile.occupation" = "Occupation"
 "profile.age" = "Age"
@@ -114,6 +115,7 @@ recap = "Anything marked with a cross can be fixed: tap it to jump to its step."
 
 [help]
 "profile.name" = "Your investigator's name."
+"profile.campaign" = "The name of the game or campaign you play this character in."
 "profile.player" = "Your own name, so the table knows who plays whom."
 "profile.occupation" = "What they do for a living: librarian, journalist, doctor… It suggests which skills to raise."
 "profile.age" = "15–90. Age modifiers to characteristics are not applied automatically."

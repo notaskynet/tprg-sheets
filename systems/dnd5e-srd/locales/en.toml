@@ -352,6 +352,7 @@ white = "Cold, 15 ft cone (Con save)."
 [fields]
 "profile.subclassName" = "Subclass name"
 "profile.name" = "Name"
+"profile.campaign" = "Campaign"
 "profile.player" = "Player"
 "profile.race" = "Race"
 "profile.class" = "Class"
@@ -452,6 +453,7 @@ recap = "Anything marked with a cross can be fixed: tap it to jump to the right 
 [help]
 "profile.subclassName" = "Name of your subclass when you pick “Other”."
 "profile.name" = "Your hero's name."
+"profile.campaign" = "The name of the game or campaign you play this character in."
 "profile.player" = "Your own name, so the table knows who plays whom."
 "profile.background" = "Gives skills and a feature. The SRD has Acolyte; Custom lets you choose any two extra skills."
 "profile.alignment" = "A shorthand for how your hero sees ethics and order. Optional flavour."

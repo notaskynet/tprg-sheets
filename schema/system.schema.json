@@ -210,6 +210,9 @@
             "type": "string"
           }
         },
+        "campaign": {
+          "type": "string"
+        },
         "stats": {
           "default": [],
           "type": "array",

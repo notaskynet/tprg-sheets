@@ -9,6 +9,7 @@ import { langDef } from '@/i18n/lang';
 export interface CardData {
   title: string;
   subtitle: string[];
+  campaign: string;
   stats: { label: string; value: number | string; brand: boolean }[];
   valid: boolean;
 }
@@ -20,6 +21,7 @@ export function cardData(pkg: SystemPackage, ch: Character, lang: string): CardD
   return {
     title: summary ? displayValue(pkg, tr, summary.title, ch.values) : '',
     subtitle: (summary?.subtitle ?? []).map((p) => displayValue(pkg, tr, p, ch.values)).filter(Boolean),
+    campaign: summary?.campaign ? displayValue(pkg, tr, summary.campaign, ch.values) : '',
     valid: evaluateCreation(pkg, ch, scope).checklist.every((c) => c.ok),
     stats: (summary?.stats ?? []).map((k) => {
       const v = scope.get([k]);

@@ -324,6 +324,7 @@ items = [
 
 [fields]
 "profile.name" = { type = "text" }
+"profile.campaign" = { type = "text" }
 "profile.player" = { type = "text" }
 "profile.race" = { type = "select", from = "races" }
 "profile.subrace" = { type = "select", from = "subraces", scope = "lookup('races', profile.race, 'subraces')" }

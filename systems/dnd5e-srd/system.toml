@@ -10,6 +10,7 @@ tags = ["fantasy", "d20"]
 credits = "Contains material from the System Reference Document 5.1 by Wizards of the Coast LLC, licensed under CC BY 4.0."
 
 [summary]
+campaign = "profile.campaign"
 title = "profile.name"
 subtitle = ["profile.class", "profile.race"]
 stats = ["level", "hpMax", "ac"]

@@ -230,6 +230,7 @@ export const Manifest = z.object({
     .object({
       title: z.string(),
       subtitle: z.array(z.string()).default([]),
+      campaign: z.string().optional(), // field path of the campaign / chronicle name, shown under the system name
       stats: z.array(z.string()).default([]), // derived names or field paths shown on the card
     })
     .optional(),

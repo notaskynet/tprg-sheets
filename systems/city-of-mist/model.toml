@@ -37,6 +37,7 @@ items = [
 
 [fields]
 "profile.name" = { type = "text" }
+"profile.campaign" = { type = "text" }
 "profile.player" = { type = "text" }
 "profile.team" = { type = "text" }
 "profile.concept" = { type = "text" }

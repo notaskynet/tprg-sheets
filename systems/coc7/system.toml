@@ -10,6 +10,7 @@ tags = ["horror", "d100", "investigation"]
 credits = "Fan-made sheet implementing the percentile mechanics of Call of Cthulhu 7th Edition. Not affiliated with or endorsed by Chaosium Inc."
 
 [summary]
+campaign = "profile.campaign"
 title = "profile.name"
 subtitle = ["profile.occupation"]
 stats = ["hp_max", "san_max", "luck"]

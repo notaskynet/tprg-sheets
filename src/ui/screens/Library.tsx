@@ -147,7 +147,7 @@ function CharacterCard({ ch }: { ch: Character }) {
       </div>
     );
   }
-  const { title, subtitle, stats, valid } = cardData(pkg, ch, lang);
+  const { title, subtitle, campaign, stats, valid } = cardData(pkg, ch, lang);
 
   function duplicate() {
     const copy: Character = { ...ch, id: crypto.randomUUID(), values: structuredClone(ch.values) };
@@ -164,7 +164,7 @@ function CharacterCard({ ch }: { ch: Character }) {
           </div>
           <div className="min-w-0 flex-1">
             <div className="font-display text-[22px] font-medium leading-tight truncate">{title || t('unnamed')}</div>
-            <div className="font-body font-medium text-[11px] tracking-[0.1em] uppercase text-text-mute mt-1 truncate">{subtitle[0] ?? localize(pkg.manifest.name, lang)}</div>
+            <div className="font-body font-medium text-[11px] tracking-[0.1em] uppercase text-text-mute mt-1 truncate">{localize(pkg.manifest.name, lang)}{campaign ? ` · ${campaign}` : ''}</div>
           </div>
           <div className="pointer-events-auto">
             <DropdownMenu>
@@ -176,7 +176,7 @@ function CharacterCard({ ch }: { ch: Character }) {
             </DropdownMenu>
           </div>
         </div>
-        {subtitle[1] && <div className="text-text-mute text-[13px] italic leading-snug">{subtitle[1]}</div>}
+        {subtitle.length > 0 && <div className="text-text-mute text-[13px] italic leading-snug">{subtitle.join(' · ')}</div>}
         {stats.length > 0 && (
           <div className="grid grid-cols-3 gap-2.5 pt-3.5 border-t border-line">
             {stats.map((s) => (

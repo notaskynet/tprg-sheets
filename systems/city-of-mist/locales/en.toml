@@ -21,6 +21,7 @@ extreme = "12+ (explosive moves get a special success)"
 
 [fields]
 "profile.name" = "Name"
+"profile.campaign" = "Campaign"
 "profile.player" = "Player"
 "profile.team" = "Team"
 "profile.concept" = "Concept"
@@ -204,6 +205,7 @@ recap = "Check the list. Each of the four themes needs a type, a name, a Mystery
 
 [help]
 "profile.name" = "What the hero is called in ordinary life."
+"profile.campaign" = "The name of the game or campaign you play this character in."
 "profile.player" = "Your name, so the sheet does not get lost at the table."
 "profile.concept" = "One line about the hero: who they were and who they became. For example, \"a boxer turned monster\"."
 "t1.kind" = "Pick Mythos if the theme is about the legend and the supernatural. Pick Logos if it is about the hero's ordinary life."
