@@ -241,19 +241,19 @@ abilities = "Abilities"
 disciplines = "Disciplines"
 backgrounds = "Backgrounds"
 virtues = "Virtues"
-freebies = "Experience"
-recap = "Character creation"
+freebies = "Freebie points"
+recap = "Summary"
 
 [hints]
-concept = "Who is this vampire? Nature is what drives them inside. Demeanor is what they show people."
-clan = "Your clan gives three disciplines and a weakness. Generation sets your blood pool."
-attributes = "7, 5 and 3 points across the three groups: Physical, Social, Mental. Every attribute starts at 1."
-abilities = "13, 9 and 5 points across Talents, Skills and Knowledges. No more than 3 in one ability."
-disciplines = "3 points, usually in clan disciplines. Caitiff may pick any."
-backgrounds = "5 points: contacts, resources, influence."
-virtues = "7 points on top of the starting 1. They set Humanity and Willpower."
-freebies = "Freebie points (the number is set on the first step, usually 15). Cost per dot: attribute 5, ability 2, discipline 7, background 1, virtue 2, Willpower 1, Humanity 2."
-recap = "Check the summary and go back to fix anything."
+concept = "Write a name and one line about who this vampire is. Pick the Nature and Demeanor from the lists."
+clan = "Pick a clan. It sets three clan disciplines and a weakness. You can leave the Generation at 13."
+attributes = "Spend points on attributes: 7 on the main group, 5 on the second, 3 on the third. Every attribute already starts at 1."
+abilities = "Spend points on abilities: 13, 9 and 5 across the three groups. No more than 3 in one ability."
+disciplines = "Spend 3 points on disciplines. Usually they go into the three clan disciplines."
+backgrounds = "Spend 5 points on backgrounds: allies, money, contacts."
+virtues = "Add 7 points to the virtues. Each already starts at 1."
+freebies = "Buy anything extra here with freebie points. You do not have to spend them all."
+recap = "Go through the list and return to any item with a cross if something is missing."
 
 [derived]
 bloodMax = "Blood Pool"
@@ -345,36 +345,54 @@ schemer = "Plots and manipulates from the shadows."
 
 [guide]
 concept = """
-A name and one line about who this is will do to start, for example "Marta Kowalska, night-shift nurse". Think about who they were before the Embrace and what they want now.
+This step records the basics. Only the name and the concept are required.
 
-Nature is who they really are, Demeanor is who they pretend to be. A gentle Demeanor over a cruel Nature often makes an interesting character. You can change all of this later."""
+Name: what the hero is called now, which can be a mortal name, a nickname or an alias. Concept: one line about who the person was before the Embrace and who they became, for example "Marta Kowalska, a night-shift nurse".
+
+Nature is who the hero really is, Demeanor is how they want to look. Pick a value from the list or write your own. A gentle Demeanor over a cruel Nature usually makes an interesting hero.
+
+In the "Freebie points" field enter how many points the Storyteller allows. It is usually 15, and that number is already filled in. Everything else can be changed later on the sheet.
+"""
 clan = """
-Your clan sets three clan disciplines and a weakness every member shares. Read the descriptions and pick the one that fits your concept.
+Pick a clan from the list. Under each name you see what it is known for. The clan sets three clan disciplines, which are usually taken first, and a clan weakness, the curse of all its members. If you are not sure, read the descriptions in the list and pick the clan that fits your concept.
 
-New characters are usually Generation 13 unless the Storyteller says otherwise. The lower the number, the bigger the blood pool. Caitiff have no clan and may take any discipline."""
+Generation sets your blood pool. It starts at 13, so leave it unless the Storyteller says otherwise. The lower the number, the bigger the blood pool. You can leave the Sire field empty.
+
+Caitiff have no clan and may take any discipline.
+"""
 attributes = """
-Attributes are what you were born with, and each starts at 1. Pick your main group and it gets 7 points, the second gets 5, the third gets 3.
+Attributes are the hero's inborn traits. There are nine, three in each group: Physical (Strength, Dexterity, Stamina), Social (Charisma, Manipulation, Appearance) and Mental (Perception, Intelligence, Wits). Each attribute already starts at 1.
 
-Physical: Strength, Dexterity, Stamina. Social: Charisma, Manipulation, Appearance. Mental: Perception, Intelligence, Wits. A 1 is poor, 3 is good, 5 is the peak of human ability."""
+Decide which group is the main one. Give the main group 7 extra points, the second 5, the third 3. Just put points on the attributes: the counter works out which group is which and shows how many points are left.
+
+1 is poor, 3 is good, 5 is the limit of human ability. If you spend more, the excess is charged to your freebie points on the last step.
+"""
 abilities = """
-Abilities are what the character has learned, and they start at 0. Set priorities again: 13 points for the main group, 9 for the next, 5 for the last (Talents, Skills, Knowledges).
+Abilities are what the hero has learned. There are three groups: Talents, Skills and Knowledges. Every ability starts at 0.
 
-On this step no ability goes above 3; going higher costs freebie points. Follow the concept: a nurse will want Empathy and Medicine."""
+As with attributes, pick a main group. Give it 13 points, the second 9, the third 5. The counter works out the order from where you put more.
+
+On this step you can put no more than 3 points in one ability. To go higher you must spend freebie points. Follow your concept: a nurse will want Empathy and Medicine.
+"""
 disciplines = """
-Disciplines are supernatural powers. You have 3 points, usually spent on clan disciplines (quick pick lists them first).
+Disciplines are the vampire's supernatural powers. You have 3 points. Usually they go into the clan disciplines, which the list shows first. You can put one point in each of the three or all three in one.
 
-You can take one point in three disciplines or all three in one. The first dot is a taste of the power, the fifth is mastery."""
+The first dot gives a basic power, the fifth real mastery. Caitiff may pick any discipline. If you spend more than three points, the excess is charged to your freebie points.
+"""
 backgrounds = """
-Backgrounds are what the character has in the world besides skills: allies, money, contacts, a mentor, a haven. You get 5 points.
+Backgrounds are what the hero has in the world besides skills: allies, money, contacts, a mentor, a haven. You have 5 points. Add a background from the list and give it dots.
 
-Take what supports the concept: a fixer needs Contacts, an aristocrat needs Resources and Status."""
+Take what supports the concept: a fixer needs Contacts, an aristocrat needs Resources and Status.
+"""
 virtues = """
-Virtues are the moral compass. Add 7 points to the starting 1 in each.
+Virtues are the hero's moral compass. There are three: Conscience, Self-Control and Courage. Each already starts at 1, add 7 more points.
 
-Conscience and Self-Control together give Humanity, Courage gives Willpower. High Humanity helps hold the Beast back, high Willpower helps you keep going when things get hard."""
+Conscience and Self-Control together give Humanity, Courage gives Willpower. High Humanity helps hold the Beast back, high Willpower helps you hold on when things get hard.
+"""
 freebies = """
-Here are your freebie points for fine tuning, the number you set on the first step (usually 15). Cost per dot: attribute 5, ability 2, discipline 7, background 1, virtue 2, Willpower 1, Humanity 2.
+On this step you can buy anything extra with freebie points. You entered the number on the first step, usually 15. Cost per dot: attribute 5, ability 2, discipline 7, background 1, virtue 2, Willpower 1, Humanity 2.
 
-Anything you put over the budgets of earlier steps is charged here automatically. You don't have to spend them all."""
-recap = "Anything marked with a cross still needs attention: tap it to jump to that step. You can finish with open items and fix them later on the sheet."
+Anything you put over the budgets of earlier steps is charged here automatically, so you do not need to count by hand. You do not have to spend all the points. If the counter turns red you have spent more than you have: go back and remove the excess.
+"""
+recap = "Go through the list. An item with a cross still needs attention: tap it to return to that step. You can finish with open items and fix them later on the sheet."
 

@@ -99,19 +99,28 @@ skills = "Skills"
 recap = "Summary"
 
 [hints]
-concept = "Who is your investigator? A name and an occupation."
-characteristics = "Roll the characteristics: 3d6×5, and (2d6+6)×5 for Size, Intelligence and Education."
-skills = "Skill points: EDU×4 plus INT×2."
-recap = "Check the summary."
+concept = "Write the investigator's name and occupation."
+characteristics = "Roll each characteristic. Hit points, magic points and Sanity are worked out for you."
+skills = "Spend your skill points. You get Education×4 plus Intelligence×2."
+recap = "Go through the list and return to any item with a cross."
 
 [guide]
-concept = "Pick a believable occupation: it suggests where to put your skill points. Older investigators are wiser but frailer, so you have to apply the age modifiers by hand."
-characteristics = "Each characteristic is one roll, and the ↻ button rerolls just that one. STR, CON, DEX, APP, POW and Luck use 3d6×5. SIZ, INT and EDU use (2d6+6)×5. Hit points, magic points and Sanity are worked out for you."
-skills = """
-You get EDU×4 plus INT×2 skill points. Put them into the skills your occupation and interests suggest.
+concept = """
+Write the investigator's name and occupation. Those two fields are required. Age and residence can be filled in later.
 
-The number next to a skill is the points you added, and the total (base plus added) sits beside it. Keep a skill at 75 or less during creation; Cthulhu Mythos stays at 0. Dodge and Language (Own) get their base from DEX and EDU automatically."""
-recap = "Anything marked with a cross can be fixed: tap it to jump to its step."
+Pick a believable occupation: a librarian, a journalist, a doctor. It hints where to spend your skill points. By the rulebook age changes the characteristics, but the sheet does not apply those adjustments. If you play an older investigator, change the values by hand.
+"""
+characteristics = """
+Here you roll the dice for the characteristics. Press "Roll all" and the values appear at once. If you dislike one, the ↻ button next to it rerolls only that one.
+
+Strength, Constitution, Dexterity, Appearance, Power and Luck are 3d6×5. Size, Intelligence and Education are (2d6+6)×5. Hit points, magic points and Sanity are worked out for you, so you do not need to count them. Ask the Keeper whether rerolls are allowed.
+"""
+skills = """
+Now spend your skill points. You get as many as the formula gives: Education×4 plus Intelligence×2. The counter at the top shows how many you have used.
+
+Put points where the occupation and interests point. The number you enter is the points you add, and the total (base plus added) stands next to it. At creation do not raise a skill above 75. Leave Cthulhu Mythos at 0. The base of Dodge and Own Language comes from Dexterity and Education automatically.
+"""
+recap = "Go through the list. An item with a cross can be fixed: tap it to return to that step."
 
 [help]
 "profile.name" = "Your investigator's name."

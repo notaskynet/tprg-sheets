@@ -419,36 +419,60 @@ subclass = "Subclass"
 background = "Background"
 
 [hints]
-concept = "Who is your hero? A name and an alignment."
-race = "Race gives ability bonuses and speed."
-subrace = "A race variant: one more bonus and extra traits."
-ancestry = "The dragon you descend from."
-class = "Class sets hit die, saving throws, skills and spellcasting."
-subclass = "A specialisation within the class."
-background = "What your hero did before adventuring."
-abilities = "Six ability scores: point buy, standard array or rolls."
-skills = "Tick the skills your hero is proficient in. Skills from class and background are already ticked."
-recap = "Check the summary."
+concept = "Write the hero's name. Alignment is optional."
+race = "Pick a race. It gives speed and ability bonuses."
+subrace = "Pick a subrace: it adds another bonus and traits."
+ancestry = "Pick the dragon you descend from."
+class = "Pick a class. It sets hit die, saves, the skill list and spells."
+subclass = "Pick a subclass, a specialization inside the class."
+background = "Pick a background: what the hero did before adventuring."
+abilities = "Set the six abilities one of three ways: point buy, standard array or rolls."
+skills = "Tick the hero's skills. Skills from race and background are already ticked."
+recap = "Go through the list and return to any item with a cross."
 
 [guide]
-concept = "A name and a few words about the hero are enough to start, for example \"disgraced soldier seeking redemption\". Alignment is how the hero sees right and wrong, and it's optional."
-race = "Race gives ability bonuses and speed, and the bonuses are added on the sheet for you. Half-elves also pick two extra +1 bonuses, which you add to the base scores yourself."
-subrace = "Some races have a variant that adds one more ability bonus and some traits. They show up on the sheet under Features & traits."
-ancestry = "Your dragon ancestor sets the damage type and shape of your breath weapon, and your damage resistance."
+concept = """
+Only the hero's name is required. Player, campaign and alignment can be filled in later.
+
+A name and a few words about the hero will help you choose race and class on the next steps, for example "a disgraced soldier seeking redemption". Alignment describes how the hero sees good and order, for example "chaotic good". You can leave it empty.
+"""
+race = """
+Pick a race from the list. The race sets speed and gives ability bonuses. Those bonuses are added on the sheet automatically, so do not include them in your scores.
+
+A half-elf also gets two +1 bonuses of their choice. Add those by hand to the base scores on the Abilities step.
+"""
+subrace = """
+Your race has a subrace. Pick one: it adds another ability bonus and its own traits. The traits appear on the sheet in the features section.
+"""
+ancestry = """
+Pick the dragon the hero descends from. It sets the damage type and shape of the breath weapon, and the damage resistance.
+"""
 class = """
-Class is what the hero can do. It sets the hit die, two saving throws, the skill list and spellcasting. Features up to your level appear on the sheet by themselves.
+Pick a class. It decides what the hero can do. The class sets the hit die, two saving throws, the skill list you choose from, and spells. The features of your level appear on the sheet automatically.
 
-Level 1 is the default; raise it if your DM starts higher."""
-subclass = "Clerics, sorcerers and warlocks choose a subclass at 1st level, druids and wizards at 2nd, everyone else at 3rd. Its features appear on the sheet from the level they unlock. If your subclass isn't in the list, pick Other and type its name."
-background = "A background gives skills and a feature. The SRD has only the Acolyte (Insight and Religion). Custom lets you choose any two skills on the Skills step."
+The level starts at 1. If the DM starts higher, set it here.
+"""
+subclass = """
+A subclass is a specialization inside the class. It is chosen at a set level: clerics, sorcerers and warlocks choose at level 1, druids and wizards at level 2, the rest at level 3. If this step is missing, the hero's level is still too low. Subclass features appear on the sheet from the right level.
+
+If the subclass you want is not in the list, pick "Other" and write its name.
+"""
+background = """
+The background describes what the hero did before adventuring. It gives two skills and a feature. The SRD has only the Acolyte, which gives Insight and Religion, and they are ticked for you. The "Custom" option lets you pick any two skills on the Skills step.
+"""
 abilities = """
-There are three ways to set your scores.
+The hero has six ability scores. Choose how you will set them and switch to the matching tab.
 
-Point buy: 27 points, each score from 8 to 15. Standard array: 15, 14, 13, 12, 10 and 8, once each. Roll: 4d6 drop the lowest, six times; ask your DM first.
+- Point buy: you have 27 points, each score from 8 to 15. The higher the score, the more a point costs.
+- Standard array: hand out the values 15, 14, 13, 12, 10 and 8, each once.
+- Rolls: 4d6, drop the lowest, six times. Ask the DM whether rolls are allowed.
 
-Racial bonuses are added on the sheet for you."""
-skills = "Pick skills from your class list, as many as it allows (that is the budget). Skills from your race and background, and your class saving throws, are already ticked. Your proficiency bonus is added to every ticked skill."
-recap = "Anything marked with a cross can be fixed: tap it to jump to the right step."
+Race bonuses are added on the sheet automatically, so do not include them in these values.
+"""
+skills = """
+Tick the skills the hero is proficient in. The counter shows how many you can pick, which the class decides. You can only choose from the class skill list. Skills from race and background, and the class saving throws, are already ticked and do not count. The proficiency bonus is added to every ticked skill automatically.
+"""
+recap = "Go through the list. An item with a cross can be fixed: tap it to return to that step."
 
 [help]
 "profile.subclassName" = "Name of your subclass when you pick “Other”."
