@@ -34,6 +34,9 @@ version = "1.0.0"
 languages = ["en", "ru"]    # each needs locales/<lang>.toml
 name = { en = "My System", ru = "Моя система" }
 description = { en = "One sentence about the game.", ru = "Одно предложение об игре." }   # shown in the Systems list
+family = { en = "World of Darkness", ru = "Мир Тьмы" }   # optional series / engine family: the Systems list groups by it
+tags = ["horror", "d10"]    # optional free-form filters (genre, dice, setting)
+author = "Your name"        # optional
 accent = "#a01e2e"          # optional default brand colour (the user can override it)
 credits = "Licence / attribution line shown in the Systems list"
 

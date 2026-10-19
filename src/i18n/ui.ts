@@ -37,7 +37,7 @@ export const UI: Partial<Record<Lang, Record<string, string>>> = {
     game: 'Игра', hostGame: 'Вести игру', joinGame: 'Присоединиться', yourName: 'Ваше имя', gmDefault: 'Мастер', playerDefault: 'Игрок',
     startSession: 'Начать сессию', joinBtn: 'Войти', roomCode: 'Код комнаты', inviteLink: 'Ссылка-приглашение', chooseChars: 'Какие листы показать мастеру',
     connecting: 'Подключение…', waitingForPlayers: 'Ждём игроков…', onlineLbl: 'в сети', offlineLbl: 'не в сети',
-    rollFeed: 'Лента бросков', leaveSession: 'Покинуть сессию', gmConnected: 'Мастер подключён', gmWaiting: 'Мастера пока нет', scanToJoin: 'Наведите камеру, чтобы войти', shownToGm: 'Показан мастеру', gameEnded: 'Мастер завершил игру',
+    rollFeed: 'Лента бросков', leaveSession: 'Покинуть сессию', gmConnected: 'Мастер подключён', gmWaiting: 'Мастера пока нет', searchSystems: 'Поиск по системам', noSystemsFound: 'Ничего не найдено', otherSystems: 'Без семейства', scanToJoin: 'Наведите камеру, чтобы войти', shownToGm: 'Показан мастеру', gameEnded: 'Мастер завершил игру',
     noRollsYet: 'Бросков пока нет', noCharsShared: 'Нет открытых листов', sessionConnecting: 'Соединение…', connError: 'Не удалось подключиться',
     sessionNote: 'Данные остаются у игроков. Сессия живёт, пока открыта вкладка мастера; на iPhone соединение рвётся при сворачивании, но восстановится при возврате.',
     
@@ -95,7 +95,7 @@ export const UI: Partial<Record<Lang, Record<string, string>>> = {
     game: 'Game', hostGame: 'Host a game', joinGame: 'Join a game', yourName: 'Your name', gmDefault: 'GM', playerDefault: 'Player',
     startSession: 'Start session', joinBtn: 'Join', roomCode: 'Room code', inviteLink: 'Invite link', chooseChars: 'Sheets to show the GM',
     connecting: 'Connecting…', waitingForPlayers: 'Waiting for players…', onlineLbl: 'online', offlineLbl: 'offline',
-    rollFeed: 'Roll feed', leaveSession: 'Leave session', gmConnected: 'GM connected', gmWaiting: 'No GM yet', scanToJoin: 'Scan to join', shownToGm: 'Shown to the GM', gameEnded: 'The GM closed the game',
+    rollFeed: 'Roll feed', leaveSession: 'Leave session', gmConnected: 'GM connected', gmWaiting: 'No GM yet', searchSystems: 'Search systems', noSystemsFound: 'Nothing found', otherSystems: 'No family', scanToJoin: 'Scan to join', shownToGm: 'Shown to the GM', gameEnded: 'The GM closed the game',
     noRollsYet: 'No rolls yet', noCharsShared: 'No sheets shared', sessionConnecting: 'Connecting…', connError: 'Could not connect',
     sessionNote: 'Data stays with the players. The session lives while the GM tab is open; on iPhone the link drops when backgrounded and recovers on return.',
     

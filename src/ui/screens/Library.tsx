@@ -6,6 +6,7 @@ import { useI18n } from '@/i18n/I18nContext';
 import { AVAILABLE_LANGS, localize } from '@/i18n/lang';
 import { useCharacters, deleteCharacter, putCharacter, saveCharacter } from '@/storage/db';
 import { getPackage, usePackages } from '@/systems/registry';
+import { SystemGroups } from '@/ui/SystemGroups';
 import { newCharacter, type Character } from '@/engine/character';
 import { cardData } from '@/ui/cardData';
 import { goSheet } from '@/routing';
@@ -120,15 +121,15 @@ export function Library({ join }: { join?: string }) {
       <Dialog open={picking} onOpenChange={setPicking}>
         <DialogContent>
           <DialogHeader><DialogTitle>{t('chooseSystem')}</DialogTitle></DialogHeader>
-          <div className="flex flex-col gap-2">
-            {packages.map((p) => (
-              <button key={p.manifest.id} onClick={() => create(p.manifest.id)} className="text-left border border-line2 rounded-md px-4 py-3 hover:border-text-mute transition-colors">
+          <SystemGroups packages={packages}>
+            {(p) => (
+              <button onClick={() => create(p.manifest.id)} className="w-full text-left border border-line2 rounded-md px-4 py-3 hover:border-text-mute transition-colors">
                 <div className="font-display text-xl">{localize(p.manifest.name, lang)}</div>
                 {p.manifest.description && <div className="text-[13px] text-text-mute mt-1 leading-snug">{localize(p.manifest.description, lang)}</div>}
                 <div className="font-mono text-[10px] text-text-dim mt-1">{p.manifest.id} · v{p.manifest.version}</div>
               </button>
-            ))}
-          </div>
+            )}
+          </SystemGroups>
         </DialogContent>
       </Dialog>
     </div>

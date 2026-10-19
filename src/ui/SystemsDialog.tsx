@@ -9,6 +9,7 @@ import { filesFromZip, PackageError } from '@/engine/loader';
 import { addPackage, getSourceFiles, isBuiltin, removePackage, usePackages } from '@/systems/registry';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/ui/components/dialog';
 import { cn } from '@/ui/lib/utils';
+import { SystemGroups } from '@/ui/SystemGroups';
 
 export function SystemsDialog({ open, onOpenChange }: { open: boolean; onOpenChange: (o: boolean) => void }) {
   const { t, lang } = useI18n();
@@ -43,12 +44,13 @@ export function SystemsDialog({ open, onOpenChange }: { open: boolean; onOpenCha
         <DialogHeader><DialogTitle className="font-display text-[22px] font-semibold">{t('systems')}</DialogTitle></DialogHeader>
         <p className="text-text-mute text-sm">{t('systemsHint')}</p>
 
-        <div className="flex flex-col gap-2">
-          {packages.map((p) => (
-            <div key={p.manifest.id} className="border border-line2 rounded-md px-3.5 py-3 flex items-start gap-3">
+        <SystemGroups packages={packages}>
+          {(p) => (
+            <div className="border border-line2 rounded-md px-3.5 py-3 flex items-start gap-3">
               <div className="min-w-0 flex-1">
                 <div className="font-display text-lg font-semibold truncate">{localize(p.manifest.name, lang)}</div>
-                <div className="font-mono text-[10px] text-text-dim">{p.manifest.id} · v{p.manifest.version} · {isBuiltin(p.manifest.id) ? t('builtIn') : t('customSystem')}</div>
+                <div className="font-mono text-[10px] text-text-dim">{p.manifest.id} · v{p.manifest.version} · {isBuiltin(p.manifest.id) ? t('builtIn') : t('customSystem')}{p.manifest.author ? ` · ${p.manifest.author}` : ''}</div>
+                {!!p.manifest.tags?.length && <div className="mt-1.5 flex flex-wrap gap-1">{p.manifest.tags.map((x) => <span key={x} className="rounded-full border border-line2 px-2 py-px text-[10px] text-text-mute">{x}</span>)}</div>}
                 {p.manifest.description && <p className="text-[13px] text-text-mute mt-1.5 leading-snug">{localize(p.manifest.description, lang)}</p>}
                 {p.manifest.credits && <p className="text-[10.5px] text-text-dim mt-1.5 leading-snug">{p.manifest.credits}</p>}
               </div>
@@ -57,8 +59,8 @@ export function SystemsDialog({ open, onOpenChange }: { open: boolean; onOpenCha
                 <button onClick={() => { if (confirm(t('removeSystemConfirm'))) void removePackage(p.manifest.id); }} title={t('removeSystem')} aria-label={t('removeSystem')} className="size-9 shrink-0 border border-line2 rounded-md inline-flex items-center justify-center text-text-mute hover:text-brand-bright hover:border-brand"><Trash2 className="size-4" /></button>
               )}
             </div>
-          ))}
-        </div>
+          )}
+        </SystemGroups>
 
         <button
           type="button"

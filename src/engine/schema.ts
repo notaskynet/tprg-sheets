@@ -213,6 +213,9 @@ export const Manifest = z.object({
   name: z.record(z.string(), z.string()),
   languages: z.array(z.string()).min(1),
   description: z.record(z.string(), z.string()).optional(), // one sentence per language, shown in the Systems list
+  family: z.record(z.string(), z.string()).optional(), // series or engine family ("World of Darkness", "d20"); systems are grouped by it
+  tags: z.array(z.string()).optional(), // free-form filters: genre, dice, setting
+  author: z.string().optional(),
   credits: z.string().optional(), // licence / attribution line shown with the system
   accent: z.string().regex(/^#[0-9a-fA-F]{6}$/, 'use #rrggbb').optional(), // default brand colour for this system
   dice: DiceConfig,
