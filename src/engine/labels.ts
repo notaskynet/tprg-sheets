@@ -23,6 +23,11 @@ export function displayValue(pkg: SystemPackage, tr: Translate, path: string, va
   const v = getIn(values, path.split('.'));
   if (v == null || v === '') return '';
   const f = pkg.model.fields[path];
-  if (f?.type === 'select' && f.from) return tr(`${f.from}.${v}`);
+  if (f?.type === 'select' && f.from) {
+    // «other» + a filled `<path>Name` text field: show the typed name, not the generic label
+    const custom = v === 'other' ? getIn(values, `${path}Name`.split('.')) : undefined;
+    if (typeof custom === 'string' && custom.trim()) return custom.trim();
+    return tr(`${f.from}.${v}`);
+  }
   return String(v);
 }

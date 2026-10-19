@@ -12,7 +12,7 @@ credits = "Contains material from the System Reference Document 5.1 by Wizards o
 [summary]
 campaign = "profile.campaign"
 title = "profile.name"
-subtitle = ["profile.class", "profile.race"]
+subtitle = ["profile.class", "profile.subclass", "profile.race"]
 stats = ["level", "hpMax", "ac"]
 
 # 1d20 + modifier against a DC; advantage / disadvantage; natural 20 / 1.
