@@ -174,7 +174,7 @@ function PlayerView() {
   const mine = chars; // sheets the player can open from here; which of them the GM sees can be changed at any time
   return (
     <div className="min-h-full">
-      <Header code={state.code} right={<span className={cn('inline-flex items-center gap-2 text-xs', state.gmPresent ? 'text-good' : 'text-gold')}><span className={cn('size-2 rounded-full', state.gmPresent ? 'bg-good' : 'bg-gold')} />{state.gmPresent ? t('gmConnected') : t('gmWaiting')}</span>} />
+      <Header code={state.code} right={<span className={cn('inline-flex items-center gap-2 text-xs', state.gmPresent ? 'text-good' : 'text-gold')}><span className={cn('size-2 rounded-full', state.gmPresent ? 'bg-good' : 'bg-gold')} />{state.gmPresent ? `${t('gmConnected')}${state.gmName ? `: ${state.gmName}` : ''}` : t('gmWaiting')}</span>} />
       <div className="max-w-[1000px] mx-auto px-4 sm:px-9 py-8 grid md:grid-cols-[minmax(0,1fr)_320px] gap-10 items-start">
         <section className="flex flex-col gap-3">
           <h2 className="font-display text-xl font-semibold">{t('myCharacters')}</h2>

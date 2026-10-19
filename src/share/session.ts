@@ -15,6 +15,7 @@ export interface SessionState {
   role: Role;
   code: string;
   gmPresent: boolean;
+  gmName: string; // player: who the GM is
   peerCount: number;
   players: PlayerView[]; // GM only
   feed: RollEntry[]; // newest first
@@ -29,7 +30,7 @@ interface PlayerRec { name: string; online: boolean; peerId: string; chars: Map<
 export class Session {
   private players = new Map<string, PlayerRec>();
   private feed: RollEntry[] = [];
-  private gmPeers = new Set<string>();
+  private gmPeers = new Map<string, string>(); // peer id -> the GM's name
   private conflict = false;
   private ended = false;
   private known = new Set<string>();
@@ -96,7 +97,7 @@ export class Session {
   private handle(m: import('./protocol').Msg, from: string) {
     switch (m.t) {
       case 'hello':
-        if (m.role === 'gm') this.gmPeers.add(from);
+        if (m.role === 'gm') this.gmPeers.set(from, m.name);
         if (m.role === 'gm' && this.role === 'gm') this.conflict = true;
         if (this.role === 'gm' && m.role === 'player') this.player(from, m.name);
         break;
@@ -150,6 +151,7 @@ export class Session {
       role: this.role,
       code: this.code,
       gmPresent: this.gmPeers.size > 0,
+      gmName: [...this.gmPeers.values()][0] ?? '',
       peerCount: this.peerCount,
       players: [...this.players.values()].map((p) => ({ name: p.name, online: p.online, peerId: p.peerId, chars: [...p.chars.values()] })),
       feed: this.feed,

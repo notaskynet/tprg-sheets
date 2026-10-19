@@ -148,3 +148,13 @@ describe('session lifecycle', () => {
     expect(gm.getState().players[0].chars.map((c) => c.id)).toEqual(['c2']);
   });
 });
+
+describe('session: who is the GM', () => {
+  it('a player learns the GM name', async () => {
+    const hub = memoryHub();
+    new Session(hub.join('g'), 'gm', 'Даня', 'ABCD2345');
+    const pl = new Session(hub.join('p'), 'player', 'P', 'ABCD2345', () => []);
+    await tick();
+    expect(pl.getState()).toMatchObject({ gmPresent: true, gmName: 'Даня' });
+  });
+});
