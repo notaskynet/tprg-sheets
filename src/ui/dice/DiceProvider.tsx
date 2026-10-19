@@ -41,7 +41,10 @@ export function DiceProvider({ values, onRoll, children }: {
   const cfg = pkg.manifest.dice;
   // pools = slots; groups listed in one slot are alternatives (one pick), slots add up.
   // value = per-group derived template ("skill_{id}") when a pick's number isn't the stored value.
-  const rollCfg = (pkg.sheet.roll ?? {}) as { pools?: string[][]; specialties?: string; penalty?: string; value?: Record<string, string> };
+  const rollCfg = (pkg.sheet.roll ?? {}) as {
+    pools?: string[][]; specialties?: string; penalty?: string; penaltyLabel?: string; value?: Record<string, string>;
+    toggles?: { text: string; sign: 1 | -1; burned?: string }[]; // tags of the sheet that can be switched into the roll
+  };
   const slotOf = useCallback((g: string) => (rollCfg.pools ?? []).findIndex((slot) => slot.includes(g)), [rollCfg.pools]);
 
   const [isOpen, setOpen] = useState(false);
@@ -53,6 +56,7 @@ export function DiceProvider({ values, onRoll, children }: {
   const [bonus, setBonus] = useState(0);
   const [formula, setFormula] = useState('1d20');
   const [applyPenalty, setApplyPenalty] = useState(true);
+  const [on, setOn] = useState<string[]>([]); // toggled tags (their text field paths)
   const [result, setResult] = useState<RollResult | null>(null);
   const [history, setHistory] = useState<HistoryEntry[]>(loadHistory);
 
@@ -73,9 +77,16 @@ export function DiceProvider({ values, onRoll, children }: {
     slot, g, id, label: tr(`${g}.${id}`), value: valueOf(g, id),
     specialty: rollCfg.specialties ? String(getIn(values, [rollCfg.specialties, id]) ?? '') : '',
   }));
-  const base = pickedRows.reduce((s, r) => s + r.value, 0);
+  const tagRows = (rollCfg.toggles ?? []).map((tg) => ({
+    ...tg,
+    label: String(getIn(values, tg.text.split('.')) ?? '').trim(),
+    burned: !!tg.burned && !!getIn(values, tg.burned.split('.')),
+  })).filter((tg) => tg.label);
+  const tagSum = tagRows.reduce((s, tg) => s + (on.includes(tg.text) && !tg.burned ? tg.sign : 0), 0);
+  const base = pickedRows.reduce((s, r) => s + r.value, 0) + tagSum;
   const penalty = rollCfg.penalty && applyPenalty ? Number(scope.get([rollCfg.penalty]) ?? 0) : 0;
-  const total = Math.max(0, base + extra + penalty);
+  const signed = cfg.mechanic === 'sum-bands'; // the modifier may go below zero
+  const total = signed ? base + extra + penalty : Math.max(0, base + extra + penalty);
   const specialtyName = pickedRows.find((r) => r.specialty)?.specialty;
 
   const label = pickedRows.map((r) => r.label).join(' + ') || t('roll');
@@ -87,12 +98,12 @@ export function DiceProvider({ values, onRoll, children }: {
     };
     const r = doRoll(cfg, req);
     setResult(r);
-    const summary = summarize(r, t);
+    const summary = summarize(r, t, tr);
     setHistory((h) => [{ ts: Date.now(), label, result: r, summary }, ...h].slice(0, 20));
     onRoll?.({ label, summary, result: r });
-  }, [cfg, total, base, extra, penalty, difficulty, specialty, advantage, bonus, formula, label, onRoll, t]);
+  }, [cfg, total, base, extra, penalty, difficulty, specialty, advantage, bonus, formula, label, onRoll, t, tr]);
 
-  const inputLabel = cfg.mechanic === 'pool-successes' ? t('pool') : cfg.mechanic === 'd20-modifier' ? t('modifier') : t('skillValue');
+  const inputLabel = cfg.mechanic === 'pool-successes' ? t('pool') : cfg.mechanic === 'd20-modifier' ? t('modifier') : cfg.mechanic === 'sum-bands' ? tr('labels.rollModifier') : t('skillValue');
 
   return (
     <Ctx value={api}>
@@ -127,13 +138,33 @@ export function DiceProvider({ values, onRoll, children }: {
               </div>
             )}
 
+            {cfg.mechanic === 'sum-bands' && tagRows.length > 0 && (
+              <div className="flex flex-wrap gap-1.5">
+                {tagRows.map((tg) => {
+                  const picked = on.includes(tg.text) && !tg.burned;
+                  return (
+                    <button
+                      key={tg.text}
+                      type="button"
+                      disabled={tg.burned}
+                      onClick={() => setOn((cur) => (cur.includes(tg.text) ? cur.filter((x) => x !== tg.text) : [...cur, tg.text]))}
+                      className={cn('inline-flex items-center gap-1.5 border rounded px-2 py-1 text-xs transition-colors disabled:opacity-40 disabled:line-through',
+                        picked ? (tg.sign > 0 ? 'border-brand bg-brand/15 text-text' : 'border-gold bg-gold/15 text-text') : 'border-line2 text-text-mute hover:text-text')}
+                    >
+                      <b className="font-mono">{tg.sign > 0 ? '+1' : '−1'}</b> {tg.label}
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+
             {cfg.mechanic === 'notation' ? (
               <label className="flex flex-col gap-1.5"><span className="eyebrow">{t('notation')}</span>
                 <input value={formula} onChange={(e) => setFormula(e.target.value)} className="bg-ink border border-line2 rounded px-3 py-2 font-mono text-lg outline-none focus:border-brand" />
               </label>
             ) : (
               <div className="grid grid-cols-1 min-[420px]:grid-cols-2 gap-4">
-                <Stepper label={inputLabel} value={extra} display={total} onChange={(v) => setExtra(v - (total - extra))} min={0} max={99} />
+                <Stepper label={inputLabel} value={extra} display={total} onChange={(v) => setExtra(v - (total - extra))} min={signed ? -9 : 0} max={99} />
                 {cfg.mechanic === 'pool-successes' && <Stepper label={t('difficulty')} value={difficulty} onChange={setDifficulty} min={2} max={10} />}
                 {cfg.mechanic === 'd20-modifier' && <Stepper label={t('dc')} value={difficulty} onChange={setDifficulty} min={1} max={40} />}
                 {cfg.mechanic === 'd100-under' && <Stepper label={t('bonusDice')} value={bonus} onChange={setBonus} min={-2} max={2} />}
@@ -158,7 +189,7 @@ export function DiceProvider({ values, onRoll, children }: {
             {rollCfg.penalty && cfg.mechanic !== 'notation' && Number(scope.get([rollCfg.penalty]) ?? 0) !== 0 && (
               <label className="flex items-center gap-2 text-text-mute text-xs cursor-pointer select-none">
                 <input type="checkbox" checked={applyPenalty} onChange={(e) => setApplyPenalty(e.target.checked)} className="w-3.5 h-3.5 accent-brand" />
-                {t('woundPenalty')}: {Number(scope.get([rollCfg.penalty]))}
+                {rollCfg.penaltyLabel ? tr(rollCfg.penaltyLabel) : t('woundPenalty')}: {Number(scope.get([rollCfg.penalty]))}
               </label>
             )}
 
@@ -187,8 +218,9 @@ export function DiceProvider({ values, onRoll, children }: {
   );
 }
 
-function summarize(r: RollResult, t: (k: string) => string): string {
+function summarize(r: RollResult, t: (k: string) => string, tr: (k: string) => string): string {
   switch (r.mechanic) {
+    case 'sum-bands': return `${r.result} · ${tr(`bands.${r.band}`)}`;
     case 'pool-successes': return r.kind === 'success' ? `+${r.result}` : r.kind === 'botch' ? '✱' : '—';
     case 'd20-modifier': return `${r.result}${r.kind === 'crit' ? ' ★' : r.kind === 'critfail' ? ' ✱' : ''}`;
     case 'd100-under': return `${r.result} · ${t(r.degree === 'fail' ? 'failure' : r.degree!)}`;
@@ -198,10 +230,11 @@ function summarize(r: RollResult, t: (k: string) => string): string {
 
 function ResultView({ result, difficulty }: { result: RollResult; difficulty: number }) {
   const { t } = useI18n();
+  const { tr } = useSystem();
   const pool = result.mechanic === 'pool-successes';
   const good = result.kind === 'success' || result.kind === 'crit';
   const headline = pool ? (result.kind === 'success' ? String(result.result) : result.kind === 'botch' ? t('botch') : t('failure')) : String(result.result);
-  const kindLabel = result.degree ? t(result.degree === 'fail' ? 'failure' : result.degree) : pool ? (good ? t('successes') : result.kind === 'botch' ? t('botch') : t('failure')) : t(result.kind);
+  const kindLabel = result.band ? tr(`bands.${result.band}`) : result.degree ? t(result.degree === 'fail' ? 'failure' : result.degree) : pool ? (good ? t('successes') : result.kind === 'botch' ? t('botch') : t('failure')) : t(result.kind);
   return (
     <div className={cn('bg-ink rounded p-[18px] flex flex-col gap-3 border', good ? 'border-brand' : 'border-line')}>
       <span className="eyebrow">{kindLabel}</span>

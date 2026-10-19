@@ -138,6 +138,56 @@
           "properties": {
             "mechanic": {
               "type": "string",
+              "const": "sum-bands"
+            },
+            "dice": {
+              "default": "2d6",
+              "type": "string"
+            },
+            "bands": {
+              "default": [
+                {
+                  "min": 12,
+                  "id": "extreme"
+                },
+                {
+                  "min": 10,
+                  "id": "strong"
+                },
+                {
+                  "min": 7,
+                  "id": "weak"
+                }
+              ],
+              "minItems": 1,
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "min": {
+                    "type": "number"
+                  },
+                  "id": {
+                    "type": "string",
+                    "pattern": "^[A-Za-z0-9_]+$"
+                  }
+                },
+                "required": [
+                  "min",
+                  "id"
+                ]
+              }
+            }
+          },
+          "required": [
+            "mechanic"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "mechanic": {
+              "type": "string",
               "const": "notation"
             }
           },

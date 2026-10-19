@@ -1,0 +1,144 @@
+#:schema ../../schema/model.schema.json
+# City of Mist: a character is four themes (Mythos or Logos), each with tags, a mystery or an
+# identity, and tracks. Statuses, clues, juice and story tags are lists kept on the sheet.
+
+[catalogs.themeKinds]
+items = [{ id = "mythos" }, { id = "logos" }]
+
+[catalogs.themebooks]
+items = [
+  { id = "adaptation", kind = "mythos" },
+  { id = "bastion", kind = "mythos" },
+  { id = "manifestation", kind = "mythos" },
+  { id = "mystification", kind = "mythos" },
+  { id = "mobility", kind = "mythos" },
+  { id = "divination", kind = "mythos" },
+  { id = "relic", kind = "mythos" },
+  { id = "routine", kind = "logos" },
+  { id = "defining_event", kind = "logos" },
+  { id = "possessions", kind = "logos" },
+  { id = "identity", kind = "logos" },
+  { id = "mission", kind = "logos" },
+  { id = "relationships", kind = "logos" },
+  { id = "training", kind = "logos" },
+]
+
+[catalogs.moves]
+items = [
+  { id = "investigate" },
+  { id = "persuade" },
+  { id = "face_danger" },
+  { id = "go_all_out" },
+  { id = "throw_down" },
+  { id = "change_game" },
+  { id = "act_covertly" },
+  { id = "take_risk" },
+]
+
+[fields]
+"profile.name" = { type = "text" }
+"profile.player" = { type = "text" }
+"profile.team" = { type = "text" }
+"profile.concept" = { type = "text" }
+"profile.look" = { type = "longtext" }
+"team.theme" = { type = "longtext" }
+"notes" = { type = "longtext" }
+"statuses.neg" = { type = "list", item = "dots", max = 6 }
+"statuses.pos" = { type = "list", item = "dots", max = 6 }
+"clues" = { type = "list", item = "note" }
+"juice" = { type = "list", item = "number" }
+"storyTags" = { type = "list", item = "note" }
+
+# theme 1
+"t1.kind" = { type = "select", from = "themeKinds" }
+"t1.book" = { type = "text", suggest = "themebooks" }
+"t1.name" = { type = "text" }
+"t1.question" = { type = "text" }
+"t1.power1" = { type = "text" }
+"t1.burn1" = { type = "checkbox" }
+"t1.power2" = { type = "text" }
+"t1.burn2" = { type = "checkbox" }
+"t1.power3" = { type = "text" }
+"t1.burn3" = { type = "checkbox" }
+"t1.power4" = { type = "text" }
+"t1.burn4" = { type = "checkbox" }
+"t1.power5" = { type = "text" }
+"t1.burn5" = { type = "checkbox" }
+"t1.weak1" = { type = "text" }
+"t1.weak2" = { type = "text" }
+"t1.weak3" = { type = "text" }
+"t1.attention" = { type = "checkboxes", count = 3 }
+"t1.drain" = { type = "checkboxes", count = 3 }
+"t1.improve" = { type = "longtext" }
+
+# theme 2
+"t2.kind" = { type = "select", from = "themeKinds" }
+"t2.book" = { type = "text", suggest = "themebooks" }
+"t2.name" = { type = "text" }
+"t2.question" = { type = "text" }
+"t2.power1" = { type = "text" }
+"t2.burn1" = { type = "checkbox" }
+"t2.power2" = { type = "text" }
+"t2.burn2" = { type = "checkbox" }
+"t2.power3" = { type = "text" }
+"t2.burn3" = { type = "checkbox" }
+"t2.power4" = { type = "text" }
+"t2.burn4" = { type = "checkbox" }
+"t2.power5" = { type = "text" }
+"t2.burn5" = { type = "checkbox" }
+"t2.weak1" = { type = "text" }
+"t2.weak2" = { type = "text" }
+"t2.weak3" = { type = "text" }
+"t2.attention" = { type = "checkboxes", count = 3 }
+"t2.drain" = { type = "checkboxes", count = 3 }
+"t2.improve" = { type = "longtext" }
+
+# theme 3
+"t3.kind" = { type = "select", from = "themeKinds" }
+"t3.book" = { type = "text", suggest = "themebooks" }
+"t3.name" = { type = "text" }
+"t3.question" = { type = "text" }
+"t3.power1" = { type = "text" }
+"t3.burn1" = { type = "checkbox" }
+"t3.power2" = { type = "text" }
+"t3.burn2" = { type = "checkbox" }
+"t3.power3" = { type = "text" }
+"t3.burn3" = { type = "checkbox" }
+"t3.power4" = { type = "text" }
+"t3.burn4" = { type = "checkbox" }
+"t3.power5" = { type = "text" }
+"t3.burn5" = { type = "checkbox" }
+"t3.weak1" = { type = "text" }
+"t3.weak2" = { type = "text" }
+"t3.weak3" = { type = "text" }
+"t3.attention" = { type = "checkboxes", count = 3 }
+"t3.drain" = { type = "checkboxes", count = 3 }
+"t3.improve" = { type = "longtext" }
+
+# theme 4
+"t4.kind" = { type = "select", from = "themeKinds" }
+"t4.book" = { type = "text", suggest = "themebooks" }
+"t4.name" = { type = "text" }
+"t4.question" = { type = "text" }
+"t4.power1" = { type = "text" }
+"t4.burn1" = { type = "checkbox" }
+"t4.power2" = { type = "text" }
+"t4.burn2" = { type = "checkbox" }
+"t4.power3" = { type = "text" }
+"t4.burn3" = { type = "checkbox" }
+"t4.power4" = { type = "text" }
+"t4.burn4" = { type = "checkbox" }
+"t4.power5" = { type = "text" }
+"t4.burn5" = { type = "checkbox" }
+"t4.weak1" = { type = "text" }
+"t4.weak2" = { type = "text" }
+"t4.weak3" = { type = "text" }
+"t4.attention" = { type = "checkboxes", count = 3 }
+"t4.drain" = { type = "checkboxes", count = 3 }
+"t4.improve" = { type = "longtext" }
+
+[derived]
+mythosCount = "if(t1.kind == 'mythos', 1, 0) + if(t2.kind == 'mythos', 1, 0) + if(t3.kind == 'mythos', 1, 0) + if(t4.kind == 'mythos', 1, 0)"
+logosCount = "if(t1.kind == 'logos', 1, 0) + if(t2.kind == 'logos', 1, 0) + if(t3.kind == 'logos', 1, 0) + if(t4.kind == 'logos', 1, 0)"
+# the best helpful status adds, the worst harmful one subtracts
+status_mod = "top(statuses.pos) - top(statuses.neg)"

@@ -1,0 +1,39 @@
+#:schema ../../schema/creation.schema.json
+[[steps]]
+id = "concept"
+kind = "fields"
+fields = ["profile.name", "profile.player", "profile.concept"]
+required = ["profile.name"]
+
+[[steps]]
+id = "theme1"
+kind = "fields"
+fields = ["t1.kind", "t1.book", "t1.name", "t1.question", "t1.power1", "t1.power2", "t1.power3", "t1.weak1"]
+required = ["t1.kind", "t1.name", "t1.question", "t1.power1", "t1.power2", "t1.power3", "t1.weak1"]
+show = ["mythosCount", "logosCount"]
+
+[[steps]]
+id = "theme2"
+kind = "fields"
+fields = ["t2.kind", "t2.book", "t2.name", "t2.question", "t2.power1", "t2.power2", "t2.power3", "t2.weak1"]
+required = ["t2.kind", "t2.name", "t2.question", "t2.power1", "t2.power2", "t2.power3", "t2.weak1"]
+show = ["mythosCount", "logosCount"]
+
+[[steps]]
+id = "theme3"
+kind = "fields"
+fields = ["t3.kind", "t3.book", "t3.name", "t3.question", "t3.power1", "t3.power2", "t3.power3", "t3.weak1"]
+required = ["t3.kind", "t3.name", "t3.question", "t3.power1", "t3.power2", "t3.power3", "t3.weak1"]
+show = ["mythosCount", "logosCount"]
+
+[[steps]]
+id = "theme4"
+kind = "fields"
+fields = ["t4.kind", "t4.book", "t4.name", "t4.question", "t4.power1", "t4.power2", "t4.power3", "t4.weak1"]
+required = ["t4.kind", "t4.name", "t4.question", "t4.power1", "t4.power2", "t4.power3", "t4.weak1"]
+show = ["mythosCount", "logosCount"]
+
+[[steps]]
+id = "recap"
+kind = "recap"
+show = ["mythosCount", "logosCount"]

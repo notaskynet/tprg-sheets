@@ -156,6 +156,12 @@ export function createScope(model: Model, values: Values): Scope {
         const v = a.t === 'path' ? get(a.p) : ev(a);
         return Array.isArray(v) ? v.length : v && typeof v === 'object' ? Object.keys(v).length : 0;
       }
+      case 'top': {
+        // highest level among the rows of a list (0 when empty): the strongest status of a kind
+        const a = args[0];
+        const v = a.t === 'path' ? get(a.p) : ev(a);
+        return Array.isArray(v) ? Math.max(0, ...v.map((r) => num((r as { level?: unknown })?.level))) : 0;
+      }
       case 'if': return ev(args[0]) ? ev(args[1]) : args[2] ? ev(args[2]) : 0;
       case 'min': return Math.min(...args.map((a) => num(ev(a))));
       case 'max': return Math.max(...args.map((a) => num(ev(a))));

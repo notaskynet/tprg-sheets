@@ -1,0 +1,26 @@
+#:schema ../../schema/system.schema.json
+id = "city-of-mist"
+version = "1.0.0"
+languages = ["ru", "en"]
+name = { en = "City of Mist", ru = "Город Тумана" }
+description = { en = "Noir urban fantasy: ordinary people carry the spark of a legend. Four themes of tags, 2d6 plus Power, statuses instead of hit points.", ru = "Нуар и городское фэнтези: обычные люди несут в себе искру легенды. Четыре темы с тегами, 2d6 плюс Сила, статусы вместо хитов." }
+family = { en = "Powered by the Apocalypse", ru = "Powered by the Apocalypse" }
+tags = ["noir", "urban-fantasy", "2d6", "investigation"]
+accent = "#7d4fc4"
+credits = "Fan-made sheet for the mechanics of City of Mist by Son of Oak Game Studio. Not affiliated with or endorsed by Son of Oak. Rules text is paraphrased; see the rulebook for the full rules."
+
+[summary]
+title = "profile.name"
+subtitle = ["profile.concept"]
+stats = ["mythosCount", "logosCount", "status_mod"]
+
+# 2d6 plus Power. 6 or less misses, 7-9 hits with a cost, 10+ is a clean hit.
+# 12+ only matters for explosive moves, which the sheet leaves to the player.
+[dice]
+mechanic = "sum-bands"
+dice = "2d6"
+bands = [
+  { min = 12, id = "extreme" },
+  { min = 10, id = "strong" },
+  { min = 7, id = "weak" },
+]

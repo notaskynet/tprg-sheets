@@ -99,6 +99,12 @@ export const DiceConfig = z.discriminatedUnion('mechanic', [
     critFail: z.number().int().default(1),
   }),
   z.object({ mechanic: z.literal('d100-under') }),
+  z.object({
+    mechanic: z.literal('sum-bands'),
+    dice: z.string().default('2d6'), // notation for the dice, the modifier is added to the sum
+    // The sum falls into the highest band whose `min` it reaches; below all bands it is a miss.
+    bands: z.array(z.object({ min: z.number(), id })).min(1).default([{ min: 12, id: 'extreme' }, { min: 10, id: 'strong' }, { min: 7, id: 'weak' }]),
+  }),
   z.object({ mechanic: z.literal('notation') }),
 ]);
 export type DiceConfig = z.infer<typeof DiceConfig>;

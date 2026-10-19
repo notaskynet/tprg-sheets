@@ -56,6 +56,7 @@ mechanic = "pool-successes" # see "Dice" below
 | `pool-successes` | `die = 10`, `defaultDifficulty = 6`, `onesCancel = true`, `specialty = "extra-die"` or `"none"` | a pool of dice; each ≥ difficulty is a success, 1s cancel successes, a botch when only 1s |
 | `d20-modifier` | `critSuccess = 20`, `critFail = 1` | d20 + modifier against a DC; advantage / disadvantage |
 | `d100-under` | – | roll under the skill: regular, hard (½), extreme (⅕); bonus / penalty dice |
+| `sum-bands` | `dice = "2d6"`, `bands = [{ min = 12, id = "extreme" }, { min = 10, id = "strong" }, { min = 7, id = "weak" }]` | dice sum plus a modifier (which may be negative), graded by the highest band reached, `miss` below all of them. Needs `bands.<id>` and `labels.rollModifier` in the locales |
 | `notation` | – | free text such as `2d6+3`, `4d6dl1`, `(2d6+6)*5` |
 
 Dice notation supports `NdM`, `dl`/`dh`/`kl`/`kh` (drop/keep lowest/highest N), `+ - * /` and parentheses.
@@ -139,6 +140,7 @@ Numbers, `'strings'`, `true/false`, dotted paths (`attributes.strength`, derived
 | `lookup('catalog', id, 'property')` | read a property of a catalog item; unknown → 0 / empty |
 | `has(list, x)` | whether a list contains `x` |
 | `concat(a, b, ...)` | join lists (a single string counts as a one-item list, anything else as empty) |
+| `top(list)` | the highest level among the rows of a list field (0 when empty) |
 | `upto(table, level)` | join the lists of a level-keyed table for every key `<= level` |
 
 Missing values count as 0 in arithmetic. Cycles between derived values are reported.
@@ -162,6 +164,9 @@ columns = 3                               # 1-4
 when = "level >= 2"                       # optional: shown only while this is truthy
 blocks = [{ type = "group-columns", group = "attributes" }]
 ```
+`[[roll.toggles]]` (`text` = a text field, `sign = 1 or -1`, optional `burned` = a checkbox field) puts
+those tags into the roll dialog as chips that add or subtract 1 (a burned tag is disabled).
+`penaltyLabel = "<label key>"` renames the checkbox that applies the `penalty` value.
 Groups listed in the same slot of `pools` are alternatives (D&D: one skill *or* save *or* check);
 separate slots add up (WoD: attribute + ability).
 
@@ -181,6 +186,7 @@ separate slots add up (WoD: attribute + ability).
 | `checkboxes` | `field` |
 | `stats` | `items = [...]` derived names (read-only) or field paths; `signed = true` |
 | `stack` | `blocks = [...]` blocks stacked in one column |
+| `tags` | `rows = [{ text = "<text field>", flag = "<checkbox field>" }]` lines of free text with an optional mark (a tag that can be burned); `title`, `flagTitle` are label keys |
 | `refs` | `catalog`, `ids = "<expression>"`: entries of a catalog (e.g. class features up to the level), each with its `desc.<catalog>.<id>` text |
 
 Any block accepts `when = "<expression>"` and is then shown only while it is truthy.

@@ -19,6 +19,7 @@ export interface RollRequest {
   skill?: number; // d100-under: skill value
   bonus?: number; // d100-under: bonus dice (negative = penalty dice)
   notation?: string; // notation: "2d6+3"
+  // sum-bands uses `modifier`
 }
 
 export interface RollResult {
@@ -30,6 +31,8 @@ export interface RollResult {
   successes?: number;
   ones?: number;
   degree?: 'regular' | 'hard' | 'extreme' | 'fail'; // d100-under
+  band?: string; // sum-bands: id of the band reached, 'miss' below all of them
+  modifier?: number; // sum-bands: what was added to the dice
 }
 
 export function roll(cfg: DiceConfig, req: RollRequest, rng: Rng = Math.random): RollResult {
@@ -37,6 +40,7 @@ export function roll(cfg: DiceConfig, req: RollRequest, rng: Rng = Math.random):
     case 'pool-successes': return poolSuccesses(cfg, req, rng);
     case 'd20-modifier': return d20(cfg, req, rng);
     case 'd100-under': return d100(req, rng);
+    case 'sum-bands': return sumBands(cfg, req, rng);
     case 'notation': return notation(req.notation ?? '1d20', rng);
   }
 }
@@ -91,4 +95,14 @@ function d100(req: RollRequest, rng: Rng): RollResult {
 function notation(src: string, rng: Rng): RollResult {
   const r = rollNotation(src, rng);
   return { mechanic: 'notation', dice: r.dice, kind: 'success', result: r.total };
+}
+
+function sumBands(cfg: Extract<DiceConfig, { mechanic: 'sum-bands' }>, req: RollRequest, rng: Rng): RollResult {
+  const r = rollNotation(cfg.dice, rng);
+  const modifier = req.modifier ?? 0;
+  const total = r.total + modifier;
+  const bands = [...cfg.bands].sort((a, b) => b.min - a.min);
+  const hit = bands.find((b) => total >= b.min);
+  const lowest = bands[bands.length - 1].min;
+  return { mechanic: cfg.mechanic, dice: r.dice, kind: total >= lowest ? 'success' : 'failure', result: total, band: hit?.id ?? 'miss', modifier };
 }

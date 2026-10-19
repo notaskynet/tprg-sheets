@@ -1,0 +1,270 @@
+#:schema ../../schema/sheet.schema.json
+# Tags and statuses are not numbers on the sheet: open the roll dialog, switch the tags that help
+# (+1) or hurt (-1), and the statuses add their best/worst level. The dialog does the arithmetic.
+[roll]
+penalty = "status_mod"
+penaltyLabel = "labels.statusMod"
+
+[[roll.toggles]]
+text = "t1.power1"
+burned = "t1.burn1"
+sign = 1
+
+[[roll.toggles]]
+text = "t1.power2"
+burned = "t1.burn2"
+sign = 1
+
+[[roll.toggles]]
+text = "t1.power3"
+burned = "t1.burn3"
+sign = 1
+
+[[roll.toggles]]
+text = "t1.power4"
+burned = "t1.burn4"
+sign = 1
+
+[[roll.toggles]]
+text = "t1.power5"
+burned = "t1.burn5"
+sign = 1
+
+[[roll.toggles]]
+text = "t1.weak1"
+sign = -1
+
+[[roll.toggles]]
+text = "t1.weak2"
+sign = -1
+
+[[roll.toggles]]
+text = "t1.weak3"
+sign = -1
+
+[[roll.toggles]]
+text = "t2.power1"
+burned = "t2.burn1"
+sign = 1
+
+[[roll.toggles]]
+text = "t2.power2"
+burned = "t2.burn2"
+sign = 1
+
+[[roll.toggles]]
+text = "t2.power3"
+burned = "t2.burn3"
+sign = 1
+
+[[roll.toggles]]
+text = "t2.power4"
+burned = "t2.burn4"
+sign = 1
+
+[[roll.toggles]]
+text = "t2.power5"
+burned = "t2.burn5"
+sign = 1
+
+[[roll.toggles]]
+text = "t2.weak1"
+sign = -1
+
+[[roll.toggles]]
+text = "t2.weak2"
+sign = -1
+
+[[roll.toggles]]
+text = "t2.weak3"
+sign = -1
+
+[[roll.toggles]]
+text = "t3.power1"
+burned = "t3.burn1"
+sign = 1
+
+[[roll.toggles]]
+text = "t3.power2"
+burned = "t3.burn2"
+sign = 1
+
+[[roll.toggles]]
+text = "t3.power3"
+burned = "t3.burn3"
+sign = 1
+
+[[roll.toggles]]
+text = "t3.power4"
+burned = "t3.burn4"
+sign = 1
+
+[[roll.toggles]]
+text = "t3.power5"
+burned = "t3.burn5"
+sign = 1
+
+[[roll.toggles]]
+text = "t3.weak1"
+sign = -1
+
+[[roll.toggles]]
+text = "t3.weak2"
+sign = -1
+
+[[roll.toggles]]
+text = "t3.weak3"
+sign = -1
+
+[[roll.toggles]]
+text = "t4.power1"
+burned = "t4.burn1"
+sign = 1
+
+[[roll.toggles]]
+text = "t4.power2"
+burned = "t4.burn2"
+sign = 1
+
+[[roll.toggles]]
+text = "t4.power3"
+burned = "t4.burn3"
+sign = 1
+
+[[roll.toggles]]
+text = "t4.power4"
+burned = "t4.burn4"
+sign = 1
+
+[[roll.toggles]]
+text = "t4.power5"
+burned = "t4.burn5"
+sign = 1
+
+[[roll.toggles]]
+text = "t4.weak1"
+sign = -1
+
+[[roll.toggles]]
+text = "t4.weak2"
+sign = -1
+
+[[roll.toggles]]
+text = "t4.weak3"
+sign = -1
+
+[[sections]]
+id = "plate"
+blocks = [
+  { type = "plate", fields = ["profile.player", "profile.team", "profile.concept"] },
+]
+
+[[sections]]
+id = "theme1"
+title = "labels.theme1"
+columns = 2
+blocks = [
+  { type = "stack", blocks = [
+    { type = "fields", fields = ["t1.kind", "t1.book", "t1.name", "t1.question"] },
+    { type = "tags", title = "labels.power", flagTitle = "labels.burned", rows = [{ text = "t1.power1", flag = "t1.burn1" }, { text = "t1.power2", flag = "t1.burn2" }, { text = "t1.power3", flag = "t1.burn3" }, { text = "t1.power4", flag = "t1.burn4" }, { text = "t1.power5", flag = "t1.burn5" }] },
+  ] },
+  { type = "stack", blocks = [
+    { type = "tags", title = "labels.weakness", rows = [{ text = "t1.weak1" }, { text = "t1.weak2" }, { text = "t1.weak3" }] },
+    { type = "checkboxes", field = "t1.attention" },
+    { type = "checkboxes", field = "t1.drain" },
+    { type = "fields", fields = ["t1.improve"] },
+  ] },
+]
+
+[[sections]]
+id = "theme2"
+title = "labels.theme2"
+columns = 2
+blocks = [
+  { type = "stack", blocks = [
+    { type = "fields", fields = ["t2.kind", "t2.book", "t2.name", "t2.question"] },
+    { type = "tags", title = "labels.power", flagTitle = "labels.burned", rows = [{ text = "t2.power1", flag = "t2.burn1" }, { text = "t2.power2", flag = "t2.burn2" }, { text = "t2.power3", flag = "t2.burn3" }, { text = "t2.power4", flag = "t2.burn4" }, { text = "t2.power5", flag = "t2.burn5" }] },
+  ] },
+  { type = "stack", blocks = [
+    { type = "tags", title = "labels.weakness", rows = [{ text = "t2.weak1" }, { text = "t2.weak2" }, { text = "t2.weak3" }] },
+    { type = "checkboxes", field = "t2.attention" },
+    { type = "checkboxes", field = "t2.drain" },
+    { type = "fields", fields = ["t2.improve"] },
+  ] },
+]
+
+[[sections]]
+id = "theme3"
+title = "labels.theme3"
+columns = 2
+blocks = [
+  { type = "stack", blocks = [
+    { type = "fields", fields = ["t3.kind", "t3.book", "t3.name", "t3.question"] },
+    { type = "tags", title = "labels.power", flagTitle = "labels.burned", rows = [{ text = "t3.power1", flag = "t3.burn1" }, { text = "t3.power2", flag = "t3.burn2" }, { text = "t3.power3", flag = "t3.burn3" }, { text = "t3.power4", flag = "t3.burn4" }, { text = "t3.power5", flag = "t3.burn5" }] },
+  ] },
+  { type = "stack", blocks = [
+    { type = "tags", title = "labels.weakness", rows = [{ text = "t3.weak1" }, { text = "t3.weak2" }, { text = "t3.weak3" }] },
+    { type = "checkboxes", field = "t3.attention" },
+    { type = "checkboxes", field = "t3.drain" },
+    { type = "fields", fields = ["t3.improve"] },
+  ] },
+]
+
+[[sections]]
+id = "theme4"
+title = "labels.theme4"
+columns = 2
+blocks = [
+  { type = "stack", blocks = [
+    { type = "fields", fields = ["t4.kind", "t4.book", "t4.name", "t4.question"] },
+    { type = "tags", title = "labels.power", flagTitle = "labels.burned", rows = [{ text = "t4.power1", flag = "t4.burn1" }, { text = "t4.power2", flag = "t4.burn2" }, { text = "t4.power3", flag = "t4.burn3" }, { text = "t4.power4", flag = "t4.burn4" }, { text = "t4.power5", flag = "t4.burn5" }] },
+  ] },
+  { type = "stack", blocks = [
+    { type = "tags", title = "labels.weakness", rows = [{ text = "t4.weak1" }, { text = "t4.weak2" }, { text = "t4.weak3" }] },
+    { type = "checkboxes", field = "t4.attention" },
+    { type = "checkboxes", field = "t4.drain" },
+    { type = "fields", fields = ["t4.improve"] },
+  ] },
+]
+
+[[sections]]
+id = "statuses"
+title = "labels.statuses"
+columns = 2
+blocks = [
+  { type = "list", field = "statuses.neg" },
+  { type = "list", field = "statuses.pos" },
+  { type = "stats", items = ["mythosCount", "logosCount", "status_mod"] },
+]
+
+[[sections]]
+id = "resources"
+title = "labels.resources"
+columns = 3
+blocks = [
+  { type = "list", field = "clues" },
+  { type = "list", field = "juice" },
+  { type = "list", field = "storyTags" },
+]
+
+[[sections]]
+id = "moves"
+title = "labels.moves"
+blocks = [
+  { type = "refs", catalog = "moves", ids = "concat('investigate', 'persuade', 'face_danger', 'go_all_out', 'throw_down', 'change_game', 'act_covertly', 'take_risk')" },
+]
+
+[[sections]]
+id = "team"
+title = "fields.team.theme"
+blocks = [{ type = "text", field = "team.theme" }]
+
+[[sections]]
+id = "look"
+title = "fields.profile.look"
+blocks = [{ type = "text", field = "profile.look" }]
+
+[[sections]]
+id = "notes"
+title = "labels.notes"
+blocks = [{ type = "text", field = "notes" }]

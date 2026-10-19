@@ -140,6 +140,32 @@ function Block({ cfg, ...p }: { cfg: BlockCfg } & SheetProps) {
       );
     }
 
+    // Free-text lines, each with an optional on/off mark (tags that can be burned, ...).
+    case 'tags': {
+      const rows = cfg.rows as { text: string; flag?: string }[];
+      const flagTitle = cfg.flagTitle ? tr(str('flagTitle')) : '';
+      return (
+        <div>
+          {cfg.title ? <div className="eyebrow mb-1.5">{tr(str('title'))}</div> : null}
+          {rows.map((r) => {
+            const flagged = !!r.flag && !!getIn(p.values, r.flag.split('.'));
+            return (
+              <div key={r.text} className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-2.5 py-[5px] print:py-[2px] border-b border-dashed border-line last:border-0">
+                <input
+                  readOnly={p.readOnly}
+                  value={String(getIn(p.values, r.text.split('.')) ?? '')}
+                  onChange={(e) => p.set(r.text, e.target.value)}
+                  placeholder="—"
+                  className={cn('bg-transparent border-0 p-0 min-w-0 text-[13px] outline-none focus:text-brand-bright', flagged && 'line-through opacity-50')}
+                />
+                {r.flag ? <span title={flagTitle}><Dot on={flagged} size="lg" onClick={p.readOnly ? undefined : () => p.set(r.flag!, !flagged)} /></span> : null}
+              </div>
+            );
+          })}
+        </div>
+      );
+    }
+
     case 'list': {
       const path = str('field');
       const def = pkg.model.fields[path];
