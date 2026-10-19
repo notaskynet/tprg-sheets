@@ -21,7 +21,7 @@ function fromBase64Url(text: string): Uint8Array {
 }
 
 export async function encodeSnapshot(ch: Character): Promise<string> {
-  const { creation: _creation, ...rest } = ch;
+  const { creation: _creation, avatar: _avatar, ...rest } = ch; // the picture would dwarf the link
   const json = new TextEncoder().encode(JSON.stringify({ v: VERSION, c: rest }));
   return toBase64Url(await pipe(json, new CompressionStream('deflate-raw')));
 }

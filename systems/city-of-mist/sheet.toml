@@ -156,7 +156,7 @@ sign = -1
 [[sections]]
 id = "plate"
 blocks = [
-  { type = "plate", fields = ["profile.player", "profile.campaign", "profile.team", "profile.concept"] },
+  { type = "plate", fields = ["profile.player", "profile.campaign", "profile.team", "profile.mythos", "profile.logos"] },
 ]
 
 [[sections]]

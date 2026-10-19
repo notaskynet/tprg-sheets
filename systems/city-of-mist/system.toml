@@ -12,7 +12,7 @@ credits = "Fan-made sheet for the mechanics of City of Mist by Son of Oak Game S
 [summary]
 campaign = "profile.campaign"
 title = "profile.name"
-subtitle = ["profile.concept"]
+subtitle = ["profile.mythos", "profile.logos"]
 stats = ["mythosCount", "logosCount", "status_mod"]
 
 # 2d6 plus Power. 6 or less misses, 7-9 hits with a cost, 10+ is a clean hit.

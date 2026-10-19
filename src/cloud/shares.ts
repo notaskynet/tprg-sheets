@@ -17,13 +17,32 @@ export const useShares = (): Map<string, string> => useSyncExternalStore((cb) =>
 /** What viewers get: the sheet without creation bookkeeping. */
 const publicCopy = (ch: Character): Character => ({ ...ch, creation: { step: 0, done: true } });
 
+/** 10 random base62 characters: short enough for a tidy link, still unguessable. */
+const shortId = (): string => {
+  const a = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  return Array.from(crypto.getRandomValues(new Uint8Array(10)), (b) => a[b % 62]).join('');
+};
+
 export const shareLink = (shareId: string) => `${location.origin}${location.pathname}?view=${shareId}`;
 
 export async function createShare(ch: Character): Promise<void> {
   if (!uidNow) throw new Error('Not signed in');
-  const shareId = crypto.randomUUID();
+  const shareId = shortId();
   await putShare(uidNow, shareId, ch.id, ch.updatedAt, publicCopy(ch));
   set(new Map(shares).set(ch.id, shareId));
+}
+
+const snapKey = (sheetId: string) => `snap:${sheetId}`;
+export const snapshotShareId = (shares: Map<string, string>, sheetId: string) => shares.get(snapKey(sheetId));
+
+/** A frozen copy on the server behind a short link. Its key never matches a real sheet, so edits do not touch it; deleting the sheet removes it. */
+export async function createSnapshotShare(ch: Character): Promise<string> {
+  if (!uidNow) throw new Error('Not signed in');
+  const key = snapKey(ch.id);
+  const shareId = shares.get(key) ?? shortId(); // one copy per sheet: pressing again refreshes it
+  await putShare(uidNow, shareId, key, ch.updatedAt, publicCopy(ch));
+  set(new Map(shares).set(key, shareId));
+  return shareLink(shareId);
 }
 
 export async function stopShare(sheetId: string): Promise<void> {
@@ -46,6 +65,10 @@ export function startShares(uid: string): () => void {
     .catch(() => {});
 
   const unlisten = onCharacterChange((id, ch, origin) => {
+    if (!ch && origin === 'local') {
+      const snap = shares.get(snapKey(id));
+      if (snap) void deleteShare(snap).catch(() => {});
+    }
     const shareId = shares.get(id);
     if (!shareId) return;
     clearTimeout(timers.get(id));
