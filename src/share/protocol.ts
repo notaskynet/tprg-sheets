@@ -7,7 +7,8 @@ export type Msg =
   | { t: 'hello'; role: Role; name: string }
   | { t: 'chars'; chars: Character[] } // full player sync
   | { t: 'char'; char: Character } // live update of one character
-  | { t: 'roll'; who: string; label: string; summary: string; ts: number };
+  | { t: 'roll'; who: string; label: string; summary: string; ts: number }
+  | { t: 'bye' }; // the GM closed the game
 
 export interface RollEntry { who: string; label: string; summary: string; ts: number }
 
@@ -40,6 +41,7 @@ export function isMsg(x: unknown): x is Msg {
     case 'chars': return Array.isArray(m.chars);
     case 'char': return !!m.char && typeof m.char === 'object';
     case 'roll': return typeof m.who === 'string' && typeof m.summary === 'string';
+    case 'bye': return true;
     default: return false;
   }
 }

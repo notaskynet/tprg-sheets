@@ -19,6 +19,7 @@ export interface SessionState {
   players: PlayerView[]; // GM only
   feed: RollEntry[]; // newest first
   conflict: boolean; // another GM is in this room (the code collided)
+  ended: boolean; // player: the GM closed the game
 }
 
 const FEED_MAX = 100;
@@ -30,6 +31,7 @@ export class Session {
   private feed: RollEntry[] = [];
   private gmPeers = new Set<string>();
   private conflict = false;
+  private ended = false;
   private known = new Set<string>();
   private subs = new Set<() => void>();
   private snapshot: SessionState;
@@ -62,7 +64,19 @@ export class Session {
     this.addRoll(full);
   }
 
-  leave() { return this.t.leave(); }
+  /** Player: the set of shared characters changed; the GM replaces what it holds. */
+  pushShared() {
+    if (this.role === 'player') this.t.send({ t: 'chars', chars: this.shared() });
+  }
+
+  /** `bye`: tell the players the game is over (not when leaving because the code collided). */
+  async leave(bye = this.role === 'gm') {
+    if (bye) {
+      this.t.send({ t: 'bye' });
+      await new Promise((r) => setTimeout(r, 80)); // let the message out before the room closes
+    }
+    return this.t.leave();
+  }
 
   private announce(to: string) {
     this.t.send({ t: 'hello', role: this.role, name: this.name }, to);
@@ -91,9 +105,13 @@ export class Session {
         if (this.role !== 'gm') return;
         const pl = [...this.players.values()].find((p) => p.peerId === from);
         if (!pl) return; // chars before hello: ignored; the player re-announces on peer join
-        for (const c of m.t === 'chars' ? m.chars : [m.char]) pl.chars.set(c.id, c);
+        if (m.t === 'chars') pl.chars = new Map(m.chars.map((c) => [c.id, c])); // a full list replaces the old one
+        else pl.chars.set(m.char.id, m.char);
         break;
       }
+      case 'bye':
+        if (this.role === 'player' && this.gmPeers.has(from)) this.ended = true;
+        break;
       case 'roll':
         this.addRoll({ who: m.who, label: m.label, summary: m.summary, ts: m.ts });
         return;
@@ -136,6 +154,7 @@ export class Session {
       players: [...this.players.values()].map((p) => ({ name: p.name, online: p.online, peerId: p.peerId, chars: [...p.chars.values()] })),
       feed: this.feed,
       conflict: this.conflict,
+      ended: this.ended,
     };
   }
 }

@@ -6,7 +6,7 @@ import { toast } from 'sonner';
 import { ArrowLeft, Copy } from 'lucide-react';
 import { useI18n } from '@/i18n/I18nContext';
 import { formatCode } from '@/share/protocol';
-import { leaveSession, useActive, useSessionState } from '@/share/active';
+import { leaveSession, setSharedIds, useActive, useSessionState } from '@/share/active';
 import type { RollEntry } from '@/share/protocol';
 import type { Character } from '@/engine/character';
 import { getPackage } from '@/systems/registry';
@@ -117,7 +117,6 @@ function GmTable() {
           {state.players.length === 0 && (
             <div className="flex flex-col items-center gap-4 py-12 text-center">
               <h2 className="font-display text-2xl font-semibold">{t('waitingForPlayers')}</h2>
-              {qr && <div className="w-44 rounded-md overflow-hidden bg-white p-2 [&>svg]:w-full [&>svg]:h-auto" dangerouslySetInnerHTML={{ __html: qr }} />}
               <p className="text-text-dim text-xs max-w-sm">{t('sessionNote')}</p>
             </div>
           )}
@@ -134,7 +133,19 @@ function GmTable() {
             </div>
           ))}
         </section>
-        <RollFeed feed={state.feed} />
+        <aside className="flex flex-col gap-8">
+          {qr && (
+            <section className="flex items-center gap-4">
+              <div className="w-28 shrink-0 rounded-md overflow-hidden bg-white p-1.5 [&>svg]:w-full [&>svg]:h-auto" dangerouslySetInnerHTML={{ __html: qr }} />
+              <div className="flex flex-col gap-1 min-w-0">
+                <span className="eyebrow">{t('roomCode')}</span>
+                <span className="font-mono text-lg tracking-[0.15em]">{formatCode(state.code)}</span>
+                <span className="text-text-dim text-xs">{t('scanToJoin')}</span>
+              </div>
+            </section>
+          )}
+          <RollFeed feed={state.feed} />
+        </aside>
       </div>
 
       <Dialog open={!!current} onOpenChange={(o) => !o && setOpenRef(null)}>
@@ -157,7 +168,8 @@ function PlayerView() {
   const { t, lang } = useI18n();
   const state = useSessionState()!;
   const chars = useCharacters();
-  const mine = chars; // sheets the player can open from here; sharing was chosen at join time
+  const { sharedIds = [] } = useActive();
+  const mine = chars; // sheets the player can open from here; which of them the GM sees can be changed at any time
   return (
     <div className="min-h-full">
       <Header code={state.code} right={<span className={cn('inline-flex items-center gap-2 text-xs', state.gmPresent ? 'text-good' : 'text-gold')}><span className={cn('size-2 rounded-full', state.gmPresent ? 'bg-good' : 'bg-gold')} />{state.gmPresent ? t('gmConnected') : t('gmWaiting')}</span>} />
@@ -165,9 +177,22 @@ function PlayerView() {
         <section className="flex flex-col gap-3">
           <h2 className="font-display text-xl font-semibold">{t('myCharacters')}</h2>
           <div className="grid sm:grid-cols-2 gap-4">
-            {mine.map((c) => { const pkg = getPackage(c.system.id); return pkg ? <SummaryCard key={c.id} ch={c} onClick={() => goSheet(c.id)} /> : null; })}
+            {mine.map((c) => {
+              const pkg = getPackage(c.system.id);
+              if (!pkg) return null;
+              const on = sharedIds.includes(c.id);
+              return (
+                <div key={c.id} className="flex flex-col gap-2">
+                  <SummaryCard ch={c} onClick={() => goSheet(c.id)} />
+                  <label className="flex items-center gap-2 text-xs text-text-mute cursor-pointer">
+                    <input type="checkbox" className="accent-brand" checked={on} onChange={(e) => setSharedIds(e.target.checked ? [...sharedIds, c.id] : sharedIds.filter((id) => id !== c.id))} />
+                    {t('shownToGm')}
+                  </label>
+                </div>
+              );
+            })}
           </div>
-          <p className="text-text-dim text-xs">{lang && t('sessionNote')}</p>
+          <p className="text-text-dim text-xs">{lang && t('sharedHint')}</p>
         </section>
         <RollFeed feed={state.feed} />
       </div>

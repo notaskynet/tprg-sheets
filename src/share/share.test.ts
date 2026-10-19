@@ -110,3 +110,41 @@ describe('codeFromInput', () => {
     expect(codeFromInput('')).toBeNull();
   });
 });
+
+describe('session lifecycle', () => {
+  it('players learn that the GM closed the game', async () => {
+    const hub = memoryHub();
+    const gm = new Session(hub.join('g'), 'gm', 'GM', 'ABCD2345');
+    const pl = new Session(hub.join('p'), 'player', 'P', 'ABCD2345', () => []);
+    await tick();
+    expect(pl.getState().ended).toBe(false);
+    await gm.leave();
+    await tick();
+    expect(pl.getState().ended).toBe(true);
+  });
+
+  it('a GM leaving because of a code collision does not end the other room', async () => {
+    const hub = memoryHub();
+    const a = new Session(hub.join('g1'), 'gm', 'A', 'ABCD2345');
+    const b = new Session(hub.join('g2'), 'gm', 'B', 'ABCD2345');
+    const pl = new Session(hub.join('p'), 'player', 'P', 'ABCD2345', () => []);
+    await tick();
+    await b.leave(false);
+    await tick();
+    expect(pl.getState().ended).toBe(false);
+    expect(a.getState().ended).toBe(false);
+  });
+
+  it('a new list of shared characters replaces the old one', async () => {
+    const hub = memoryHub();
+    const gm = new Session(hub.join('g'), 'gm', 'GM', 'ABCD2345');
+    let list = [mk('c1', 'A'), mk('c2', 'B')];
+    const pl = new Session(hub.join('p'), 'player', 'P', 'ABCD2345', () => list);
+    await tick();
+    expect(gm.getState().players[0].chars).toHaveLength(2);
+    list = [list[1]];
+    pl.pushShared();
+    await tick();
+    expect(gm.getState().players[0].chars.map((c) => c.id)).toEqual(['c2']);
+  });
+});

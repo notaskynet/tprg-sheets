@@ -6,10 +6,11 @@ import { newRoomCode } from './protocol';
 import { Session, type SessionState } from './session';
 import { openRoom } from './transport';
 
-export interface ActiveInfo { status: 'idle' | 'connecting' | 'active' | 'error'; error?: string; session?: Session }
+export interface ActiveInfo { status: 'idle' | 'connecting' | 'active' | 'error'; error?: string; session?: Session; sharedIds?: string[]; ended?: boolean }
 
 interface Saved { role: 'gm' | 'player'; code: string; name: string; sharedIds: string[] }
 const KEY = 'trpg.session';
+const SHARED_KEY = 'trpg.sharedIds';
 
 let info: ActiveInfo = { status: 'idle' };
 const subs = new Set<() => void>();
@@ -29,11 +30,11 @@ export function useSessionState(): SessionState | null {
   );
 }
 
-export async function startSession(opts: { role: 'gm' | 'player'; name: string; code?: string; sharedIds?: string[] }): Promise<void> {
-  await leaveSession();
+export async function startSession(opts: { role: 'gm' | 'player'; name: string; code?: string; sharedIds?: string[] }, bye = true): Promise<void> {
+  await leaveSession(bye);
   const code = opts.code ?? newRoomCode();
-  const sharedIds = opts.sharedIds ?? [];
-  set({ status: 'connecting' });
+  let sharedIds = opts.sharedIds ?? [];
+  set({ status: 'connecting', sharedIds });
   try {
     const transport = await openRoom({ code, kind: 's' });
     const shared = () => sharedIds.map(getCharacter).filter((c): c is NonNullable<typeof c> => !!c);
@@ -41,10 +42,18 @@ export async function startSession(opts: { role: 'gm' | 'player'; name: string; 
     // Two GMs in one room means the code collided: the host moves to a fresh code.
     if (opts.role === 'gm') {
       const off = session.subscribe(() => {
-        if (session.getState().conflict && info.session === session) { off(); void startSession({ role: 'gm', name: opts.name }); }
+        if (session.getState().conflict && info.session === session) { off(); void startSession({ role: 'gm', name: opts.name }, false); }
       });
     }
-    try { sessionStorage.setItem(KEY, JSON.stringify({ role: opts.role, code, name: opts.name, sharedIds } satisfies Saved)); } catch { /* ignore */ }
+    const save = () => { try { sessionStorage.setItem(KEY, JSON.stringify({ role: opts.role, code, name: opts.name, sharedIds } satisfies Saved)); } catch { /* ignore */ } };
+    save();
+    changeShared = (ids) => {
+      sharedIds = ids;
+      save();
+      try { localStorage.setItem(SHARED_KEY, JSON.stringify(ids)); } catch { /* ignore */ }
+      set({ ...info, sharedIds: ids });
+      session.pushShared();
+    };
 
     // Players: push edits of shared characters (debounced) so the GM sees them live.
     if (opts.role === 'player') {
@@ -57,19 +66,30 @@ export async function startSession(opts: { role: 'gm' | 'player'; name: string; 
         }, 300);
       });
     }
-    set({ status: 'active', session });
+    // The GM closed the game: a player leaves too instead of waiting for a GM who is gone.
+    if (opts.role === 'player') {
+      const off = session.subscribe(() => {
+        if (session.getState().ended && info.session === session) { off(); void leaveSession(false).then(() => set({ status: 'idle', ended: true })); }
+      });
+    }
+    set({ status: 'active', session, sharedIds });
   } catch (e) {
     set({ status: 'error', error: (e as Error).message });
   }
 }
 
-export async function leaveSession(): Promise<void> {
+/** Player: change which sheets the GM sees, live. */
+export function setSharedIds(ids: string[]) { changeShared?.(ids); }
+let changeShared: ((ids: string[]) => void) | null = null;
+
+export async function leaveSession(bye?: boolean): Promise<void> {
   unsubStorage?.();
   unsubStorage = null;
+  changeShared = null;
   const s = info.session;
   set({ status: 'idle' });
   try { sessionStorage.removeItem(KEY); } catch { /* ignore */ }
-  await s?.leave().catch(() => {});
+  await s?.leave(bye).catch(() => {});
 }
 
 /** After a page reload: rejoin the same room with the same identity. */
