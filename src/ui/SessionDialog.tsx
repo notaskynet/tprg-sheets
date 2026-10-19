@@ -4,6 +4,7 @@ import { useI18n } from '@/i18n/I18nContext';
 import { codeFromInput } from '@/share/protocol';
 import { startSession } from '@/share/active';
 import { useCharacters } from '@/storage/db';
+import { useAuth } from '@/cloud/AuthContext';
 import { getPackage } from '@/systems/registry';
 import { cardData } from '@/ui/cardData';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/ui/components/dialog';
@@ -20,8 +21,10 @@ const input = 'h-11 bg-ink border border-line2 rounded-md px-3 outline-none focu
 export function SessionDialog({ open, onOpenChange, initialJoin }: { open: boolean; onOpenChange: (o: boolean) => void; initialJoin?: string }) {
   const { t, lang } = useI18n();
   const chars = useCharacters();
-  const [gmName, setGmName] = useState(t('gmDefault'));
-  const [name, setName] = useState(loadName() || t('playerDefault'));
+  const { user } = useAuth();
+  const accountName = user?.name ?? user?.email ?? '';
+  const [gmName, setGmName] = useState(accountName || t('gmDefault'));
+  const [name, setName] = useState(loadName() || accountName || t('playerDefault'));
   const [codeInput, setCodeInput] = useState(initialJoin ?? '');
   const [picked, setPicked] = useState<Set<string>>(new Set());
   const code = codeFromInput(codeInput);

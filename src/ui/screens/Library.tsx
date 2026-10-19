@@ -7,7 +7,8 @@ import { AVAILABLE_LANGS, localize } from '@/i18n/lang';
 import { useCharacters, deleteCharacter, putCharacter, saveCharacter } from '@/storage/db';
 import { getPackage, usePackages } from '@/systems/registry';
 import { SystemGroups } from '@/ui/SystemGroups';
-import { newCharacter, type Character } from '@/engine/character';
+import { newCharacter, setValue, type Character } from '@/engine/character';
+import { useAuth } from '@/cloud/AuthContext';
 import { cardData } from '@/ui/cardData';
 import { goSheet } from '@/routing';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/ui/components/dialog';
@@ -34,6 +35,7 @@ export function Library({ join }: { join?: string }) {
   const characters = useCharacters();
   const packages = usePackages();
   const [sortBy, setSortBy] = useState<SortBy>(loadSort);
+  const { user } = useAuth();
   const [picking, setPicking] = useState(false);
   const [session, setSession] = useState(!!join);
   const [systems, setSystems] = useState(false);
@@ -46,7 +48,10 @@ export function Library({ join }: { join?: string }) {
 
   function create(systemId: string) {
     const pkg = getPackage(systemId)!;
-    const ch = newCharacter(pkg.model, { id: pkg.manifest.id, version: pkg.manifest.version }, crypto.randomUUID());
+    let ch = newCharacter(pkg.model, { id: pkg.manifest.id, version: pkg.manifest.version }, crypto.randomUUID());
+    // the player's name is the account name, when signed in
+    const accountName = user?.name ?? user?.email;
+    if (accountName && pkg.model.fields['profile.player']) ch = setValue(ch, 'profile.player', accountName);
     putCharacter(ch);
     setPicking(false);
     goSheet(ch.id);
