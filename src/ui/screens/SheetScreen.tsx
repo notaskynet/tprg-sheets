@@ -23,6 +23,8 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/ui/components/popover
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/ui/components/dropdown-menu';
 import { cn } from '@/ui/lib/utils';
 import { reasonOf } from '@/ui/reason';
+import { Avatar } from '@/ui/Avatar';
+import { AvatarPicker } from '@/ui/AvatarPicker';
 import { AccentPicker } from '@/ui/AccentPicker';
 import { applyAccent, getSavedAccent } from '@/ui/theme';
 import type { Character } from '@/engine/character';
@@ -55,16 +57,17 @@ export function SheetScreen({ charId }: { charId: string }) {
         /></Lazy>
       ) : (
         <DiceProvider values={editor.ch.values} onRoll={(e) => getActiveSession()?.roll({ label: e.label, summary: e.summary })}>
-          <SheetBody ch={editor.ch} set={editor.set} saveState={editor.saveState} onWizard={(stepId) => editor.replace({ ...editor.ch!, creation: { step: Math.max(0, pkg.creation.steps.findIndex((x) => x.id === stepId)), done: false } })} />
+          <SheetBody ch={editor.ch} set={editor.set} onAvatar={(avatar) => editor.replace({ ...editor.ch!, avatar })} saveState={editor.saveState} onWizard={(stepId) => editor.replace({ ...editor.ch!, creation: { step: Math.max(0, pkg.creation.steps.findIndex((x) => x.id === stepId)), done: false } })} />
         </DiceProvider>
       )}
     </SystemProvider>
   );
 }
 
-export function SheetBody({ ch, set, saveState = 'saved', onWizard, readOnly, banner, headerExtra }: {
+export function SheetBody({ ch, set, onAvatar, saveState = 'saved', onWizard, readOnly, banner, headerExtra }: {
   ch: Character;
   set: (p: string, v: unknown) => void;
+  onAvatar?: (src: string | undefined) => void;
   saveState?: 'saving' | 'saved' | 'offline';
   onWizard?: (stepId?: string) => void;
   readOnly?: boolean;
@@ -111,15 +114,20 @@ export function SheetBody({ ch, set, saveState = 'saved', onWizard, readOnly, ba
               {!readOnly && <Actions ch={ch} title={title} onWizard={onWizard && pkg.creation.steps.length ? () => onWizard() : undefined} />}
             </div>
           </div>
-          {titlePath && (
-            <input
-              className="bg-transparent border-0 outline-none font-display text-5xl print:text-3xl font-medium leading-none w-full min-w-0 placeholder:text-text-dim placeholder:italic"
-              value={title}
-              readOnly={readOnly}
-              onChange={(e) => set(titlePath, e.target.value)}
-              placeholder={t('unnamed')}
-            />
-          )}
+          <div className="flex items-center gap-4">
+            {readOnly || !onAvatar
+              ? ch.avatar && <Avatar src={ch.avatar} name={title} className="size-14" />
+              : <AvatarPicker src={ch.avatar} name={title} onChange={onAvatar} />}
+            {titlePath && (
+              <input
+                className="bg-transparent border-0 outline-none font-display text-5xl print:text-3xl font-medium leading-none w-full min-w-0 placeholder:text-text-dim placeholder:italic"
+                value={title}
+                readOnly={readOnly}
+                onChange={(e) => set(titlePath, e.target.value)}
+                placeholder={t('unnamed')}
+              />
+            )}
+          </div>
         </header>
         <div className={readOnly ? 'pointer-events-none contents' : 'contents'}><SheetRenderer values={ch.values} set={set} readOnly={readOnly} /></div>
       </div>

@@ -1,4 +1,5 @@
 // Character library: cards for every saved character, sort, create, import.
+import { Avatar } from '@/ui/Avatar';
 import { useMemo, useRef, useState } from 'react';
 import { toast } from 'sonner';
 import { MoreVertical, Package, Plus, Users } from 'lucide-react';
@@ -164,9 +165,7 @@ function CharacterCard({ ch }: { ch: Character }) {
       <button type="button" onClick={() => goSheet(ch.id)} aria-label={title || t('unnamed')} className="absolute inset-0 z-0 rounded-lg cursor-pointer" />
       <div className="relative z-10 pointer-events-none flex flex-col gap-3.5">
         <div className="flex items-center gap-3.5">
-          <div className="w-11 h-11 rounded-full bg-surf2 border border-line2 flex items-center justify-center font-display text-xl shrink-0">
-            {(title || '?').trim().charAt(0).toUpperCase() || '?'}
-          </div>
+          <Avatar src={ch.avatar} name={title} />
           <div className="min-w-0 flex-1">
             <div className="font-display text-[22px] font-medium leading-tight truncate">{title || t('unnamed')}</div>
             <div className="font-body font-medium text-[11px] tracking-[0.1em] uppercase text-text-mute mt-1 truncate">{localize(pkg.manifest.name, lang)}{campaign ? ` · ${campaign}` : ''}</div>

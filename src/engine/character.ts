@@ -11,6 +11,8 @@ export interface Character {
   schema: number;
   updatedAt: number;
   values: Values;
+  /** Uploaded picture as a small data URL. */
+  avatar?: string;
   creation?: { step: number; done: boolean; methods?: Record<string, string> };
 }
 

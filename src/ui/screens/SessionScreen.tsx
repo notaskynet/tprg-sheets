@@ -1,5 +1,6 @@
 // The live table. GM: every player's shared sheets (live, read-only) + roll feed.
 // Player: connection status, own shared sheets, roll feed.
+import { Avatar } from '@/ui/Avatar';
 import { useEffect, useState } from 'react';
 import QRCode from 'qrcode';
 import { toast } from 'sonner';
@@ -83,8 +84,13 @@ function SummaryCard({ ch, onClick }: { ch: Character; onClick: () => void }) {
   const d = cardData(pkg, ch, lang);
   return (
     <button onClick={onClick} className="text-left bg-bg border border-line rounded-lg p-4 hover:border-text-mute transition-colors flex flex-col gap-2.5">
-      <div className="font-display text-xl font-semibold truncate">{d.title || t('unnamed')}</div>
-      <div className="eyebrow truncate">{localize(pkg.manifest.name, lang)}{d.campaign ? ` · ${d.campaign}` : ''}</div>
+      <div className="flex items-center gap-2.5 min-w-0">
+        <Avatar src={ch.avatar} name={d.title} className="size-9 text-base" />
+        <div className="min-w-0">
+          <div className="font-display text-xl font-semibold truncate">{d.title || t('unnamed')}</div>
+          <div className="eyebrow truncate">{localize(pkg.manifest.name, lang)}{d.campaign ? ` · ${d.campaign}` : ''}</div>
+        </div>
+      </div>
       {d.subtitle.length > 0 && <div className="text-text-mute text-[13px] italic truncate">{d.subtitle.join(' · ')}</div>}
       <div className="grid grid-cols-3 gap-2 pt-2.5 border-t border-line">
         {d.stats.map((s) => (
