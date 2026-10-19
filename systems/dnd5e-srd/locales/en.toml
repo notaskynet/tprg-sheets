@@ -60,6 +60,7 @@ gnome = "Gnome"
 half_elf = "Half-Elf"
 half_orc = "Half-Orc"
 tiefling = "Tiefling"
+other = "Other (custom)"
 
 [classes]
 barbarian = "Barbarian"
@@ -102,6 +103,7 @@ gnome = "Curious, inventive and tiny."
 half_elf = "Charming, between two worlds (+1 to two more scores of your choice)."
 half_orc = "Strong and relentless."
 tiefling = "Marked by an infernal bloodline."
+other = "A race from another book or your own: write its name. Include its ability bonuses in the scores and note its traits."
 
 [desc.classes]
 barbarian = "Rage-fuelled front-line brute. Saves: STR, CON."
@@ -134,6 +136,7 @@ ce = "Destruction and cruelty on a whim."
 
 [desc.features]
 custom_subclass = "Write the features of your subclass in Features & traits below."
+custom_race = "Write the traits of your race in Features & traits below. Include its ability bonuses in the scores."
 darkvision = "See 60 ft in dim light as bright and in darkness as dim light (no colour in darkness)."
 dwarven_resilience = "Advantage on saves against poison and resistance to poison damage."
 dwarven_combat_training = "Proficient with battleaxe, handaxe, light hammer and warhammer."
@@ -351,6 +354,7 @@ white = "Cold, 15 ft cone (Con save)."
 
 [fields]
 "profile.subclassName" = "Subclass name"
+"profile.raceName" = "Race name"
 "profile.name" = "Name"
 "profile.campaign" = "Campaign"
 "profile.player" = "Player"
@@ -476,6 +480,7 @@ recap = "Go through the list. An item with a cross can be fixed: tap it to retur
 
 [help]
 "profile.subclassName" = "Name of your subclass when you pick “Other”."
+"profile.raceName" = "The name of your race when you pick Other. Add its ability bonuses to the scores yourself on the Abilities step."
 "profile.name" = "Your hero's name."
 "profile.campaign" = "The name of the game or campaign you play this character in."
 "profile.player" = "Your own name, so the table knows who plays whom."
@@ -490,6 +495,7 @@ level = "Current level, 1–20. New heroes start at 1 unless your DM says otherw
 
 [features]
 custom_subclass = "Custom subclass"
+custom_race = "Custom race"
 darkvision = "Darkvision"
 dwarven_resilience = "Dwarven Resilience"
 dwarven_combat_training = "Dwarven Combat Training"

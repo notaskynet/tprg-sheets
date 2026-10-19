@@ -60,6 +60,7 @@ items = [
   { id = "half_elf", cha = 2, speed = 30, features = ["darkvision", "fey_ancestry", "skill_versatility"] },
   { id = "half_orc", str = 2, con = 1, speed = 30, skills = ["intimidation"], features = ["darkvision", "menacing", "relentless_endurance", "savage_attacks"] },
   { id = "tiefling", int = 1, cha = 2, speed = 30, features = ["darkvision", "hellish_resistance", "infernal_legacy"] },
+  { id = "other", speed = 30, features = ["custom_race"] },
 ]
 
 [catalogs.subraces]
@@ -320,6 +321,7 @@ items = [
   { id = "empowered_evocation" },
   { id = "overchannel" },
   { id = "custom_subclass" },
+  { id = "custom_race" },
 ]
 
 [fields]
@@ -330,7 +332,8 @@ items = [
 "profile.subrace" = { type = "select", from = "subraces", scope = "lookup('races', profile.race, 'subraces')" }
 "profile.ancestry" = { type = "select", from = "ancestries" }
 "profile.class" = { type = "select", from = "classes" }
-"profile.subclassName" = { type = "text" }
+"profile.subclassName" = { type = "text", when = "profile.subclass == 'other'" }
+"profile.raceName" = { type = "text", when = "profile.race == 'other'" }
 "profile.subclass" = { type = "select", from = "subclasses", scope = "lookup('classes', profile.class, 'subclasses')" }
 "profile.background" = { type = "select", from = "backgrounds" }
 "profile.alignment" = { type = "text", suggest = "alignments" }

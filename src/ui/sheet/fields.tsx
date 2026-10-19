@@ -23,6 +23,7 @@ export function FieldEditor({ path, values, set, variant = 'plate', readOnly, ba
   const scope = useScope(values);
   const def = pkg.model.fields[path] as FieldDef | undefined;
   if (!def) return null;
+  if (def.when && !scope.run(def.when)) return null;
   const value = getIn(values, path.split('.'));
   const label = tr(`fields.${path}`);
   const input = cn(base, variant === 'plate' ? 'font-body text-[15px] font-medium' : 'text-sm');

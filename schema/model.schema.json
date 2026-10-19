@@ -29,6 +29,10 @@
                     "type": "string",
                     "const": "text"
                   },
+                  "when": {
+                    "type": "string",
+                    "minLength": 1
+                  },
                   "default": {
                     "default": "",
                     "type": "string"
@@ -49,6 +53,10 @@
                     "type": "string",
                     "const": "longtext"
                   },
+                  "when": {
+                    "type": "string",
+                    "minLength": 1
+                  },
                   "default": {
                     "default": "",
                     "type": "string"
@@ -64,6 +72,10 @@
                   "type": {
                     "type": "string",
                     "const": "number"
+                  },
+                  "when": {
+                    "type": "string",
+                    "minLength": 1
                   },
                   "min": {
                     "type": "number"
@@ -86,6 +98,10 @@
                   "type": {
                     "type": "string",
                     "const": "dots"
+                  },
+                  "when": {
+                    "type": "string",
+                    "minLength": 1
                   },
                   "min": {
                     "default": 0,
@@ -110,6 +126,10 @@
                     "type": "string",
                     "const": "percent"
                   },
+                  "when": {
+                    "type": "string",
+                    "minLength": 1
+                  },
                   "default": {
                     "default": 0,
                     "type": "number"
@@ -126,6 +146,10 @@
                     "type": "string",
                     "const": "checkbox"
                   },
+                  "when": {
+                    "type": "string",
+                    "minLength": 1
+                  },
                   "default": {
                     "default": false,
                     "type": "boolean"
@@ -141,6 +165,10 @@
                   "type": {
                     "type": "string",
                     "const": "select"
+                  },
+                  "when": {
+                    "type": "string",
+                    "minLength": 1
                   },
                   "from": {
                     "type": "string",
@@ -172,6 +200,10 @@
                     "type": "string",
                     "const": "list"
                   },
+                  "when": {
+                    "type": "string",
+                    "minLength": 1
+                  },
                   "item": {
                     "default": "dots",
                     "type": "string",
@@ -201,6 +233,10 @@
                   "type": {
                     "type": "string",
                     "const": "damage-track"
+                  },
+                  "when": {
+                    "type": "string",
+                    "minLength": 1
                   },
                   "levels": {
                     "minItems": 1,
@@ -235,6 +271,10 @@
                     "type": "string",
                     "const": "pool"
                   },
+                  "when": {
+                    "type": "string",
+                    "minLength": 1
+                  },
                   "max": {
                     "type": "string",
                     "minLength": 1
@@ -263,6 +303,10 @@
                   "type": {
                     "type": "string",
                     "const": "checkboxes"
+                  },
+                  "when": {
+                    "type": "string",
+                    "minLength": 1
                   },
                   "count": {
                     "type": "integer",
@@ -361,6 +405,10 @@
                 "type": "string",
                 "const": "text"
               },
+              "when": {
+                "type": "string",
+                "minLength": 1
+              },
               "default": {
                 "default": "",
                 "type": "string"
@@ -381,6 +429,10 @@
                 "type": "string",
                 "const": "longtext"
               },
+              "when": {
+                "type": "string",
+                "minLength": 1
+              },
               "default": {
                 "default": "",
                 "type": "string"
@@ -396,6 +448,10 @@
               "type": {
                 "type": "string",
                 "const": "number"
+              },
+              "when": {
+                "type": "string",
+                "minLength": 1
               },
               "min": {
                 "type": "number"
@@ -418,6 +474,10 @@
               "type": {
                 "type": "string",
                 "const": "dots"
+              },
+              "when": {
+                "type": "string",
+                "minLength": 1
               },
               "min": {
                 "default": 0,
@@ -442,6 +502,10 @@
                 "type": "string",
                 "const": "percent"
               },
+              "when": {
+                "type": "string",
+                "minLength": 1
+              },
               "default": {
                 "default": 0,
                 "type": "number"
@@ -458,6 +522,10 @@
                 "type": "string",
                 "const": "checkbox"
               },
+              "when": {
+                "type": "string",
+                "minLength": 1
+              },
               "default": {
                 "default": false,
                 "type": "boolean"
@@ -473,6 +541,10 @@
               "type": {
                 "type": "string",
                 "const": "select"
+              },
+              "when": {
+                "type": "string",
+                "minLength": 1
               },
               "from": {
                 "type": "string",
@@ -504,6 +576,10 @@
                 "type": "string",
                 "const": "list"
               },
+              "when": {
+                "type": "string",
+                "minLength": 1
+              },
               "item": {
                 "default": "dots",
                 "type": "string",
@@ -533,6 +609,10 @@
               "type": {
                 "type": "string",
                 "const": "damage-track"
+              },
+              "when": {
+                "type": "string",
+                "minLength": 1
               },
               "levels": {
                 "minItems": 1,
@@ -567,6 +647,10 @@
                 "type": "string",
                 "const": "pool"
               },
+              "when": {
+                "type": "string",
+                "minLength": 1
+              },
               "max": {
                 "type": "string",
                 "minLength": 1
@@ -595,6 +679,10 @@
               "type": {
                 "type": "string",
                 "const": "checkboxes"
+              },
+              "when": {
+                "type": "string",
+                "minLength": 1
               },
               "count": {
                 "type": "integer",

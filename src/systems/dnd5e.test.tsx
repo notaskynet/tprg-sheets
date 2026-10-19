@@ -183,4 +183,14 @@ describe('D&D 5e package: class, race and background data', () => {
     expect(barb).not.toContain('Ячейки'); // no spellcasting
     expect(html({ 'profile.class': 'wizard', level: 3 })).toContain('Ячейки 1-го уровня');
   });
+  it('a custom race and subclass ask for a name only when picked', () => {
+    const wrap = (node: React.ReactNode) => renderToString(<I18nProvider><SystemProvider pkg={pkg}><DiceProvider values={{}}>{node}</DiceProvider></SystemProvider></I18nProvider>);
+    const html = (v: Record<string, unknown>) => wrap(<SheetRenderer values={set(blank(), v).values} set={() => {}} />);
+    expect(html({ 'profile.race': 'dwarf' })).not.toContain('Название расы');
+    expect(html({ 'profile.race': 'other' })).toContain('Название расы');
+    expect(html({ 'profile.race': 'other' })).toContain('Своя раса');
+    expect(html({ 'profile.class': 'fighter', 'profile.subclass': 'champion' })).not.toContain('Название подкласса');
+    expect(html({ 'profile.class': 'fighter', 'profile.subclass': 'other' })).toContain('Название подкласса');
+    expect(d(set(blank(), { 'profile.race': 'other' }), 'speed')).toBe(30);
+  });
 });

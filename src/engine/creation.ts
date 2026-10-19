@@ -114,7 +114,8 @@ export function evaluateCreation(pkg: SystemPackage, ch: Character, scope: Scope
     switch (step.kind) {
       case 'fields': {
         const req = step.required ?? step.fields;
-        const missing = req.filter((f) => !nonEmpty(get(f)));
+        const shown = (f: string) => { const w = pkg.model.fields[f]?.when; return !w || !!scope.run(w); }; // a hidden field cannot be missing
+        const missing = req.filter((f) => shown(f) && !nonEmpty(get(f)));
         steps.push({ id: step.id, kind: step.kind, ok: missing.length === 0, missing });
         for (const f of req) checklist.push({ id: f, ok: nonEmpty(get(f)), labelKey: `fields.${f}`, stepId: step.id, empty: !nonEmpty(get(f)) });
         break;

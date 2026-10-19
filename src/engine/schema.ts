@@ -10,44 +10,47 @@ const expr = z.string().min(1); // expression source, see engine/expr
 
 const dotsLike = { min: z.number().default(0), max: z.number().default(5), default: z.number().optional() };
 
+// `when`: the field exists only while this expression is truthy (a name box that matters only for a custom race)
+const fieldBase = { when: expr.optional() };
+
 export const FieldDef = z.discriminatedUnion('type', [
-  z.object({ type: z.literal('text'), default: z.string().default(''), suggest: id.optional() }), // suggest = catalog id offered as autocomplete
-  z.object({ type: z.literal('longtext'), default: z.string().default('') }),
+  z.object({ type: z.literal('text'), ...fieldBase, default: z.string().default(''), suggest: id.optional() }), // suggest = catalog id offered as autocomplete
+  z.object({ type: z.literal('longtext'), ...fieldBase, default: z.string().default('') }),
   z.object({
-    type: z.literal('number'),
+    type: z.literal('number'), ...fieldBase,
     min: z.number().optional(),
     max: z.number().optional(),
     default: z.number().default(0),
   }),
-  z.object({ type: z.literal('dots'), ...dotsLike }),
-  z.object({ type: z.literal('percent'), default: z.number().default(0) }),
-  z.object({ type: z.literal('checkbox'), default: z.boolean().default(false) }),
+  z.object({ type: z.literal('dots'), ...fieldBase, ...dotsLike }),
+  z.object({ type: z.literal('percent'), ...fieldBase, default: z.number().default(0) }),
+  z.object({ type: z.literal('checkbox'), ...fieldBase, default: z.boolean().default(false) }),
   z.object({
-    type: z.literal('select'),
+    type: z.literal('select'), ...fieldBase,
     from: id.optional(), // catalog id
     options: z.array(z.string()).optional(),
     scope: expr.optional(), // expr yielding the catalog ids offered (narrows `from`)
     default: z.string().default(''),
   }),
   z.object({
-    type: z.literal('list'),
+    type: z.literal('list'), ...fieldBase,
     item: z.enum(['dots', 'number', 'note', 'text']).default('dots'),
     suggest: id.optional(), // catalog id offering quick-picks
     max: z.number().default(5), // max dots / number per row
   }),
   z.object({
-    type: z.literal('damage-track'),
+    type: z.literal('damage-track'), ...fieldBase,
     levels: z.array(id).min(1), // ordered level ids
     kinds: z.array(id).default(['bashing', 'lethal', 'aggravated']), // weakest → strongest
   }),
   z.object({
-    type: z.literal('pool'),
+    type: z.literal('pool'), ...fieldBase,
     max: expr,
     default: z.number().default(0),
     full: z.boolean().default(false), // untouched value means "at max" (hit points start full)
     initial: expr.optional(), // untouched value means this expression (sanity starts at POW)
   }),
-  z.object({ type: z.literal('checkboxes'), count: z.number().int().positive(), default: z.number().default(0) }),
+  z.object({ type: z.literal('checkboxes'), ...fieldBase, count: z.number().int().positive(), default: z.number().default(0) }),
 ]);
 export type FieldDef = z.infer<typeof FieldDef>;
 

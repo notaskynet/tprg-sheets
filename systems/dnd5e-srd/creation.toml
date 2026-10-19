@@ -10,6 +10,7 @@ id = "race"
 kind = "pick"
 field = "profile.race"
 from = "races"
+fields = ["profile.raceName"]
 show = ["speed"]
 
 # Only for races that have sub-races (hill dwarf, high elf…).

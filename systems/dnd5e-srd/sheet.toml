@@ -10,7 +10,7 @@ skills = "skill_{id}"
 [[sections]]
 id = "plate"
 blocks = [
-  { type = "plate", fields = ["profile.player", "profile.campaign", "profile.race", "profile.subrace", "profile.class", "profile.subclass", "profile.subclassName", "profile.background", "profile.alignment", "level", "xp"] },
+  { type = "plate", fields = ["profile.player", "profile.campaign", "profile.race", "profile.raceName", "profile.subrace", "profile.class", "profile.subclass", "profile.subclassName", "profile.background", "profile.alignment", "level", "xp"] },
 ]
 
 [[sections]]

@@ -110,6 +110,9 @@ Read them in formulas with `lookup('clans', profile.clan, 'disciplines')`. A pro
 | `pool` | `max = "<expression>"`; `full = true` (untouched means full) or `initial = "<expression>"` |
 | `checkboxes` | `count` boxes (e.g. death saves) |
 
+Any field accepts `when = "<expression>"`: it is drawn (and required in the wizard) only while the expression is truthy,
+for example a name box for a custom race: `when = "profile.race == 'other'"`.
+
 ### Derived values
 
 ```toml
