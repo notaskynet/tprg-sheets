@@ -195,23 +195,21 @@ export function DiceProvider({ values, onRoll, children }: {
 
             <button onClick={submit} className="bg-brand text-on-brand border border-brand-bright h-12 text-base tracking-[0.06em] uppercase rounded font-semibold hover:bg-brand-bright transition-colors">{t('rollIt')}</button>
 
-            {result && <ResultView result={result} difficulty={difficulty} />}
+            {/* fixed-size slots, so the dialog does not jump when a result or history appears */}
+            <div className="min-h-[166px]">{result && <ResultView result={result} difficulty={difficulty} />}</div>
           </div>
 
-          {history.length > 0 && (
-            <>
-              <div className="px-5 pt-3 pb-2 eyebrow border-t border-line">{t('rollHistory')}</div>
-              <div className="border-t border-line max-h-[220px] overflow-y-auto">
-                {history.map((h, i) => (
-                  <div key={i} className="grid grid-cols-[auto_1fr_auto] gap-2.5 px-5 py-2.5 border-b border-line last:border-0 items-center text-xs">
-                    <span className="font-mono text-[10px] text-text-dim">{timeStr(h.ts)}</span>
-                    <span className="font-display text-sm truncate">{h.label}</span>
-                    <span className="font-mono font-semibold text-text-mute">{h.summary}</span>
-                  </div>
-                ))}
+          <div className="px-5 pt-3 pb-2 eyebrow border-t border-line">{t('rollHistory')}</div>
+          <div className="border-t border-line h-[220px] overflow-y-auto">
+            {history.length === 0 && <div className="px-5 py-3 text-xs text-text-dim">—</div>}
+            {history.map((h, i) => (
+              <div key={i} className="grid grid-cols-[auto_1fr_auto] gap-2.5 px-5 py-2.5 border-b border-line last:border-0 items-center text-xs">
+                <span className="font-mono text-[10px] text-text-dim">{timeStr(h.ts)}</span>
+                <span className="font-display text-sm truncate">{h.label}</span>
+                <span className="font-mono font-semibold text-text-mute">{h.summary}</span>
               </div>
-            </>
-          )}
+            ))}
+          </div>
         </DialogContent>
       </Dialog>
     </Ctx>
