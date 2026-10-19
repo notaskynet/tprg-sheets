@@ -193,4 +193,16 @@ describe('D&D 5e package: class, race and background data', () => {
     expect(html({ 'profile.class': 'fighter', 'profile.subclass': 'other' })).toContain('Название подкласса');
     expect(d(set(blank(), { 'profile.race': 'other' }), 'speed')).toBe(30);
   });
+  it('extra backgrounds grant their skills and extra subclasses show their features by level', () => {
+    const step = (ch: Character, id: string) => evaluateCreation(pkg, ch).steps.find((s) => s.id === id)!;
+    const soldier = set(blank(), { 'profile.class': 'fighter', 'profile.background': 'soldier' });
+    expect(createScope(pkg.model, soldier.values).granted('skills').has('athletics')).toBe(true);
+    expect(createScope(pkg.model, soldier.values).granted('skills').has('intimidation')).toBe(true);
+    expect(step(soldier, 'skills').budget).toBe(2);
+    const wrap = (node: React.ReactNode) => renderToString(<I18nProvider><SystemProvider pkg={pkg}><DiceProvider values={{}}>{node}</DiceProvider></SystemProvider></I18nProvider>);
+    const html = (v: Record<string, unknown>) => wrap(<SheetRenderer values={set(blank(), v).values} set={() => {}} />);
+    expect(html({ 'profile.class': 'fighter', 'profile.subclass': 'battle_master', level: 3 })).toContain('Боевое превосходство');
+    expect(html({ 'profile.class': 'fighter', 'profile.subclass': 'battle_master', level: 3 })).not.toContain('Неудержимость');
+    expect(html({ 'profile.class': 'wizard', 'profile.subclass': 'divination', level: 2 })).toContain('Знамение');
+  });
 });
