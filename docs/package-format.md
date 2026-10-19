@@ -211,7 +211,7 @@ only while it is truthy (a sub-class step once the level allows one); hidden ste
 | `list` | `field`, `budget`, `scope = "<expression>"` |
 | `scores` | `group`, `methods = ["pointbuy", "array", "roll"]` with `[pointbuy] budget min max costs`, `array = [...]`, `[roll] formula, items.<id>` |
 | `spend` | `group`, `budget` (a number or an expression), `maxPerItem`, `scope = "<expression>"` (only these item ids may be chosen; the rest are locked and flagged if already ticked) |
-| `freebies` | `budget`, `costs = [{ step = "<id>", per = 5 }, { field = "<path>", per = 2 }]` — extra points beyond earlier budgets, and stored bonus fields |
+| `freebies` | `budget` (a number or an expression, e.g. a field the player sets), `costs = [{ step = "<id>", per = 5 }, { field = "<path>", per = 2 }]` — extra points beyond earlier budgets, and stored bonus fields |
 | `recap` | the checklist |
 
 The checklist and the “what is wrong” texts are derived from these steps; no validation code.

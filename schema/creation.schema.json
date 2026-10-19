@@ -383,7 +383,10 @@
                 "const": "freebies"
               },
               "budget": {
-                "type": "number"
+                "type": [
+                  "number",
+                  "string"
+                ]
               },
               "costs": {
                 "type": "array",

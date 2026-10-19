@@ -212,6 +212,7 @@ aggravated = "Aggravated"
 "profile.name" = "Name"
 "profile.player" = "Player"
 "profile.chronicle" = "Chronicle"
+"profile.freebies" = "Freebie points"
 "profile.concept" = "Concept"
 "profile.nature" = "Nature"
 "profile.demeanor" = "Demeanor"
@@ -251,7 +252,7 @@ abilities = "13, 9 and 5 points across Talents, Skills and Knowledges. No more t
 disciplines = "3 points, usually in clan disciplines. Caitiff may pick any."
 backgrounds = "5 points: contacts, resources, influence."
 virtues = "7 points on top of the starting 1. They set Humanity and Willpower."
-freebies = "15 freebie points. Cost per dot: attribute 5, ability 2, discipline 7, background 1, virtue 2, Willpower 1, Humanity 2."
+freebies = "Freebie points (the number is set on the first step, usually 15). Cost per dot: attribute 5, ability 2, discipline 7, background 1, virtue 2, Willpower 1, Humanity 2."
 recap = "Check the summary and go back to fix anything."
 
 [derived]
@@ -333,6 +334,7 @@ schemer = "Plots and manipulates from the shadows."
 "profile.name" = "The name you go by now. It can be a mortal name, a nickname, or an alias."
 "profile.player" = "Your own name, so the table knows who plays whom."
 "profile.chronicle" = "The name of the game or campaign you play this character in."
+"profile.freebies" = "How many freebie points the Storyteller allows. Usually 15; more for stronger characters, fewer for weaker."
 "profile.concept" = "One line that sums them up: who they were and who they are now. E.g. “disgraced detective”."
 "profile.nature" = "Your true self: what actually drives you and how you regain Willpower. Pick one or write your own."
 "profile.demeanor" = "The mask you show others. It can differ a lot from your Nature."
@@ -371,7 +373,7 @@ Virtues are the moral compass. Add 7 points to the starting 1 in each.
 
 Conscience and Self-Control together give Humanity, Courage gives Willpower. High Humanity helps hold the Beast back, high Willpower helps you keep going when things get hard."""
 freebies = """
-You have 15 freebie points for fine tuning. Cost per dot: attribute 5, ability 2, discipline 7, background 1, virtue 2, Willpower 1, Humanity 2.
+Here are your freebie points for fine tuning, the number you set on the first step (usually 15). Cost per dot: attribute 5, ability 2, discipline 7, background 1, virtue 2, Willpower 1, Humanity 2.
 
 Anything you put over the budgets of earlier steps is charged here automatically. You don't have to spend them all."""
 recap = "Anything marked with a cross still needs attention: tap it to jump to that step. You can finish with open items and fix them later on the sheet."

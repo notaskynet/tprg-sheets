@@ -146,6 +146,7 @@ items = [
 "profile.name" = { type = "text" }
 "profile.player" = { type = "text" }
 "profile.chronicle" = { type = "text" }
+"profile.freebies" = { type = "number", min = 0, max = 99, default = 15 }
 "profile.concept" = { type = "text" }
 "profile.nature" = { type = "text", suggest = "archetypes" }
 "profile.demeanor" = { type = "text", suggest = "archetypes" }

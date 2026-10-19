@@ -149,14 +149,15 @@ function FreebiesStep({ step, status, report, values, set }: StepProps<'freebies
   const { tr } = useSystem();
   const { t } = useI18n();
   const spent = status.spent ?? 0;
-  const left = step.budget - spent;
+  const budget = status.budget ?? 0;
+  const left = budget - spent;
   return (
     <div className="flex flex-col gap-5">
       <p className="text-text-mute text-sm">{t('goBackToSpend')}</p>
       <div className="p-4 bg-surf border border-line rounded-md flex items-end gap-8">
         <div>
           <div className="eyebrow">{t('spent')}</div>
-          <div className="font-display text-[28px] leading-none mt-1"><span className={spent > step.budget ? 'text-brand-bright' : ''}>{spent}</span><span className="text-text-mute text-sm font-mono"> / {step.budget}</span></div>
+          <div className="font-display text-[28px] leading-none mt-1"><span className={spent > budget ? 'text-brand-bright' : ''}>{spent}</span><span className="text-text-mute text-sm font-mono"> / {budget}</span></div>
         </div>
         <div>
           <div className="eyebrow">{t('remaining')}</div>

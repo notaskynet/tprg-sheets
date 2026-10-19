@@ -178,13 +178,14 @@ export function evaluateCreation(pkg: SystemPackage, ch: Character, scope: Scope
   const fb = pkg.creation.steps.find((s): s is Extract<CreationStep, { kind: 'freebies' }> => s.kind === 'freebies');
   if (fb) {
     let spent = 0;
+    const budget = typeof fb.budget === 'number' ? fb.budget : Math.max(0, n(scope.run(fb.budget)));
     for (const rule of fb.costs) {
       if ('step' in rule) spent += (steps.find((s) => s.id === rule.step)?.overflow ?? 0) * rule.per;
       else spent += Math.max(0, n(scope.get(rule.field.split('.')))) * rule.per;
     }
-    freebies = { spent, budget: fb.budget };
-    steps.push({ id: fb.id, kind: 'freebies', ok: spent <= fb.budget, spent, budget: fb.budget, overflow: Math.max(0, spent - fb.budget) });
-    checklist.push({ id: fb.id, ok: spent <= fb.budget, labelKey: `steps.${fb.id}`, val: spent, need: fb.budget, stepId: fb.id, over: Math.max(0, spent - fb.budget) });
+    freebies = { spent, budget };
+    steps.push({ id: fb.id, kind: 'freebies', ok: spent <= budget, spent, budget, overflow: Math.max(0, spent - budget) });
+    checklist.push({ id: fb.id, ok: spent <= budget, labelKey: `steps.${fb.id}`, val: spent, need: budget, stepId: fb.id, over: Math.max(0, spent - budget) });
   }
   const recap = pkg.creation.steps.find((s) => s.kind === 'recap');
   if (recap) steps.push({ id: recap.id, kind: 'recap', ok: checklist.every((c) => c.ok) });

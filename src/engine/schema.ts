@@ -194,7 +194,7 @@ export const CreationStep = z.discriminatedUnion('kind', [
   z.object({
     ...stepBase,
     kind: z.literal('freebies'),
-    budget: z.number(),
+    budget: z.union([z.number(), z.string()]), // number, or an expression over the character (a field the player sets)
     // Each rule charges `per` freebies for every point beyond a base:
     //  - { step, per }: overflow of an earlier budget step (priority / list / pointbuy)
     //  - { field, per }: a numeric field that stores points bought above the base (value × per)
