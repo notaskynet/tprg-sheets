@@ -193,7 +193,7 @@ separate slots add up (WoD: attribute + ability).
 Any block accepts `when = "<expression>"` and is then shown only while it is truthy.
 
 `group` blocks accept `derived = ["{id}_score", "+{id}_mod"]`: derived columns per item
-(`{id}` is the item id; a leading `+` always shows a sign).
+(`{id}` is the item id; a leading `+` always shows a sign, a leading `~` leaves the cell empty while it equals the stored value).
 The control per item follows the group's field type (dots, checkbox, number).
 
 ---

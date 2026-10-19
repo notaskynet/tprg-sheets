@@ -81,7 +81,7 @@ describe.each(BUILTIN_PACKAGES.map((p) => [p.manifest.id, p] as const))('package
       if (b.type === 'stepper') expect(m.derived[b.derived as string]).toBeDefined();
       if (b.type === 'stats') for (const i of b.items as string[]) expect(m.fields[i] ?? m.derived[i], `stat ${i}`).toBeDefined();
       for (const tpl of ([] as string[]).concat((b.derived as string | string[] | undefined) ?? []).filter(() => b.group)) {
-        for (const it of m.groups[b.group as string].items) expect(m.derived[tpl.replace(/^\+/, '').replace('{id}', it.id)], tpl).toBeDefined();
+        for (const it of m.groups[b.group as string].items) expect(m.derived[tpl.replace(/^[+~]/, '').replace('{id}', it.id)], tpl).toBeDefined();
       }
     }
   });

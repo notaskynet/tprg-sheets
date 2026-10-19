@@ -32,7 +32,7 @@ id = "abilities"
 title = "abilities.title"
 columns = 2
 blocks = [
-  { type = "group", group = "abilities", derived = ["{id}_score", "+{id}_mod"] },
+  { type = "group", group = "abilities", derived = ["~{id}_score", "+{id}_mod"] },
   { type = "group", group = "saves", derived = ["+save_{id}"] },
 ]
 

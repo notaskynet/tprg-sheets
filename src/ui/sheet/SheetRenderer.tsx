@@ -86,10 +86,12 @@ function Block({ cfg, ...p }: { cfg: BlockCfg } & SheetProps) {
       const field = g.field as { type: string; min?: number; max?: number };
       const granted = scope.granted(gid);
       const derivedTpl = ([] as string[]).concat((cfg.derived as string | string[] | undefined) ?? []);
-      // a leading "+" in a derived template shows that column with an explicit sign
-      const DerivedCell = ({ name: raw, signed: all }: { name: string; signed: boolean }) => {
+      // a leading "+" in a derived template shows that column with an explicit sign;
+      // a leading "~" leaves the cell empty while it equals the stored value (no point repeating it)
+      const DerivedCell = ({ name: raw, signed: all, stored }: { name: string; signed: boolean; stored: unknown }) => {
         const signed = all || raw.startsWith('+');
-        const v = scope.get([raw.replace(/^\+/, '')]);
+        const v = scope.get([raw.replace(/^[+~]/, '')]);
+        if (raw.startsWith('~') && typeof v === 'number' && v === Number(stored ?? 0)) return <span className="min-w-7" />;
         return <span className="font-mono text-[13px] min-w-7 text-right tabular-nums">{typeof v === 'number' && signed && v >= 0 ? `+${v}` : String(v ?? '')}</span>;
       };
       return (
@@ -109,7 +111,7 @@ function Block({ cfg, ...p }: { cfg: BlockCfg } & SheetProps) {
                     </span>
                     <span className="inline-flex items-center gap-3">
                       <ItemControl field={field} value={getIn(p.values, [gid, it.id])} locked={granted.has(it.id)} readOnly={p.readOnly} onChange={(v) => p.set(`${gid}.${it.id}`, v)} />
-                      {derivedTpl.map((tpl) => <DerivedCell key={tpl} name={tpl.replace('{id}', it.id)} signed={!!cfg.signed} />)}
+                      {derivedTpl.map((tpl) => <DerivedCell key={tpl} name={tpl.replace('{id}', it.id)} signed={!!cfg.signed} stored={getIn(p.values, [gid, it.id])} />)}
                     </span>
                   </div>
                 );
@@ -226,7 +228,17 @@ function Block({ cfg, ...p }: { cfg: BlockCfg } & SheetProps) {
       const path = str('field');
       const def = pkg.model.fields[path];
       if (def?.type !== 'pool') return null;
-      const max = Math.max(Number(scope.run(def.max) ?? 0), 1);
+      const rawMax = Number(scope.run(def.max) ?? 0);
+      if (rawMax <= 0) {
+        // nothing to track yet (no class chosen, ...): a placeholder instead of a single phantom cell
+        return (
+          <div className="flex flex-col gap-1.5">
+            <Heading title={tr(`fields.${path}`)} small={path === 'willpowerCurrent'} />
+            <span className="text-text-dim text-sm">—</span>
+          </div>
+        );
+      }
+      const max = rawMax;
       const raw = getIn(p.values, path.split('.'));
       const value = raw === undefined ? (def.initial ? Number(scope.run(def.initial) ?? 0) : def.full ? max : 0) : Number(raw);
       const noteKey = cfg.note as string | undefined;

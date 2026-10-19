@@ -59,7 +59,7 @@ export function FieldEditor({ path, values, set, variant = 'plate', readOnly, ba
       );
     case 'longtext':
       return (
-        <div className={wrap}>
+        <div className={cn(wrap, 'col-span-full')}>
           {!bare && cap}
           <MarkdownField value={String(value ?? '')} onChange={(v) => set(path, v)} readOnly={readOnly} />
         </div>
